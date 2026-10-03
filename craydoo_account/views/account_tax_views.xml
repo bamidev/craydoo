@@ -1,0 +1,62 @@
+<odoo>
+    <record id="view_account_tax_list" model="ir.ui.view">
+        <field name="name">cd.account.tax.list</field>
+        <field name="model">cd.account.tax</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="amount_type"/>
+                <field name="amount"/>
+                <field name="type_tax_use"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_account_tax_form" model="ir.ui.view">
+        <field name="name">cd.account.tax.form</field>
+        <field name="model">cd.account.tax</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="amount_type"/>
+                        <field name="amount"/>
+                        <field name="type_tax_use"/>
+                        <field name="price_include"/>
+                        <field name="active"/>
+                    </group>
+                    <notebook>
+                        <page string="Invoice Allocation">
+                            <field name="invoice_lines">
+                                <list editable="bottom">
+                                    <field name="account_id"/>
+                                    <field name="tags" widget="many2many_tags"/>
+                                    <field name="percentage"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Refund Allocation">
+                            <field name="refund_lines">
+                                <list editable="bottom">
+                                    <field name="account_id"/>
+                                    <field name="tags" widget="many2many_tags"/>
+                                    <field name="percentage"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_account_tax" model="ir.actions.act_window">
+        <field name="name">Taxes</field>
+        <field name="res_model">cd.account.tax</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_account_tax" name="Taxes" parent="menu_account_config"
+              action="action_account_tax" sequence="10"/>
+</odoo>

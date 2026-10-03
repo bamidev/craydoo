@@ -1,0 +1,8 @@
+<odoo noupdate="1">
+    <record id="seq_account_invoice" model="ir.sequence">
+        <field name="name">Invoice</field>
+        <field name="code">cd.account.invoice</field>
+        <field name="prefix">INV/%(year)s/</field>
+        <field name="padding">4</field>
+    </record>
+</odoo>

@@ -1,0 +1,84 @@
+<odoo>
+    <record id="view_contact_info_list" model="ir.ui.view">
+        <field name="name">cd.contact.info.list</field>
+        <field name="model">cd.contact.info</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="city"/>
+                <field name="country"/>
+                <field name="locked"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_contact_info_form" model="ir.ui.view">
+        <field name="name">cd.contact.info.form</field>
+        <field name="model">cd.contact.info</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <field name="locked" invisible="1"/>
+                    <group invisible="not locked">
+                        <div class="alert alert-info" role="alert">
+                            This record is locked and cannot be modified.
+                        </div>
+                    </group>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                    <notebook>
+                        <page string="Emails">
+                            <field name="emails">
+                                <list editable="bottom">
+                                    <field name="address"/>
+                                    <field name="is_primary"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Phones">
+                            <field name="phones">
+                                <list editable="bottom">
+                                    <field name="number"/>
+                                    <field name="type"/>
+                                    <field name="is_primary"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Websites">
+                            <field name="websites">
+                                <list editable="bottom">
+                                    <field name="url"/>
+                                    <field name="type"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                    <group string="Address">
+                        <field name="street"/>
+                        <field name="street2"/>
+                        <field name="city"/>
+                        <field name="zip"/>
+                        <field name="state"/>
+                        <field name="country"/>
+                    </group>
+                    <group string="Other">
+                        <field name="tz"/>
+                        <field name="company_id"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_contact_info" model="ir.actions.act_window">
+        <field name="name">Contact Information</field>
+        <field name="res_model">cd.contact.info</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_contact_root" name="Contacts"/>
+    <menuitem id="menu_contact_info" name="Contact Information" parent="menu_contact_root"
+              action="action_contact_info" groups="base.group_system"/>
+</odoo>

@@ -1,0 +1,72 @@
+from odoo.exceptions import UserError
+from odoo.tests import TransactionCase, tagged
+
+
+@tagged('post_install', '-at_install')
+class TestAccountInvoice(TransactionCase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.contact = cls.env['cd.contact.contact'].create({'name': 'Jane Doe'})
+        cls.tax = cls.env['cd.account.tax'].create({
+            'name': '10%', 'amount_type': 'percent', 'amount': 10.0,
+        })
+
+    def test_amount_total_computed_from_lines(self):
+        invoice = self.env['cd.account.invoice'].create({
+            'debtor': self.contact.contact_info.id,
+            'invoice_lines': [(0, 0, {
+                'name': 'Consulting', 'quantity': 2, 'price_unit': 100.0,
+                'taxes': [(6, 0, [self.tax.id])],
+            })],
+        })
+        self.assertAlmostEqual(invoice.amount_untaxed, 200.0)
+        self.assertAlmostEqual(invoice.amount_tax, 20.0)
+        self.assertAlmostEqual(invoice.amount_total, 220.0)
+
+    def test_posting_locks_a_snapshot_of_the_debtor(self):
+        invoice = self.env['cd.account.invoice'].create({
+            'debtor': self.contact.contact_info.id,
+        })
+        invoice.action_post()
+        self.assertEqual(invoice.state, 'posted')
+        self.assertTrue(invoice.debtor.locked)
+        self.assertNotEqual(invoice.debtor, self.contact.contact_info)
+        self.assertEqual(invoice.debtor.name, self.contact.name)
+
+    def test_posting_twice_reuses_the_cached_locked_copy(self):
+        invoice = self.env['cd.account.invoice'].create({
+            'debtor': self.contact.contact_info.id,
+        })
+        locked_copy = self.contact.contact_info.create_locked_copy()
+        invoice.action_post()
+        self.assertEqual(invoice.debtor, locked_copy)
+
+    def test_posted_invoice_is_locked(self):
+        invoice = self.env['cd.account.invoice'].create({
+            'debtor': self.contact.contact_info.id,
+        })
+        invoice.action_post()
+        self.assertTrue(invoice.locked)
+        user = self.env['res.users'].create({
+            'name': 'Regular User', 'login': 'regular_invoice_user',
+            'groups_id': [(6, 0, [self.env.ref('base.group_user').id])],
+        })
+        with self.assertRaises(UserError):
+            invoice.with_user(user).write({'invoice_date': '2026-01-01'})
+
+    def test_only_draft_invoices_can_be_archived(self):
+        invoice = self.env['cd.account.invoice'].create({
+            'debtor': self.contact.contact_info.id,
+        })
+        invoice.action_post()
+        with self.assertRaises(UserError):
+            invoice.active = False
+
+    def test_draft_invoice_can_be_archived(self):
+        invoice = self.env['cd.account.invoice'].create({
+            'debtor': self.contact.contact_info.id,
+        })
+        invoice.active = False
+        self.assertFalse(invoice.active)
