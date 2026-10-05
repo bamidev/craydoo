@@ -7,6 +7,7 @@
     'license': 'LGPL-3',
     'depends': ['base', 'mail', 'craydoo_contact'],
     'external_dependencies': {'python': ['tigerbeetle']},
+    'post_init_hook': 'sync_tigerbeetle_accounts',
     'data': [
         'security/account_security.xml',
         'security/ir.access.csv',

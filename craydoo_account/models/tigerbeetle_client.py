@@ -17,9 +17,9 @@ def get_client(env):
     if _client is None:
         if tb is None:
             raise RuntimeError("The 'tigerbeetle' python package is not installed.")
-        get_param = env['ir.config_parameter'].sudo().get_param
-        cluster_id = int(get_param('craydoo_account.tigerbeetle_cluster_id', '0'))
-        addresses = get_param('craydoo_account.tigerbeetle_addresses', '3000')
+        icp = env['ir.config_parameter'].sudo()
+        cluster_id = icp.get_int('craydoo_account.tigerbeetle_cluster_id', 0)
+        addresses = icp.get_str('craydoo_account.tigerbeetle_addresses', '3000')
         _client = tb.ClientSync(cluster_id=cluster_id, replica_addresses=addresses)
     return _client
 
@@ -45,6 +45,22 @@ def query_filter(limit, **overrides):
     }
     kwargs.update(overrides)
     return tb.QueryFilter(**kwargs)
+
+
+def create_account(env, *, ledger, code, flags=0, user_data_32=0):
+    """ Create a single Tigerbeetle account and return its id, raising
+    UserError if Tigerbeetle refuses it.
+    """
+    client = get_client(env)
+    account_id = new_id()
+    account = tb.Account(
+        id=account_id, ledger=ledger, code=code, flags=tb.AccountFlags(flags),
+        user_data_32=user_data_32,
+    )
+    for result in client.create_accounts([account]):
+        if result.status != tb.CreateAccountStatus.CREATED:
+            raise UserError(_("Tigerbeetle refused the account: %s", result.status.name))
+    return account_id
 
 
 def create_linked_transfers(env, transfers):

@@ -33,8 +33,18 @@ class AccountInvoiceDraft(models.Model):
     amount_total = fields.Monetary(related='invoice_id.amount_total', currency_field='currency')
     locked = fields.Boolean(related='invoice_id.locked')
 
-    debit_account_id = fields.Many2one('cd.account.account')
-    credit_account_id = fields.Many2one('cd.account.account')
+    debit_account_id = fields.Many2one(
+        'cd.account.account', default=lambda self: self._default_account('default_debit_account'))
+    credit_account_id = fields.Many2one(
+        'cd.account.account', default=lambda self: self._default_account('default_credit_account'))
+
+    @api.model
+    def _default_account(self, company_field):
+        account = self.env.company[company_field]
+        if account:
+            return account
+        param = self.env['ir.config_parameter'].sudo().get_int(f'craydoo_account.{company_field}', 0)
+        return self.env['cd.account.account'].browse(param) if param else self.env['cd.account.account']
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -44,29 +54,13 @@ class AccountInvoiceDraft(models.Model):
                 vals['invoice_id'] = self.env['cd.account.invoice'].create(invoice_vals).id
         return super().create(vals_list)
 
-    def _get_debit_account(self):
-        self.ensure_one()
-        account = self.debit_account_id or self.company_id.default_debit_account
-        if account:
-            return account
-        param = self.env['ir.config_parameter'].sudo().get_param('craydoo_account.default_debit_account')
-        return self.env['cd.account.account'].browse(int(param)) if param else self.env['cd.account.account']
-
-    def _get_credit_account(self):
-        self.ensure_one()
-        account = self.credit_account_id or self.company_id.default_credit_account
-        if account:
-            return account
-        param = self.env['ir.config_parameter'].sudo().get_param('craydoo_account.default_credit_account')
-        return self.env['cd.account.account'].browse(int(param)) if param else self.env['cd.account.account']
-
     def action_post(self):
         for draft in self:
             if draft.invoice_id.locked:
                 raise UserError(_("This invoice is already posted."))
 
-            debit_account = draft._get_debit_account()
-            credit_account = draft._get_credit_account()
+            debit_account = draft.debit_account_id
+            credit_account = draft.credit_account_id
             if not debit_account or not credit_account:
                 raise UserError(_(
                     "No debit/credit account configured for this invoice, its "

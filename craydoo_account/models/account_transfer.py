@@ -32,16 +32,23 @@ class AccountTransfer(models.Model):
             l.number: l for l in self.env['cd.account.ledger'].search(
                 [('number', 'in', [t.ledger for t in transfers])])
         }
+        account_ids = {t.debit_account_id for t in transfers} | {t.credit_account_id for t in transfers}
+        accounts = {
+            a.tigerbeetle_id: a for a in self.env['cd.account.account'].search(
+                [('tigerbeetle_id', 'in', list(account_ids))])
+        }
         data = {}
         for t in transfers:
             ledger = ledgers.get(t.ledger)
+            debit = accounts.get(t.debit_account_id)
+            credit = accounts.get(t.credit_account_id)
             data[t.id] = {
                 'ledger': (ledger.id, ledger.display_name) if ledger else False,
                 'code': t.code,
                 'flags': int(t.flags),
                 'amount': t.amount,
-                'debit_account': (t.debit_account_id, str(t.debit_account_id)) if t.debit_account_id else False,
-                'credit_account': (t.credit_account_id, str(t.credit_account_id)) if t.credit_account_id else False,
+                'debit_account': (debit.id, debit.display_name) if debit else False,
+                'credit_account': (credit.id, credit.display_name) if credit else False,
             }
         return data
 

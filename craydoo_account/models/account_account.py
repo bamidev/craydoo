@@ -1,63 +1,49 @@
-from odoo import fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import UserError
 
 from .fields import TigerbeetleId
-from .tigerbeetle_client import get_client, query_filter
+from .tigerbeetle_client import create_account
 
 
 class AccountAccount(models.Model):
-    """ A Tigerbeetle account, viewed live - no local copy. The record's own
-    `id` *is* the Tigerbeetle account id (there's no Postgres sequence to
-    hand out a different one), so any TigerbeetleId field elsewhere that stores
-    a Tigerbeetle account id can be browsed directly:
-    `env['cd.account.account'].browse(some_account_id)`.
+    """ A Tigerbeetle account. Identity fields (tigerbeetle_id/ledger/code)
+    are stored locally in Postgres - they never change after creation in
+    Tigerbeetle anyway, so caching them means listing/searching/archiving
+    doesn't need a live Tigerbeetle connection.
 
-    Only searching by id, or with no filter at all (page through everything),
-    is supported - Tigerbeetle's `query_accounts` has no free-text search,
-    only equality on ledger/code/user_data and a timestamp range, none of
-    which a generic Odoo search box produces today.
+    Creatable and `active` is freely writable (a purely local annotation,
+    never sent to Tigerbeetle), but `tigerbeetle_id`/`ledger`/`code`/`flags`
+    can't be changed once set, and records can't be deleted - Tigerbeetle
+    has no "update"/"delete account" API at all.
     """
     _name = 'cd.account.account'
     _description = 'Tigerbeetle Account'
-    _inherit = ['cd.account.tigerbeetle.record']
-    _rec_name = 'id'
+    _rec_name = 'tigerbeetle_id'
 
-    ledger = fields.Many2one('cd.account.ledger', readonly=True)
+    tigerbeetle_id = TigerbeetleId(required=True, index=True, readonly=True, copy=False)
+    ledger = fields.Many2one('cd.account.ledger', required=True, readonly=True)
     code = fields.Integer(readonly=True)
     flags = fields.Integer(readonly=True)
-    debits_pending = TigerbeetleId(readonly=True)
-    debits_posted = TigerbeetleId(readonly=True)
-    credits_pending = TigerbeetleId(readonly=True)
-    credits_posted = TigerbeetleId(readonly=True)
+    active = fields.Boolean(default=True)
 
-    def _tb_fetch(self, ids):
-        if not ids:
-            return {}
-        accounts = get_client(self.env).lookup_accounts(list(ids))
-        ledgers = {
-            l.number: l for l in self.env['cd.account.ledger'].search(
-                [('number', 'in', [a.ledger for a in accounts])])
-        }
-        data = {}
-        for a in accounts:
-            ledger = ledgers.get(a.ledger)
-            data[a.id] = {
-                'ledger': (ledger.id, ledger.display_name) if ledger else False,
-                'code': a.code,
-                'flags': int(a.flags),
-                'debits_pending': a.debits_pending,
-                'debits_posted': a.debits_posted,
-                'credits_pending': a.credits_pending,
-                'credits_posted': a.credits_posted,
-            }
-        return data
+    _tigerbeetle_id_unique = models.Constraint(
+        'UNIQUE(tigerbeetle_id)', 'A Tigerbeetle account can only be cached once.')
 
-    def _tb_search_ids(self, domain):
-        client = get_client(self.env)
-        ids = self._tb_ids_from_domain(domain)
-        if ids is not None:
-            return [a.id for a in client.lookup_accounts(ids)]
-        if domain:
-            raise NotImplementedError(
-                "cd.account.account only supports searching by id; browse a "
-                "specific id instead of filtering.")
-        return [a.id for a in client.query_accounts(query_filter(limit=8190))]
+    @api.model_create_multi
+    def create(self, vals_list):
+        if not self.env.context.get('cd_account_sync'):
+            for vals in vals_list:
+                ledger = self.env['cd.account.ledger'].browse(vals.get('ledger'))
+                if not ledger:
+                    raise UserError(_("A ledger is required to create a Tigerbeetle account."))
+                vals['tigerbeetle_id'] = create_account(
+                    self.env, ledger=ledger.number, code=vals.get('code', 0))
+        return super().create(vals_list)
+
+    def write(self, vals):
+        if set(vals) - {'active'}:
+            raise UserError(_("Only 'active' can be changed on a Tigerbeetle account."))
+        return super().write(vals)
+
+    def unlink(self):
+        raise UserError(_("Tigerbeetle accounts can't be deleted."))

@@ -3,7 +3,8 @@ from odoo import models
 
 class TigerbeetleRecord(models.AbstractModel):
     """ Base for Odoo models whose rows live in Tigerbeetle, not Postgres:
-    `cd.account.account` and `cd.account.transfer`. No table is created
+    `cd.account.transfer` (`cd.account.account` is cached locally instead,
+    see there for why). No table is created
     (`_auto = False`); `_search`/`read` go straight to the Tigerbeetle client
     via the two hooks concrete models implement: `_tb_search_ids` and
     `_tb_fetch`. These records are only ever produced by posting the

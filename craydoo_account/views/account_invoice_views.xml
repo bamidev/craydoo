@@ -92,10 +92,6 @@
                         <field name="due_date" readonly="locked"/>
                         <field name="currency" readonly="locked"/>
                     </group>
-                    <group string="Posting Accounts">
-                        <field name="debit_account_id" readonly="locked"/>
-                        <field name="credit_account_id" readonly="locked"/>
-                    </group>
                     <notebook>
                         <page string="Invoice Lines">
                             <field name="invoice_lines" readonly="locked">
@@ -108,6 +104,12 @@
                                     <field name="price_total"/>
                                 </list>
                             </field>
+                        </page>
+                        <page string="Accounting">
+                            <group>
+                                <field name="debit_account_id" readonly="locked"/>
+                                <field name="credit_account_id" readonly="locked"/>
+                            </group>
                         </page>
                     </notebook>
                     <group class="oe_subtotal_footer">
