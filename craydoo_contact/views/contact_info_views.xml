@@ -1,17 +1,4 @@
 <odoo>
-    <record id="view_contact_info_list" model="ir.ui.view">
-        <field name="name">cd.contact.info.list</field>
-        <field name="model">cd.contact.info</field>
-        <field name="arch" type="xml">
-            <list>
-                <field name="name"/>
-                <field name="city"/>
-                <field name="country"/>
-                <field name="locked"/>
-            </list>
-        </field>
-    </record>
-
     <record id="view_contact_info_form" model="ir.ui.view">
         <field name="name">cd.contact.info.form</field>
         <field name="model">cd.contact.info</field>
@@ -73,13 +60,5 @@
         </field>
     </record>
 
-    <record id="action_contact_info" model="ir.actions.act_window">
-        <field name="name">Contact Information</field>
-        <field name="res_model">cd.contact.info</field>
-        <field name="view_mode">list,form</field>
-    </record>
-
     <menuitem id="menu_contact_root" name="Contacts"/>
-    <menuitem id="menu_contact_info" name="Contact Information" parent="menu_contact_root"
-              action="action_contact_info" groups="base.group_system"/>
 </odoo>
