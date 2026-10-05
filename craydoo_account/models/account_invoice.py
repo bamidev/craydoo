@@ -12,7 +12,7 @@ class AccountInvoice(models.Model):
     active = fields.Boolean(default=True)
     locked = fields.Boolean(default=False, copy=False, index=True)
 
-    debtor = fields.Many2one('cd.contact.info', required=True)
+    debtor = fields.Many2one('cd.contact.info', required=True, string="Billed to")
     language = fields.Selection(lambda self: self.env['res.lang'].get_installed())
 
     invoice_date = fields.Date()
