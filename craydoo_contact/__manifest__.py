@@ -5,10 +5,13 @@
     'category': 'Contacts',
     'author': 'Craydoo',
     'license': 'LGPL-3',
-    'depends': ['base'],
+    'depends': ['base', 'mail', 'phone_validation'],
     'data': [
+        'security/contact_security.xml',
+        'security/ir.access.csv',
         'views/contact_info_views.xml',
-        'views/contact_contact_views.xml',
+        'views/contact_mixin_views.xml',
+        'views/contact_person_views.xml',
         'views/contact_company_views.xml',
     ],
 }

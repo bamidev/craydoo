@@ -1,0 +1,47 @@
+<odoo>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.craydoo.account</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app id="craydoo_account" string="Accounting" name="craydoo_account">
+                    <block title="Tigerbeetle Defaults" id="craydoo_account_tigerbeetle_defaults">
+                        <setting string="Ledger">
+                            <field name="company_account_ledger"/>
+                        </setting>
+                        <setting string="Debit Account">
+                            <field name="company_default_debit_account"
+                                   domain="[('ledger', '=', company_account_ledger)]"/>
+                        </setting>
+                        <setting string="Credit Account">
+                            <field name="company_default_credit_account"
+                                   domain="[('ledger', '=', company_account_ledger)]"/>
+                        </setting>
+                        <setting string="Default Ledger">
+                            <field name="default_ledger"/>
+                        </setting>
+                        <setting string="Default Debit Account">
+                            <field name="default_debit_account"
+                                   domain="[('ledger', '=', default_ledger)]"/>
+                        </setting>
+                        <setting string="Default Credit Account">
+                            <field name="default_credit_account"
+                                   domain="[('ledger', '=', default_ledger)]"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_account_settings" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="context">{'module': 'craydoo_account'}</field>
+    </record>
+
+    <menuitem id="menu_account_settings" name="Settings" parent="menu_account_config"
+              action="action_account_settings" sequence="100" groups="base.group_system"/>
+</odoo>

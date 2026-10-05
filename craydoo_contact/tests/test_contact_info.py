@@ -8,7 +8,7 @@ class TestContactInfo(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.info = cls.env['cd.contact.info'].create({'name': 'Jane Doe'})
+        cls.info = cls.env['cd.contact.info'].create({})
 
     def test_unlocked_record_is_editable(self):
         self.info.write({'city': 'Rotterdam'})
@@ -35,7 +35,7 @@ class TestContactInfo(TransactionCase):
         self.assertEqual(self.info.city, 'Utrecht')
 
     def test_unlocked_record_can_be_unlinked(self):
-        info = self.env['cd.contact.info'].create({'name': 'To Delete'})
+        info = self.env['cd.contact.info'].create({})
         info.unlink()
 
     def test_phones_one2many(self):

@@ -1,0 +1,50 @@
+<odoo>
+    <record id="view_account_account_list" model="ir.ui.view">
+        <field name="name">cd.account.account.list</field>
+        <field name="model">cd.account.account</field>
+        <field name="arch" type="xml">
+            <list create="false" delete="false">
+                <field name="id"/>
+                <field name="ledger"/>
+                <field name="code"/>
+                <field name="debits_pending"/>
+                <field name="debits_posted"/>
+                <field name="credits_pending"/>
+                <field name="credits_posted"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_account_account_form" model="ir.ui.view">
+        <field name="name">cd.account.account.form</field>
+        <field name="model">cd.account.account</field>
+        <field name="arch" type="xml">
+            <form create="false" delete="false">
+                <sheet>
+                    <group>
+                        <field name="id" string="Account ID"/>
+                        <field name="ledger"/>
+                        <field name="code"/>
+                        <field name="flags"/>
+                    </group>
+                    <group string="Balance">
+                        <field name="debits_pending"/>
+                        <field name="debits_posted"/>
+                        <field name="credits_pending"/>
+                        <field name="credits_posted"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_account_account" model="ir.actions.act_window">
+        <field name="name">Accounts</field>
+        <field name="res_model">cd.account.account</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_account_tigerbeetle" name="General Ledger" parent="menu_account_root" sequence="80"/>
+    <menuitem id="menu_account_account" name="Accounts" parent="menu_account_tigerbeetle"
+              action="action_account_account" sequence="10"/>
+</odoo>

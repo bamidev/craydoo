@@ -1,0 +1,56 @@
+<odoo>
+    <record id="view_contact_person_list" model="ir.ui.view">
+        <field name="name">cd.contact.person.list</field>
+        <field name="model">cd.contact.person</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="display_name"/>
+                <field name="function"/>
+                <field name="city"/>
+                <field name="country"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_contact_person_form" model="ir.ui.view">
+        <field name="name">cd.contact.person.form</field>
+        <field name="model">cd.contact.person</field>
+        <field name="inherit_id" ref="view_contact_base_form"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="replace">
+                <label for="first_name" string="Name"/>
+                <div class="d-flex gap-2">
+                    <field name="salutation" nolabel="1" placeholder="Salutation"/>
+                    <field name="first_name" nolabel="1" placeholder="First name"/>
+                    <field name="prefix" nolabel="1" placeholder="Prefix"/>
+                    <field name="name" nolabel="1" placeholder="Last name"/>
+                </div>
+            </xpath>
+            <xpath expr="//page[@name='extra']/notebook" position="before">
+                <field name="function"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_contact_person_search" model="ir.ui.view">
+        <field name="name">cd.contact.person.search</field>
+        <field name="model">cd.contact.person</field>
+        <field name="arch" type="xml">
+            <search>
+                <filter name="filter_current_company" string="Current Company"
+                        domain="[('company_id', 'in', [False] + allowed_company_ids)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_contact_person" model="ir.actions.act_window">
+        <field name="name">People</field>
+        <field name="res_model">cd.contact.person</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_filter_current_company': 1}</field>
+    </record>
+
+    <menuitem id="menu_contact_person" name="People" parent="menu_contact_root"
+              action="action_contact_person" sequence="10"/>
+</odoo>

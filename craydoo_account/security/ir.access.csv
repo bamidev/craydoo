@@ -1,0 +1,13 @@
+id,name,model_id,group_id/id,operation,domain
+access_cd_account_invoice_user,cd.account.invoice.user,cd.account.invoice,group_account_user,crud,
+access_cd_account_invoice_line_user,cd.account.invoice.line.user,cd.account.invoice.line,group_account_user,crud,
+access_cd_account_invoice_draft_user,cd.account.invoice.draft.user,cd.account.invoice.draft,group_account_user,crud,
+access_cd_account_tax_user,cd.account.tax.user,cd.account.tax,group_account_user,r,
+access_cd_account_tax_admin,cd.account.tax.admin,cd.account.tax,group_account_admin,crud,
+access_cd_account_tax_tag_user,cd.account.tax.tag.user,cd.account.tax.tag,group_account_user,r,
+access_cd_account_tax_tag_admin,cd.account.tax.tag.admin,cd.account.tax.tag,group_account_admin,crud,
+access_cd_account_tax_allocation_line_admin,cd.account.tax.allocation.line.admin,cd.account.tax.allocation.line,group_account_admin,crud,
+access_cd_account_ledger_user,cd.account.ledger.user,cd.account.ledger,group_account_user,r,
+access_cd_account_ledger_admin,cd.account.ledger.admin,cd.account.ledger,group_account_admin,crud,
+access_cd_account_account_user,cd.account.account.user,cd.account.account,group_account_user,r,
+access_cd_account_transfer_user,cd.account.transfer.user,cd.account.transfer,group_account_user,r,

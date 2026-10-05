@@ -8,7 +8,6 @@
                 <field name="debtor"/>
                 <field name="invoice_date"/>
                 <field name="amount_total"/>
-                <field name="state"/>
             </list>
         </field>
     </record>
@@ -17,19 +16,8 @@
         <field name="name">cd.account.invoice.form</field>
         <field name="model">cd.account.invoice</field>
         <field name="arch" type="xml">
-            <form>
-                <header>
-                    <button name="action_post" type="object" string="Post"
-                            invisible="state != 'draft'"/>
-                    <field name="state" widget="statusbar"/>
-                </header>
+            <form create="false" edit="false">
                 <sheet>
-                    <field name="locked" invisible="1"/>
-                    <group invisible="not locked">
-                        <div class="alert alert-info" role="alert">
-                            This invoice is locked and can only be changed by administrators.
-                        </div>
-                    </group>
                     <group>
                         <field name="debtor"/>
                         <field name="language"/>
@@ -40,6 +28,77 @@
                     <notebook>
                         <page string="Invoice Lines">
                             <field name="invoice_lines">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="quantity"/>
+                                    <field name="price_unit"/>
+                                    <field name="taxes" widget="many2many_tags"/>
+                                    <field name="price_subtotal"/>
+                                    <field name="price_total"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                    <group class="oe_subtotal_footer">
+                        <field name="amount_untaxed"/>
+                        <field name="amount_tax"/>
+                        <field name="amount_total"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_account_invoice" model="ir.actions.act_window">
+        <field name="name">Posted Invoices</field>
+        <field name="res_model">cd.account.invoice</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('locked', '=', True)]</field>
+    </record>
+
+    <record id="view_account_invoice_draft_list" model="ir.ui.view">
+        <field name="name">cd.account.invoice.draft.list</field>
+        <field name="model">cd.account.invoice.draft</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="debtor"/>
+                <field name="invoice_date"/>
+                <field name="amount_total"/>
+                <field name="locked"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_account_invoice_draft_form" model="ir.ui.view">
+        <field name="name">cd.account.invoice.draft.form</field>
+        <field name="model">cd.account.invoice.draft</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_post" type="object" string="Post" invisible="locked"/>
+                </header>
+                <sheet>
+                    <field name="locked" invisible="1"/>
+                    <group invisible="not locked">
+                        <div class="alert alert-info" role="alert">
+                            This invoice is locked and can only be changed by administrators.
+                        </div>
+                    </group>
+                    <group>
+                        <field name="debtor" readonly="locked"/>
+                        <field name="language" readonly="locked"/>
+                        <field name="due_date" readonly="locked"/>
+                        <field name="currency" readonly="locked"/>
+                    </group>
+                    <group string="Posting Accounts">
+                        <field name="debit_account_id" readonly="locked"/>
+                        <field name="credit_account_id" readonly="locked"/>
+                    </group>
+                    <notebook>
+                        <page string="Invoice Lines">
+                            <field name="invoice_lines" readonly="locked">
                                 <list editable="bottom">
                                     <field name="name"/>
                                     <field name="quantity"/>
@@ -61,14 +120,16 @@
         </field>
     </record>
 
-    <record id="action_account_invoice" model="ir.actions.act_window">
+    <record id="action_account_invoice_draft" model="ir.actions.act_window">
         <field name="name">Invoices</field>
-        <field name="res_model">cd.account.invoice</field>
+        <field name="res_model">cd.account.invoice.draft</field>
         <field name="view_mode">list,form</field>
     </record>
 
     <menuitem id="menu_account_root" name="Accounting"/>
     <menuitem id="menu_account_invoice" name="Invoices" parent="menu_account_root"
-              action="action_account_invoice" sequence="10"/>
+              action="action_account_invoice_draft" sequence="10"/>
+    <menuitem id="menu_account_invoice_posted" name="Posted Invoices" parent="menu_account_root"
+              action="action_account_invoice" sequence="20"/>
     <menuitem id="menu_account_config" name="Configuration" parent="menu_account_root" sequence="90"/>
 </odoo>

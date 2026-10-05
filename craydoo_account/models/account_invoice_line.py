@@ -1,10 +1,12 @@
 from odoo import api, fields, models
 
+from .fields import TigerbeetleId
+
 
 class AccountInvoiceLine(models.Model):
     _name = 'cd.account.invoice.line'
     _description = 'Invoice Line'
-    _inherit = ['cd.account.tigerbeetle.mixin']
+    _inherit = ['cd.account.locked_mixin']
 
     invoice = fields.Many2one('cd.account.invoice', required=True, ondelete='cascade')
     sequence = fields.Integer(default=10)
@@ -13,6 +15,9 @@ class AccountInvoiceLine(models.Model):
     price_unit = fields.Float(required=True, default=0.0)
     taxes = fields.Many2many('cd.account.tax')
     currency = fields.Many2one(related='invoice.currency')
+
+    locked = fields.Boolean(related='invoice.locked', store=True)
+    tigerbeetle_ref = TigerbeetleId(copy=False, index=True, readonly=True)
 
     price_subtotal = fields.Monetary(compute='_compute_amounts', store=True, currency_field='currency')
     price_tax = fields.Monetary(compute='_compute_amounts', store=True, currency_field='currency')

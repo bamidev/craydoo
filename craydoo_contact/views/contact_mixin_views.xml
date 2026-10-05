@@ -1,0 +1,61 @@
+<odoo>
+    <record id="view_contact_base_form" model="ir.ui.view">
+        <field name="name">cd.contact.base.form</field>
+        <field name="model">cd.contact.mixin</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+							<field name="name"/>
+                            <field name="main_email"/>
+                            <field name="main_phone"/>
+                        </group>
+                        <group string="Address">
+                            <field name="street"/>
+                            <field name="house"/>
+                            <field name="address_extra"/>
+                            <field name="city"/>
+                            <field name="zip"/>
+                            <field name="state"/>
+                            <field name="country"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="extra" string="Extra">
+                            <field name="tz"/>
+                            <notebook>
+                                <page string="Emails">
+                                    <field name="emails">
+                                        <list editable="bottom">
+                                            <field name="address"/>
+                                            <field name="is_primary"/>
+                                        </list>
+                                    </field>
+                                </page>
+                                <page string="Phones">
+                                    <field name="phones">
+                                        <list editable="bottom">
+                                            <field name="number"/>
+                                            <field name="type"/>
+                                            <field name="is_primary"/>
+                                        </list>
+                                    </field>
+                                </page>
+                                <page string="Websites">
+                                    <field name="websites">
+                                        <list editable="bottom">
+                                            <field name="url"/>
+                                            <field name="type"/>
+                                        </list>
+                                    </field>
+                                </page>
+                            </notebook>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+</odoo>

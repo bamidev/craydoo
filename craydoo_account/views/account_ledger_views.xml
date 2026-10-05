@@ -1,0 +1,21 @@
+<odoo>
+    <record id="view_account_ledger_list" model="ir.ui.view">
+        <field name="name">cd.account.ledger.list</field>
+        <field name="model">cd.account.ledger</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="number"/>
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_account_ledger" model="ir.actions.act_window">
+        <field name="name">Ledgers</field>
+        <field name="res_model">cd.account.ledger</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_account_ledger" name="Ledgers" parent="menu_account_config"
+              action="action_account_ledger" sequence="30"/>
+</odoo>

@@ -15,54 +15,23 @@
     <record id="view_contact_company_form" model="ir.ui.view">
         <field name="name">cd.contact.company.form</field>
         <field name="model">cd.contact.company</field>
+        <field name="inherit_id" ref="view_contact_base_form"/>
+        <field name="mode">primary</field>
         <field name="arch" type="xml">
-            <form>
-                <sheet>
-                    <group>
-                        <field name="name"/>
-                        <field name="vat_id"/>
-                    </group>
-                    <notebook>
-                        <page string="Emails">
-                            <field name="emails">
-                                <list editable="bottom">
-                                    <field name="address"/>
-                                    <field name="is_primary"/>
-                                </list>
-                            </field>
-                        </page>
-                        <page string="Phones">
-                            <field name="phones">
-                                <list editable="bottom">
-                                    <field name="number"/>
-                                    <field name="type"/>
-                                    <field name="is_primary"/>
-                                </list>
-                            </field>
-                        </page>
-                        <page string="Websites">
-                            <field name="websites">
-                                <list editable="bottom">
-                                    <field name="url"/>
-                                    <field name="type"/>
-                                </list>
-                            </field>
-                        </page>
-                    </notebook>
-                    <group string="Address">
-                        <field name="street"/>
-                        <field name="street2"/>
-                        <field name="city"/>
-                        <field name="zip"/>
-                        <field name="state"/>
-                        <field name="country"/>
-                    </group>
-                    <group string="Other">
-                        <field name="tz"/>
-                        <field name="company_id"/>
-                    </group>
-                </sheet>
-            </form>
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="vat_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_contact_company_search" model="ir.ui.view">
+        <field name="name">cd.contact.company.search</field>
+        <field name="model">cd.contact.company</field>
+        <field name="arch" type="xml">
+            <search>
+                <filter name="filter_current_company" string="Current Company"
+                        domain="[('company_id', 'in', [False] + allowed_company_ids)]"/>
+            </search>
         </field>
     </record>
 
@@ -70,6 +39,7 @@
         <field name="name">Companies</field>
         <field name="res_model">cd.contact.company</field>
         <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_filter_current_company': 1}</field>
     </record>
 
     <menuitem id="menu_contact_company" name="Companies" parent="menu_contact_root"

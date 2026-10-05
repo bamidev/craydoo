@@ -7,4 +7,5 @@ class ContactCompany(models.Model):
     _inherit = ['cd.contact.mixin']
     _order = 'name'
 
+    name = fields.Char(required=True)
     vat_id = fields.Char(string='Tax ID')

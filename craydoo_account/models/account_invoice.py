@@ -5,15 +5,12 @@ from odoo.exceptions import UserError
 class AccountInvoice(models.Model):
     _name = 'cd.account.invoice'
     _description = 'Invoice'
-    _inherit = ['cd.account.tigerbeetle.mixin']
+    _inherit = ['cd.account.locked_mixin', 'mail.thread']
     _order = 'invoice_date desc, name desc'
 
     name = fields.Char(required=True, copy=False, default='/')
     active = fields.Boolean(default=True)
-    state = fields.Selection([
-        ('draft', 'Draft'),
-        ('posted', 'Posted'),
-    ], required=True, default='draft', copy=False)
+    locked = fields.Boolean(default=False, copy=False, index=True)
 
     debtor = fields.Many2one('cd.contact.info', required=True)
     language = fields.Selection(lambda self: self.env['res.lang'].get_installed())
@@ -38,25 +35,9 @@ class AccountInvoice(models.Model):
             inv.amount_tax = sum(inv.invoice_lines.mapped('price_tax'))
             inv.amount_total = inv.amount_untaxed + inv.amount_tax
 
-    @api.depends('tigerbeetle_ref', 'state')
-    def _compute_locked(self):
-        super()._compute_locked()
-        for inv in self:
-            if inv.state != 'draft':
-                inv.locked = True
-
     def write(self, vals):
         if vals.get('active') is False:
-            non_draft = self.filtered(lambda inv: inv.state != 'draft')
-            if non_draft:
-                raise UserError(_("Only draft invoices can be archived."))
+            locked_invoices = self.filtered('locked')
+            if locked_invoices:
+                raise UserError(_("Only unlocked invoices can be archived."))
         return super().write(vals)
-
-    def action_post(self):
-        for inv in self:
-            if inv.state != 'draft':
-                continue
-            inv.debtor = inv.debtor.create_locked_copy()
-            if inv.name == '/':
-                inv.name = self.env['ir.sequence'].next_by_code('cd.account.invoice') or '/'
-            inv.state = 'posted'

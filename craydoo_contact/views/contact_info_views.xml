@@ -56,7 +56,8 @@
                     </notebook>
                     <group string="Address">
                         <field name="street"/>
-                        <field name="street2"/>
+                        <field name="house"/>
+                        <field name="address_extra"/>
                         <field name="city"/>
                         <field name="zip"/>
                         <field name="state"/>

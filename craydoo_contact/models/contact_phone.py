@@ -1,4 +1,4 @@
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class ContactPhone(models.Model):
@@ -19,3 +19,9 @@ class ContactPhone(models.Model):
         required=True, default='phone',
     )
     locked = fields.Boolean(related='contact_info.locked', store=True)
+
+    @api.constrains('number')
+    def _check_number(self):
+        for phone in self:
+            if phone.number:
+                phone._phone_format(fname='number', raise_exception=True)

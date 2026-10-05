@@ -1,0 +1,13 @@
+id,name,model_id,group_id/id,operation,domain
+access_cd_contact_info_user,cd.contact.info.user,cd.contact.info,base.group_user,r,
+access_cd_contact_info_editor,cd.contact.info.editor,cd.contact.info,group_contact_editor,crud,
+access_cd_contact_person_user,cd.contact.person.user,cd.contact.person,base.group_user,r,
+access_cd_contact_person_editor,cd.contact.person.editor,cd.contact.person,group_contact_editor,crud,
+access_cd_contact_company_user,cd.contact.company.user,cd.contact.company,base.group_user,r,
+access_cd_contact_company_editor,cd.contact.company.editor,cd.contact.company,group_contact_editor,crud,
+access_cd_contact_phone_user,cd.contact.phone.user,cd.contact.phone,base.group_user,r,
+access_cd_contact_phone_editor,cd.contact.phone.editor,cd.contact.phone,group_contact_editor,crud,
+access_cd_contact_email_user,cd.contact.email.user,cd.contact.email,base.group_user,r,
+access_cd_contact_email_editor,cd.contact.email.editor,cd.contact.email,group_contact_editor,crud,
+access_cd_contact_website_user,cd.contact.website.user,cd.contact.website,base.group_user,r,
+access_cd_contact_website_editor,cd.contact.website.editor,cd.contact.website,group_contact_editor,crud,

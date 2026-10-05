@@ -1,8 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_cd_account_invoice_user,cd.account.invoice.user,model_cd_account_invoice,group_account_user,1,1,1,1
-access_cd_account_invoice_line_user,cd.account.invoice.line.user,model_cd_account_invoice_line,group_account_user,1,1,1,1
-access_cd_account_tax_user,cd.account.tax.user,model_cd_account_tax,group_account_user,1,0,0,0
-access_cd_account_tax_admin,cd.account.tax.admin,model_cd_account_tax,group_account_admin,1,1,1,1
-access_cd_account_tax_tag_user,cd.account.tax.tag.user,model_cd_account_tax_tag,group_account_user,1,0,0,0
-access_cd_account_tax_tag_admin,cd.account.tax.tag.admin,model_cd_account_tax_tag,group_account_admin,1,1,1,1
-access_cd_account_tax_allocation_line_admin,cd.account.tax.allocation.line.admin,model_cd_account_tax_allocation_line,group_account_admin,1,1,1,1
