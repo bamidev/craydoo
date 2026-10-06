@@ -48,6 +48,9 @@ class ContactInfo(models.Model):
             info.main_email = email.address
 
     def _inverse_main_email(self):
+        if not self.main_email:
+            return
+
         for info in self:
             email = info.emails.filtered('is_primary')[:1] or info.emails[:1]
             if email:
@@ -64,6 +67,9 @@ class ContactInfo(models.Model):
             info.main_phone = phone.number
 
     def _inverse_main_phone(self):
+        if not self.main_phone:
+            return
+
         for info in self:
             phone = info.phones.filtered('is_primary')[:1] or info.phones[:1]
             if phone:
