@@ -29,13 +29,13 @@ class TestAccountInvoice(TransactionCase):
         invoice = self.env['cd.account.invoice'].create({'debtor': self.contact.contact_info.id})
         invoice.locked = True
         with self.assertRaises(UserError):
-            invoice.write({'invoice_date': '2026-01-01'})
+            invoice.write({'date': '2026-01-01'})
 
     def test_locked_write_allowed_with_context_flag(self):
         invoice = self.env['cd.account.invoice'].create({'debtor': self.contact.contact_info.id})
         invoice.locked = True
-        invoice.with_context(craydoo_allow_locked_write=True).write({'invoice_date': '2026-01-01'})
-        self.assertEqual(str(invoice.invoice_date), '2026-01-01')
+        invoice.with_context(craydoo_allow_locked_write=True).write({'date': '2026-01-01'})
+        self.assertEqual(str(invoice.date), '2026-01-01')
 
     def test_only_unlocked_invoices_can_be_archived(self):
         invoice = self.env['cd.account.invoice'].create({'debtor': self.contact.contact_info.id})

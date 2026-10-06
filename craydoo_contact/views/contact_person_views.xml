@@ -23,7 +23,7 @@
                 <div class="d-flex gap-2">
                     <field name="salutation" nolabel="1" placeholder="Salutation"/>
                     <field name="first_name" nolabel="1" placeholder="First name"/>
-                    <field name="prefix" nolabel="1" placeholder="Prefix"/>
+                    <field name="infix" nolabel="1" placeholder="Infix"/>
                     <field name="name" nolabel="1" placeholder="Last name"/>
                 </div>
             </xpath>

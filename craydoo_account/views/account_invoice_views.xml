@@ -6,7 +6,7 @@
             <list>
                 <field name="name"/>
                 <field name="debtor"/>
-                <field name="invoice_date"/>
+                <field name="date"/>
                 <field name="amount_total"/>
             </list>
         </field>
@@ -21,7 +21,7 @@
                     <group>
                         <field name="debtor"/>
                         <field name="language"/>
-                        <field name="invoice_date"/>
+                        <field name="date"/>
                         <field name="due_date"/>
                         <field name="currency"/>
                     </group>
@@ -64,7 +64,7 @@
             <list>
                 <field name="name"/>
                 <field name="debtor"/>
-                <field name="invoice_date"/>
+                <field name="date"/>
                 <field name="amount_total"/>
                 <field name="locked"/>
             </list>

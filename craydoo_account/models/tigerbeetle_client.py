@@ -8,6 +8,8 @@ except ImportError:
 
 _client = None
 
+QUERY_PAGE_LIMIT = 1000
+
 
 def get_client(env):
     """ Process-wide Tigerbeetle client, built lazily from ir.config_parameter
@@ -24,19 +26,12 @@ def get_client(env):
     return _client
 
 
-def new_id():
-    """ A fresh Tigerbeetle id, masked down to 64 bits so it fits in our
-    `TigerbeetleId` columns - ids in this project are assumed to always be
-    small enough for this truncation to be safe.
-    """
-    return tb.id() & 0xFFFFFFFFFFFFFFFF
-
-
-def query_filter(limit, **overrides):
+def query_filter(limit=QUERY_PAGE_LIMIT, **overrides):
     """ A `tigerbeetle.QueryFilter` matching anything (every field is 0,
-    the TB wildcard), with `limit` and any of its fields overridden - every
-    field is a required positional/keyword arg on QueryFilter, so this
-    saves repeating all the zeroes at every call site.
+    the TB wildcard), with `limit` (defaulting to `QUERY_PAGE_LIMIT`, well
+    under the cluster's own batch-size ceiling) and any of its fields
+    overridden - every field is a required positional/keyword arg on
+    QueryFilter, so this saves repeating all the zeroes at every call site.
     """
     kwargs = {
         'user_data_128': 0, 'user_data_64': 0, 'user_data_32': 0,
@@ -52,7 +47,7 @@ def create_account(env, *, ledger, code, flags=0, user_data_32=0):
     UserError if Tigerbeetle refuses it.
     """
     client = get_client(env)
-    account_id = new_id()
+    account_id = tb.id()
     account = tb.Account(
         id=account_id, ledger=ledger, code=code, flags=tb.AccountFlags(flags),
         user_data_32=user_data_32,
@@ -70,7 +65,7 @@ def create_linked_transfers(env, transfers):
     in); returns the generated ids, in the same order.
     """
     client = get_client(env)
-    ids = [new_id() for _ in transfers]
+    ids = [tb.id() for _ in transfers]
     last = len(transfers) - 1
     objects = [
         tb.Transfer(

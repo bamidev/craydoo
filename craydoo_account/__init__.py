@@ -1,2 +1,2 @@
 from . import models
-from .hooks import sync_tigerbeetle_accounts
+from .hooks import post_init_hook, pre_init_hook

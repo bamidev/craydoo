@@ -1,6 +1,6 @@
 from odoo import fields, models
 
-from .fields import TigerbeetleId
+from ..fields import UInt128
 from .tigerbeetle_client import get_client, query_filter
 
 
@@ -20,7 +20,7 @@ class AccountTransfer(models.Model):
     ledger = fields.Many2one('cd.account.ledger', readonly=True)
     code = fields.Integer(readonly=True)
     flags = fields.Integer(readonly=True)
-    amount = TigerbeetleId(readonly=True)
+    amount = UInt128(readonly=True)
     debit_account = fields.Many2one('cd.account.account', readonly=True)
     credit_account = fields.Many2one('cd.account.account', readonly=True)
 
@@ -61,4 +61,4 @@ class AccountTransfer(models.Model):
             raise NotImplementedError(
                 "cd.account.transfer only supports searching by id; browse a "
                 "specific id instead of filtering.")
-        return [t.id for t in client.query_transfers(query_filter(limit=8190))]
+        return [t.id for t in client.query_transfers(query_filter())]

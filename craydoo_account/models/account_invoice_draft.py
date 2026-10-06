@@ -4,7 +4,7 @@ from odoo.exceptions import UserError
 from .tigerbeetle_client import create_linked_transfers
 
 INVOICE_FIELD_NAMES = [
-    'name', 'debtor', 'language', 'invoice_date', 'due_date', 'currency',
+    'name', 'debtor', 'language', 'date', 'due_date', 'currency',
     'company_id', 'invoice_lines',
 ]
 
@@ -23,7 +23,7 @@ class AccountInvoiceDraft(models.Model):
     name = fields.Char(related='invoice_id.name', readonly=False, store=True)
     debtor = fields.Many2one(related='invoice_id.debtor', readonly=False)
     language = fields.Selection(related='invoice_id.language', readonly=False)
-    invoice_date = fields.Date(related='invoice_id.invoice_date', readonly=False)
+    date = fields.Date(related='invoice_id.date', readonly=False)
     due_date = fields.Date(related='invoice_id.due_date', readonly=False)
     currency = fields.Many2one(related='invoice_id.currency', readonly=False)
     company_id = fields.Many2one(related='invoice_id.company_id', readonly=False)
@@ -84,6 +84,6 @@ class AccountInvoiceDraft(models.Model):
                 'user_data_64': invoice.id,
             } for line in lines]
             for line, transfer_id in zip(lines, create_linked_transfers(self.env, transfers)):
-                line.tigerbeetle_ref = transfer_id
+                line.tigerbeetle_id = transfer_id
 
             invoice.locked = True

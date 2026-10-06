@@ -1,7 +1,7 @@
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
-from .fields import TigerbeetleId
+from ..fields import UInt128
 from .tigerbeetle_client import create_account
 
 
@@ -20,7 +20,7 @@ class AccountAccount(models.Model):
     _description = 'Tigerbeetle Account'
     _rec_name = 'tigerbeetle_id'
 
-    tigerbeetle_id = TigerbeetleId(required=True, index=True, readonly=True, copy=False)
+    tigerbeetle_id = UInt128(required=True, index=True, readonly=True, copy=False)
     ledger = fields.Many2one('cd.account.ledger', required=True, readonly=True)
     code = fields.Integer(readonly=True)
     flags = fields.Integer(readonly=True)

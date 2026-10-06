@@ -36,13 +36,13 @@ class TestContactPerson(TransactionCase):
         })
         self.assertEqual(person.function, 'Engineer')
 
-    def test_display_name_combines_salutation_first_prefix_last(self):
+    def test_display_name_combines_salutation_first_infix_last(self):
         person = self.env['cd.contact.person'].create({
-            'salutation': 'mr', 'first_name': 'Jan', 'prefix': 'van der', 'name': 'Berg',
+            'salutation': 'mr', 'first_name': 'Jan', 'infix': 'van der', 'name': 'Berg',
         })
         self.assertEqual(person.display_name, 'Mr. Jan van der Berg')
 
-    def test_display_name_without_prefix(self):
+    def test_display_name_without_infix(self):
         person = self.env['cd.contact.person'].create({'first_name': 'Jane', 'name': 'Doe'})
         self.assertEqual(person.display_name, 'Jane Doe')
 
