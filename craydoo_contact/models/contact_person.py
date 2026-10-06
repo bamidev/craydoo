@@ -27,7 +27,8 @@ class ContactPerson(models.Model):
                 salutations.get(person.salutation), person.first_name,
                 person.infix, person.name,
             ]
-            person.display_name = ' '.join(p for p in parts if p)
+            person.contact_info.display_name = ' '.join(p for p in parts if p)
+            person.display_name = person.contact_info.display_name
 
     @api.constrains('first_name', 'name')
     def _check_first_or_last_name(self):

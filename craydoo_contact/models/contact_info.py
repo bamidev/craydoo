@@ -20,8 +20,10 @@ class ContactInfo(models.Model):
     _description = 'Contact Information'
     _inherit = ['cd.contact.locked_mixin']
     _order = 'name'
+    _rec_name = 'display_name'
 
     name = fields.Char(index=True, copy=True)
+    display_name = fields.Char(compute='_compute_display_name', store=True)
     active = fields.Boolean(default=True)
     locked = fields.Boolean(default=False, copy=False, index=True)
     locked_copy = fields.Many2one('cd.contact.info', copy=False)
@@ -33,6 +35,11 @@ class ContactInfo(models.Model):
         compute='_compute_main_email', inverse='_inverse_main_email', string='Email')
     main_phone = fields.Char(
         compute='_compute_main_phone', inverse='_inverse_main_phone', string='Phone')
+
+    @api.depends('name')
+    def _compute_display_name(self):
+        for info in self:
+            info.display_name = info.name
 
     @api.depends('emails.address', 'emails.is_primary')
     def _compute_main_email(self):

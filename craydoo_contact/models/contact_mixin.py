@@ -22,8 +22,8 @@ class ContactMixin(models.AbstractModel):
         required=True, ondelete='restrict', copy=False, readonly=True,
     )
 
-    name = fields.Char(related='contact_info.name', readonly=False, store=True)
-    display_name = fields.Char(compute='_compute_display_name', store=True)
+    display_name = fields.Char(compute='_compute_display_name')
+    name = fields.Char(related='contact_info.name', readonly=False)
     main_email = fields.Char(related='contact_info.main_email', readonly=False)
     main_phone = fields.Char(related='contact_info.main_phone', readonly=False)
     emails = fields.One2many(related='contact_info.emails', readonly=False)
@@ -39,11 +39,6 @@ class ContactMixin(models.AbstractModel):
     tz = fields.Selection(related='contact_info.tz', readonly=False)
     company_id = fields.Many2one(related='contact_info.company_id', readonly=False)
 
-    @api.depends('name')
-    def _compute_display_name(self):
-        for rec in self:
-            rec.display_name = rec.name
-
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
@@ -51,6 +46,11 @@ class ContactMixin(models.AbstractModel):
                 info_vals = {f: vals[f] for f in INFO_FIELD_NAMES if f in vals}
                 vals['contact_info'] = self.env['cd.contact.info'].create(info_vals).id
         return super().create(vals_list)
+
+    @api.depends('name')
+    def _compute_display_name(self):
+        for this in self:
+            this.display_name = this.contact_info.display_name
 
     @api.constrains('contact_info')
     def _check_contact_info_unlocked(self):
