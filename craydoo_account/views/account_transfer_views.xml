@@ -24,7 +24,8 @@
                         <field name="id" string="Transfer ID"/>
                         <field name="ledger"/>
                         <field name="code"/>
-                        <field name="flags"/>
+                        <field name="flag_linked"/>
+                        <field name="linked_ids"/>
                     </group>
                     <group string="Amount">
                         <field name="debit_account"/>

@@ -1,7 +1,7 @@
 from odoo import fields, models
 
 from ..fields import UInt128
-from .tigerbeetle_client import get_client, query_filter
+from .tigerbeetle_client import get_client, get_linked_transfer_ids, is_transfer_linked, query_filter
 
 
 class AccountTransfer(models.Model):
@@ -19,12 +19,13 @@ class AccountTransfer(models.Model):
 
     ledger = fields.Many2one('cd.account.ledger', readonly=True)
     code = fields.Integer(readonly=True)
-    flags = fields.Integer(readonly=True)
     amount = UInt128(readonly=True)
     debit_account = fields.Many2one('cd.account.account', readonly=True)
     credit_account = fields.Many2one('cd.account.account', readonly=True)
+    flag_linked = fields.Boolean(readonly=True)
+    linked_ids = fields.Many2many('cd.account.transfer', readonly=True)
 
-    def _tb_fetch(self, ids):
+    def _tb_fetch(self, ids, field_names):
         if not ids:
             return {}
         transfers = get_client(self.env).lookup_transfers(list(ids))
@@ -42,14 +43,17 @@ class AccountTransfer(models.Model):
             ledger = ledgers.get(t.ledger)
             debit = accounts.get(t.debit_account_id)
             credit = accounts.get(t.credit_account_id)
-            data[t.id] = {
+            row = {
                 'ledger': (ledger.id, ledger.display_name) if ledger else False,
                 'code': t.code,
-                'flags': int(t.flags),
                 'amount': t.amount,
                 'debit_account': (debit.id, debit.display_name) if debit else False,
                 'credit_account': (credit.id, credit.display_name) if credit else False,
+                'flag_linked': is_transfer_linked(t.flags),
             }
+            if 'linked_ids' in field_names:
+                row['linked_ids'] = get_linked_transfer_ids(self.env, t)
+            data[t.id] = row
         return data
 
     def _tb_search_ids(self, domain):

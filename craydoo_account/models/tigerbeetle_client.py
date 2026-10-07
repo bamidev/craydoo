@@ -58,6 +58,53 @@ def create_account(env, *, ledger, code, flags=0, user_data_32=0):
     return account_id
 
 
+def is_transfer_linked(flags):
+    """ Whether a Tigerbeetle transfer's `flags` declares it linked to the
+    next transfer in Tigerbeetle's global commit order (see
+    `get_linked_transfer_ids`).
+    """
+    return bool(flags & tb.TransferFlags.LINKED)
+
+
+def get_linked_transfer_ids(env, transfer):
+    """ Reconstruct the chain a `LINKED` transfer belongs to.
+
+    Tigerbeetle applies each client's `create_transfers` batch as one
+    indivisible operation - no other client's events can land between two
+    members of the same batch - so the transfer immediately before/after
+    `transfer` in Tigerbeetle's global timestamp order *is* the other half
+    of the link, with no chain id or extra bookkeeping needed. Walking
+    outward in both directions (a transfer can be linked to its
+    predecessor, not just its successor) reconstructs the full chain.
+
+    Returns the ids of the chain's other members, in chain order; empty if
+    `transfer` isn't linked to anything.
+    """
+    client = get_client(env)
+    chain = [transfer]
+
+    cur = transfer
+    while True:
+        prev = client.query_transfers(query_filter(
+            limit=1, timestamp_max=cur.timestamp - 1,
+            flags=tb.QueryFilterFlags.REVERSED,
+        ))
+        if not prev or not is_transfer_linked(prev[0].flags):
+            break
+        cur = prev[0]
+        chain.insert(0, cur)
+
+    cur = transfer
+    while is_transfer_linked(cur.flags):
+        nxt = client.query_transfers(query_filter(limit=1, timestamp_min=cur.timestamp + 1))
+        if not nxt:
+            break
+        cur = nxt[0]
+        chain.append(cur)
+
+    return [t.id for t in chain if t.id != transfer.id]
+
+
 def create_linked_transfers(env, transfers):
     """ Create a batch of Tigerbeetle transfers as one atomic LINKED chain -
     either all of them land or none do. `transfers` is a list of dicts of

@@ -20,8 +20,12 @@ class TigerbeetleRecord(models.AbstractModel):
     _description = 'Tigerbeetle-Backed Record'
     _auto = False
 
-    def _tb_fetch(self, ids):
-        """ Return {id: {field_name: value}} for the given ids. """
+    def _tb_fetch(self, ids, field_names):
+        """ Return {id: {field_name: value}} for the given ids, populating
+        at least `field_names` (extra keys are ignored) - letting callers
+        skip expensive per-field work (e.g. extra Tigerbeetle round trips)
+        for fields nobody asked to read.
+        """
         raise NotImplementedError
 
     def _tb_search_ids(self, domain):
@@ -64,7 +68,7 @@ class TigerbeetleRecord(models.AbstractModel):
 
     def read(self, fields=None, load='_classic_read'):
         field_names = fields or [f for f in self._fields if f != 'id']
-        data = self._tb_fetch(self.ids)
+        data = self._tb_fetch(self.ids, field_names)
         return [
             {'id': rec_id, **{f: data.get(rec_id, {}).get(f, False) for f in field_names}}
             for rec_id in self.ids
