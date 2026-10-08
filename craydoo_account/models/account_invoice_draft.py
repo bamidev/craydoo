@@ -39,12 +39,20 @@ class AccountInvoiceDraft(models.Model):
         'cd.account.account', default=lambda self: self._default_account('default_credit_account'))
 
     @api.model
-    def _default_account(self, company_field):
-        account = self.env.company[company_field]
+    def _default_account(self, field):
+        account = self.env.company[field]
         if account:
             return account
-        param = self.env['ir.config_parameter'].sudo().get_int(f'craydoo_account.{company_field}', 0)
-        return self.env['cd.account.account'].browse(param) if param else self.env['cd.account.account']
+        param = self.env['ir.config_parameter'].sudo().get_int(f'craydoo_account.{field}', 0)
+        return self.env['cd.account.account'].browse(param)
+
+    @api.model
+    def _default_credit_account(self):
+        return self._default_account('default_credit_account')
+
+    @api.model
+    def _default_debit_account(self):
+        return self._default_account('default_debit_account')
 
     @api.model_create_multi
     def create(self, vals_list):
