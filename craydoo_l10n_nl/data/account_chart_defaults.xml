@@ -1,0 +1,7 @@
+<odoo>
+    <!-- Set after the CSV so the referenced chart.account entries already exist. -->
+    <record id="chart_nl" model="cd.account.chart">
+        <field name="default_debit_account_id" ref="chart_account_nl_1100"/>
+        <field name="default_credit_account_id" ref="chart_account_nl_1300"/>
+    </record>
+</odoo>

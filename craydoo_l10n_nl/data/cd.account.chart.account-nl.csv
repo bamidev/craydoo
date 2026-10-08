@@ -1,0 +1,351 @@
+id,chart_id/id,code,name,name@nl
+chart_account_nl_0010,chart_nl,0010,Acquisition value Goodwill,Aanschafwaarde Goodwill
+chart_account_nl_0019,chart_nl,0019,Amortisation Goodwill,Afschrijving Goodwill
+chart_account_nl_0020,chart_nl,0020,Acquisition value other intangible assets,Aanschafwaarde overige immateriele vaste activa
+chart_account_nl_0029,chart_nl,0029,Amortisation of other intangible assets,Afschrijving overige immateriele vaste activa
+chart_account_nl_0101,chart_nl,0101,Land purchase value,Aanschafwaarde Grond
+chart_account_nl_0110,chart_nl,0110,Acquisition value of buildings,Aanschafwaarde Gebouwen
+chart_account_nl_0119,chart_nl,0119,Depreciation of buildings,Afschrijving Gebouwen
+chart_account_nl_0120,chart_nl,0120,Acquisition value of shops,Aanschafwaarde Winkels
+chart_account_nl_0129,chart_nl,0129,Depreciation of shops,Afschrijving Winkels
+chart_account_nl_0130,chart_nl,0130,Acquisition value of renovations,Aanschafwaarde Verbouwingen
+chart_account_nl_0139,chart_nl,0139,Depreciation of renovations,Afschrijving Verbouwingen
+chart_account_nl_0210,chart_nl,0210,Acquisition value of machinery 1,Aanschafwaarde Machines 1
+chart_account_nl_0219,chart_nl,0219,Depreciation of machinery 1,Afschrijving Machines 1
+chart_account_nl_0220,chart_nl,0220,Acquisition value of machinery 2,Aanschafwaarde Machines 2
+chart_account_nl_0229,chart_nl,0229,Depreciation of machinery 2,Afschrijving Machines 2
+chart_account_nl_0310,chart_nl,0310,Purchase value of business equipment,Aanschafwaarde Bedrijfsinventaris
+chart_account_nl_0319,chart_nl,0319,Depreciation of business equipment,Afschrijving Bedrijfsinventaris
+chart_account_nl_0320,chart_nl,0320,Purchase value of warehouse inventory,Aanschafwaarde Magazijninventaris
+chart_account_nl_0329,chart_nl,0329,Depreciation of warehouse inventory,Afschrijving Magazijninventaris
+chart_account_nl_0330,chart_nl,0330,Purchase value of factory inventory,Aanschafwaarde Fabrieksinventaris
+chart_account_nl_0339,chart_nl,0339,Depreciation of factory inventory,Afschrijving Fabrieksinventaris
+chart_account_nl_0340,chart_nl,0340,Purchase value of tools,Aanschafwaarde Gereedschappen
+chart_account_nl_0349,chart_nl,0349,Depreciation of tools,Afschrijving Gereedschappen
+chart_account_nl_0350,chart_nl,0350,Purchase value of office equipment,Aanschafwaarde Kantoorinventaris
+chart_account_nl_0359,chart_nl,0359,Depreciation of office equipment,Afschrijving Kantoorinventaris
+chart_account_nl_0360,chart_nl,0360,Purchase value of office machinery,Aanschafwaarde Kantoormachines
+chart_account_nl_0369,chart_nl,0369,Depreciation of office machinery,Afschrijving Kantoormachines
+chart_account_nl_0370,chart_nl,0370,Purchase value of canteen inventory,Aanschafwaarde Kantine-inventaris
+chart_account_nl_0379,chart_nl,0379,Depreciation of canteen inventory,Afschrijving Kantine-inventaris
+chart_account_nl_0410,chart_nl,0410,Purchase value of passenger cars,Aanschafwaarde Personenauto's
+chart_account_nl_0419,chart_nl,0419,Depreciation of passenger cars,Afschrijving Personenauto's
+chart_account_nl_0420,chart_nl,0420,Purchase value other transport equipment,Aanschafwaarde overige vervoersmiddelen
+chart_account_nl_0429,chart_nl,0429,Depreciation of other transport equipment,Afschrijving overige vervoersmiddelen
+chart_account_nl_0430,chart_nl,0430,Purchase value of trucks,Aanschafwaarde Vrachtauto's
+chart_account_nl_0439,chart_nl,0439,Depreciation of trucks,Afschrijving Vrachtauto's
+chart_account_nl_0510,chart_nl,0510,Participation 1,Deelneming 1
+chart_account_nl_0520,chart_nl,0520,Participation 2,Deelneming 2
+chart_account_nl_0530,chart_nl,0530,Participation 3,Deelneming 3
+chart_account_nl_0551,chart_nl,0551,Receivables from participation 1,Vorderingen op deelneming 1
+chart_account_nl_0552,chart_nl,0552,Receivables from participation 2,Vorderingen op deelneming 2
+chart_account_nl_0553,chart_nl,0553,Receivables from participation 3,Vorderingen op deelneming 3
+chart_account_nl_0561,chart_nl,0561,Mortgages receivable 1,Hypotheken u/g 1
+chart_account_nl_0562,chart_nl,0562,Mortgages receivable 2,Hypotheken u/g 2
+chart_account_nl_0563,chart_nl,0563,Mortgages receivable 3,Hypotheken u/g 3
+chart_account_nl_0565,chart_nl,0565,Loans receivable 1,Leningen u/g 1
+chart_account_nl_0566,chart_nl,0566,Loans receivable 2,Leningen u/g 2
+chart_account_nl_0567,chart_nl,0567,Loans receivable 3,Leningen u/g 3
+chart_account_nl_0570,chart_nl,0570,Security deposits,Waarborgsommen
+chart_account_nl_0610,chart_nl,0610,Share capital,Aandelenkapitaal
+chart_account_nl_0620,chart_nl,0620,Legal reserves,Wettelijke reserves
+chart_account_nl_0630,chart_nl,0630,Share premium reserve,Agioreserve
+chart_account_nl_0640,chart_nl,0640,General reserve,Algemene reserve
+chart_account_nl_0650,chart_nl,0650,Other reserves,Overige reserves
+chart_account_nl_0660,chart_nl,0660,Revaluation reserve,Herwaarderingsreserve
+chart_account_nl_0710,chart_nl,0710,Provision for pension liabilities,Voorziening pensioenverplichtingen
+chart_account_nl_0720,chart_nl,0720,Major maintenance equalisation reserve,Egalisatiereserve groot onderhoud
+chart_account_nl_0730,chart_nl,0730,Provision for participating interests,Voorziening deelnemingen
+chart_account_nl_0740,chart_nl,0740,Deferred tax liability,Latente belastingverplichting
+chart_account_nl_0750,chart_nl,0750,Other provisions,Overige voorzieningen
+chart_account_nl_0760,chart_nl,0760,Guarantee liabilities,Garantieverplichtingen
+chart_account_nl_0811,chart_nl,0811,Mortgages payable 1,Hypotheken o/g 1
+chart_account_nl_0812,chart_nl,0812,Mortgages payable 2,Hypotheken o/g 2
+chart_account_nl_0813,chart_nl,0813,Mortgages payable 3,Hypotheken o/g 3
+chart_account_nl_0814,chart_nl,0814,Mortgages payable 4,Hypotheken o/g 4
+chart_account_nl_0815,chart_nl,0815,Mortgages payable 5,Hypotheken o/g 5
+chart_account_nl_0821,chart_nl,0821,Loans payable 1,Leningen o/g 1
+chart_account_nl_0822,chart_nl,0822,Loans payable 2,Leningen o/g 2
+chart_account_nl_0823,chart_nl,0823,Loans payable 3,Leningen o/g 3
+chart_account_nl_0824,chart_nl,0824,Loans payable 4,Leningen o/g 4
+chart_account_nl_0825,chart_nl,0825,Loans payable 5,Leningen o/g 5
+chart_account_nl_1040,chart_nl,1040,Demand items,Vraagposten
+chart_account_nl_1100,chart_nl,1100,Debtors,Debiteuren
+chart_account_nl_1101,chart_nl,1101,Debtors (PoS),Debiteuren (PoS)
+chart_account_nl_1150,chart_nl,1150,Doubtful debtors,Dubieuze debiteuren
+chart_account_nl_1160,chart_nl,1160,Provision for doubtful debts,Voorziening dubieuze debiteuren
+chart_account_nl_1205,chart_nl,1205,Prepaid expenses,Vooruitbetaalde kosten
+chart_account_nl_1210,chart_nl,1210,Deposit,Borg
+chart_account_nl_1220,chart_nl,1220,Interest to be received,Te ontvangen rente
+chart_account_nl_1230,chart_nl,1230,Sick pay to be received,Te ontvangen ziekengeld
+chart_account_nl_1250,chart_nl,1250,Still to be invoiced (outgoing stock),Nog te factureren (uitgaande voorraad)
+chart_account_nl_1290,chart_nl,1290,Other short-term receivables,Overige kortlopende vorderingen
+chart_account_nl_1300,chart_nl,1300,Creditors,Crediteuren
+chart_account_nl_1350,chart_nl,1350,Payments in transit,Betalingen onderweg
+chart_account_nl_1405,chart_nl,1405,Invoiced amounts in advance,Vooruit gefactureerde bedragen
+chart_account_nl_1410,chart_nl,1410,Interest to be paid,Te betalen rente
+chart_account_nl_1420,chart_nl,1420,Dividends to be paid,Te betalen dividend
+chart_account_nl_1430,chart_nl,1430,Audit fees to be paid,Te betalen accountantskosten
+chart_account_nl_1440,chart_nl,1440,Telephone charges to be paid,Te betalen telefoonkosten
+chart_account_nl_1450,chart_nl,1450,Invoices to be received (incoming stock),Nog te ontvangen facturen (inkomende voorraad)
+chart_account_nl_1460,chart_nl,1460,Income tax to be paid,Te betalen VPB
+chart_account_nl_1470,chart_nl,1470,Income tax from previous years to be paid,Te betalen VPB voorgaande jaren
+chart_account_nl_1480,chart_nl,1480,Dividend tax to be paid,Te betalen dividendbelasting
+chart_account_nl_1490,chart_nl,1490,Other current liabilities,Overige kortlopende schulden
+chart_account_nl_1500,chart_nl,1500,Deferred VAT high rate,Af te dragen BTW hoog tarief
+chart_account_nl_1501,chart_nl,1501,Deferred VAT low rate,Af te dragen BTW laag tarief
+chart_account_nl_1502,chart_nl,1502,Deferred VAT other rates,Af te dragen BTW overige tarieven
+chart_account_nl_1503,chart_nl,1503,Deductible VAT on private use,Af te dragen BTW privé-gebruik
+chart_account_nl_1504,chart_nl,1504,Chargeable reverse charge VAT,Af te dragen BTW heffing verlegd
+chart_account_nl_1505,chart_nl,1505,VAT 0% / not taxed with me,BTW 0% / niet bij mij belast
+chart_account_nl_1507,chart_nl,1507,Installation/tele sales within the EU,Installatie/televerkoop binnen de EU
+chart_account_nl_1508,chart_nl,1508,Deliveries made to me outside the EU,Aan mij verrichte leveringen buiten EU
+chart_account_nl_1509,chart_nl,1509,Deliveries within the EU made to me,Aan mij verrichte leveringen binnen EU
+chart_account_nl_1510,chart_nl,1510,Pre-tax other,Voorbelasting overige
+chart_account_nl_1513,chart_nl,1513,Deferred VAT high rate outside the EU,Af te dragen BTW hoog tarief buiten de EU
+chart_account_nl_1514,chart_nl,1514,Deferred VAT low rate outside the EU,Af te dragen BTW laag tarief buiten de EU
+chart_account_nl_1515,chart_nl,1515,Deferred VAT other rates outside the EU,Af te dragen BTW overige tarieven buiten de EU
+chart_account_nl_1516,chart_nl,1516,EU high rate VAT to be paid,Af te dragen BTW hoog tarief binnen de EU
+chart_account_nl_1517,chart_nl,1517,EU low rate VAT to be paid,Af te dragen BTW laag tarief binnen de EU
+chart_account_nl_1518,chart_nl,1518,EU other rate VAT to be paid,Af te dragen BTW overige tarieven binnen de EU
+chart_account_nl_1520,chart_nl,1520,Pre-tax high,Voorbelasting hoog
+chart_account_nl_1521,chart_nl,1521,Pre-tax low,Voorbelasting laag
+chart_account_nl_1522,chart_nl,1522,Pre-tax shifted,Voorbelasting verlegd
+chart_account_nl_1523,chart_nl,1523,Pre-tax other within the EU,Voorbelasting overige binnen de EU
+chart_account_nl_1524,chart_nl,1524,Pre-tax high within the EU,Voorbelasting hoog binnen de EU
+chart_account_nl_1525,chart_nl,1525,Pre-tax low within the EU,Voorbelasting laag binnen de EU
+chart_account_nl_1526,chart_nl,1526,Pre-tax carried forward within the EU,Voorbelasting verlegd binnen de EU
+chart_account_nl_1527,chart_nl,1527,Pre-tax other outside EU,Voorbelasting overige buiten EU
+chart_account_nl_1528,chart_nl,1528,Pre-tax high outside EU,Voorbelasting hoog buiten EU
+chart_account_nl_1529,chart_nl,1529,Pre-tax low outside EU,Voorbelasting laag buiten EU
+chart_account_nl_1530,chart_nl,1530,Pre-tax carried forward outside EU,Voorbelasting verlegd buiten EU
+chart_account_nl_1531,chart_nl,1531,VAT bad debts,BTW oninbare vorderingen
+chart_account_nl_1532,chart_nl,1532,Small business regulation,Kleine ondernemersregeling
+chart_account_nl_1535,chart_nl,1535,Pre-tax reverse charge outside EU services,Voorbelasting verlegd buiten EU diensten
+chart_account_nl_1540,chart_nl,1540,Deferred VAT high rate services,Af te dragen BTW hoog tarief diensten
+chart_account_nl_1541,chart_nl,1541,Deferred VAT low rate services,Af te dragen BTW laag tarief diensten
+chart_account_nl_1542,chart_nl,1542,Deferred VAT other rate services,Af te dragen BTW overige tarieven diensten
+chart_account_nl_1544,chart_nl,1544,Deferred VAT to be paid on reverse-charge services,Af te dragen BTW heffing verlegd diensten
+chart_account_nl_1550,chart_nl,1550,Sales tax payments/declaration,Afdrachten/aangifte omzetbelasting
+chart_account_nl_1560,chart_nl,1560,Sales tax supplement,Suppletie omzetbelasting
+chart_account_nl_1570,chart_nl,1570,Pre-tax other services,Voorbelasting overige diensten
+chart_account_nl_1573,chart_nl,1573,Deferred VAT high rate outside EU services,Af te dragen BTW hoog tarief buiten de EU diensten
+chart_account_nl_1574,chart_nl,1574,Deferred VAT low rate outside EU services,Af te dragen BTW laag tarief buiten de EU diensten
+chart_account_nl_1575,chart_nl,1575,Deferred VAT other rates outside EU services,Af te dragen BTW overige tarieven buiten de EU diensten
+chart_account_nl_1576,chart_nl,1576,Deferred VAT high rate within EU services,Af te dragen BTW hoog tarief binnen de EU diensten
+chart_account_nl_1577,chart_nl,1577,Deferred VAT low rate within EU services,Af te dragen BTW laag tarief binnen de EU diensten
+chart_account_nl_1578,chart_nl,1578,Deferred VAT other rate within EU services,Af te dragen BTW overige tarief binnen de EU diensten
+chart_account_nl_1580,chart_nl,1580,Pre-tax high services,Voorbelasting hoog diensten
+chart_account_nl_1581,chart_nl,1581,Pre-tax low services,Voorbelasting laag diensten
+chart_account_nl_1582,chart_nl,1582,Pre-tax reverse charge services,Voorbelasting verlegd diensten
+chart_account_nl_1583,chart_nl,1583,Pre-tax other intra-EU services,Voorbelasting overige binnen de EU diensten
+chart_account_nl_1584,chart_nl,1584,Pre-tax high within EU services,Voorbelasting hoog binnen de EU diensten
+chart_account_nl_1585,chart_nl,1585,Pre-tax low within EU services,Voorbelasting laag binnen de EU diensten
+chart_account_nl_1586,chart_nl,1586,Pre-tax reverse charge within EU services,Voorbelasting verlegd binnen de EU diensten
+chart_account_nl_1587,chart_nl,1587,Pre-tax other non-EU services,Voorbelasting overige buiten EU diensten
+chart_account_nl_1588,chart_nl,1588,Pre-tax high outside EU services,Voorbelasting hoog buiten EU diensten
+chart_account_nl_1589,chart_nl,1589,Pre-tax low outside EU services,Voorbelasting laag buiten EU diensten
+chart_account_nl_1590,chart_nl,1590,VAT tax liabilities,Belastingschulden btw
+chart_account_nl_1591,chart_nl,1591,VAT tax assets,belastingvorderingen btw
+chart_account_nl_1599,chart_nl,1599,Sales tax liability (end of financial year),Schuld omzetbelasting (einde boekjaar)
+chart_account_nl_1610,chart_nl,1610,Pension premiums,Pensioenpremies
+chart_account_nl_1615,chart_nl,1615,Payment of pension contributions,Afdracht pensioenpremies
+chart_account_nl_1620,chart_nl,1620,Net salaries,Netto lonen
+chart_account_nl_1621,chart_nl,1621,Advance payment of wages,Voorschot loon
+chart_account_nl_1625,chart_nl,1625,Net wages to be paid,Te betalen netto lonen
+chart_account_nl_1630,chart_nl,1630,Payroll tax,Loonheffing
+chart_account_nl_1635,chart_nl,1635,Remittance of wage tax,Afdracht loonheffing
+chart_account_nl_1640,chart_nl,1640,Holidays to be paid,Te betalen vakantiedagen
+chart_account_nl_1650,chart_nl,1650,Holiday pay due,Te betalen vakantiegeld
+chart_account_nl_2010,chart_nl,2010,Opening balance sheet suspense account,Tussenrekening beginbalans
+chart_account_nl_3001,chart_nl,3001,Raw materials 1,Grondstoffen 1
+chart_account_nl_3002,chart_nl,3002,Raw materials 2,Grondstoffen 2
+chart_account_nl_3100,chart_nl,3100,Excipients 1,Hulpstoffen 1
+chart_account_nl_3110,chart_nl,3110,Excipients 2,Hulpstoffen 2
+chart_account_nl_3200,chart_nl,3200,Stock 1,Voorraad 1
+chart_account_nl_3210,chart_nl,3210,Stock 2,Voorraad 2
+chart_account_nl_3300,chart_nl,3300,Packaging material,Verpakkingsmateriaal
+chart_account_nl_3310,chart_nl,3310,Packaging,Emballage
+chart_account_nl_4001,chart_nl,4001,Gross wages,Bruto lonen
+chart_account_nl_4002,chart_nl,4002,Bonuses and commissions,Bonussen en provisies
+chart_account_nl_4003,chart_nl,4003,Holiday allowance,Vakantietoeslag
+chart_account_nl_4004,chart_nl,4004,Royalty,Tantièmes
+chart_account_nl_4005,chart_nl,4005,Employee car contribution,Werknemersbijdrage auto
+chart_account_nl_4006,chart_nl,4006,Healthcare Insurance Act (SVW) contribution,Bijdrage zorgverzekeringswet (SVW)
+chart_account_nl_4010,chart_nl,4010,Employer's share of payroll taxes,Werkgeversdeel loonheffingen
+chart_account_nl_4011,chart_nl,4011,Employer's share of pensions,Werkgeversdeel pensioenen
+chart_account_nl_4012,chart_nl,4012,Employer's share of social security contributions,Werkgeversdeel sociale lasten
+chart_account_nl_4015,chart_nl,4015,Provision for holidays,Voorziening vakantiedagen
+chart_account_nl_4016,chart_nl,4016,Compensation for commuting,Vergoeding woon-werkverkeer
+chart_account_nl_4017,chart_nl,4017,Reimbursement of study costs,Vergoeding studiekosten
+chart_account_nl_4018,chart_nl,4018,Reimbursement of other travel expenses,Vergoeding overige reiskosten
+chart_account_nl_4019,chart_nl,4019,Reimbursement of other expenses,Vergoeding overige kosten
+chart_account_nl_4020,chart_nl,4020,Management fees,Managementvergoedingen
+chart_account_nl_4021,chart_nl,4021,Staff on loan,Ingeleend personeel
+chart_account_nl_4022,chart_nl,4022,Working expenses scheme (WKR max 1.2% gross pay),Werkkostenregeling (WKR max 1.2% brutoloon)
+chart_account_nl_4024,chart_nl,4024,Travel costs of hired staff,Reiskosten ingeleend personeel
+chart_account_nl_4029,chart_nl,4029,Recharge of direct labour costs,Doorbelasting directe loonkosten
+chart_account_nl_4030,chart_nl,4030,Sick leave insurance,Ziekteverzuimverzekering
+chart_account_nl_4040,chart_nl,4040,Canteen costs,Kantinekosten
+chart_account_nl_4041,chart_nl,4041,Corporate clothing,Bedrijfskleding
+chart_account_nl_4042,chart_nl,4042,Other travel expenses,Overige reiskosten
+chart_account_nl_4043,chart_nl,4043,"Conferences, seminars and symposia",Vergoeding woon- werkverkeer
+chart_account_nl_4044,chart_nl,4044,Staff recruitment costs,Wervingskosten personeel
+chart_account_nl_4045,chart_nl,4045,Study and training costs,Studie- en opleidingskosten
+chart_account_nl_4090,chart_nl,4090,Other personnel costs,Overige personeelskosten
+chart_account_nl_4110,chart_nl,4110,Property rental,Huur onroerend goed
+chart_account_nl_4111,chart_nl,4111,Major property maintenance,Groot onderhoud onroerend goed
+chart_account_nl_4112,chart_nl,4112,Property maintenance,Onderhoud onroerend goed
+chart_account_nl_4113,chart_nl,4113,Addition to large-scale maintenance equalisation reserve,Toevoeging egalisatiereserve Groot onderhoud
+chart_account_nl_4120,chart_nl,4120,Property taxes,Belastingen onroerend goed
+chart_account_nl_4130,chart_nl,4130,Energy costs,Energiekosten
+chart_account_nl_4140,chart_nl,4140,Cleaning costs,Schoonmaakkosten
+chart_account_nl_4150,chart_nl,4150,Property insurance,Assurantie onroerend goed
+chart_account_nl_4190,chart_nl,4190,Other housing costs,Overige huisvestingskosten
+chart_account_nl_4201,chart_nl,4201,Machine rental,Huur machines
+chart_account_nl_4202,chart_nl,4202,Machines leasen (operationele lease),Lease machines (operational lease)
+chart_account_nl_4210,chart_nl,4210,Inventory rental,Huur inventaris
+chart_account_nl_4211,chart_nl,4211,Lease inventaris (operationele lease),Lease inventaris (operational lease)
+chart_account_nl_4220,chart_nl,4220,Machinery maintenance,Onderhoud machines
+chart_account_nl_4230,chart_nl,4230,Inventory maintenance,Onderhoud inventaris
+chart_account_nl_4240,chart_nl,4240,Tools,Gereedschappen
+chart_account_nl_4250,chart_nl,4250,Small acquisitions,Kleine aanschaffingen
+chart_account_nl_4260,chart_nl,4260,Energy costs machines/inventory,Energiekosten machines / inventaris
+chart_account_nl_4270,chart_nl,4270,Insurance machinery/inventory,Assurantie machines / inventaris
+chart_account_nl_4280,chart_nl,4280,Environmental costs,Milieukosten
+chart_account_nl_4290,chart_nl,4290,Other operating expenses,Overige bedrijfskosten
+chart_account_nl_4305,chart_nl,4305,Contributies / subscriptionen,Contributies / abonnementen
+chart_account_nl_4310,chart_nl,4310,Office supplies,Kantoorbenodigdheden
+chart_account_nl_4320,chart_nl,4320,Maintenance of office equipment,Onderhoud kantoorinventaris
+chart_account_nl_4321,chart_nl,4321,Office equipment rental,Huur kantoorapparatuur
+chart_account_nl_4322,chart_nl,4322,Lease of office equipment (operating lease),Lease kantoorinventaris (operational lease)
+chart_account_nl_4330,chart_nl,4330,Phone,Telefoon
+chart_account_nl_4340,chart_nl,4340,Internet / e-mail,Internet / e-mail
+chart_account_nl_4350,chart_nl,4350,Postage,Porti
+chart_account_nl_4360,chart_nl,4360,Automation costs,Automatiseringskosten
+chart_account_nl_4390,chart_nl,4390,Other office expenses,Overige kantoorkosten
+chart_account_nl_4401,chart_nl,4401,Fuel for trucks,Brandstof vrachtauto's
+chart_account_nl_4402,chart_nl,4402,Truck maintenance,Onderhoud vrachtauto's
+chart_account_nl_4403,chart_nl,4403,Truck rental,Huur vrachtauto's
+chart_account_nl_4404,chart_nl,4404,Leasing trucks (operational lease),Lease vrachtauto's (operational lease)
+chart_account_nl_4405,chart_nl,4405,Insurance trucks,Assurantie vrachtauto's
+chart_account_nl_4406,chart_nl,4406,Truck taxes,Belastingen vrachtauto's
+chart_account_nl_4408,chart_nl,4408,Other costs of trucks,Overige kosten vrachtauto's
+chart_account_nl_4411,chart_nl,4411,Fuel cars,Brandstof personenauto's
+chart_account_nl_4412,chart_nl,4412,Car maintenance,Onderhoud personenauto's
+chart_account_nl_4413,chart_nl,4413,Car rental,Huur personenauto's
+chart_account_nl_4414,chart_nl,4414,Lease of cars (operational lease),Lease personenauto's (operational lease)
+chart_account_nl_4415,chart_nl,4415,Car insurance,Assurantie personenauto's
+chart_account_nl_4416,chart_nl,4416,Taxes on cars,Belastingen personenauto's
+chart_account_nl_4418,chart_nl,4418,Private car use,Privégebruik personenauto's
+chart_account_nl_4419,chart_nl,4419,Other costs cars,Overige kosten personenauto's
+chart_account_nl_4421,chart_nl,4421,Fuel other means of transport,Brandstof overige vervoermiddelen
+chart_account_nl_4422,chart_nl,4422,Maintenance of other means of transport,Onderhoud overige vervoermiddelen
+chart_account_nl_4423,chart_nl,4423,Rental of other means of transport,Huur overige vervoermiddelen
+chart_account_nl_4424,chart_nl,4424,Lease of other means of transport (operational lease),Lease overige vervoermiddelen (operational lease)
+chart_account_nl_4425,chart_nl,4425,Insurance other means of transport,Assurantie overige vervoermiddelen
+chart_account_nl_4426,chart_nl,4426,Taxes on other means of transport,Belastingen overige vervoermiddelen
+chart_account_nl_4428,chart_nl,4428,Other remaining means of transport,Overige overige vervoermiddelen
+chart_account_nl_4490,chart_nl,4490,Other transport costs,Overige vervoerskosten
+chart_account_nl_4505,chart_nl,4505,Business gifts,Relatiegeschenken
+chart_account_nl_4510,chart_nl,4510,Travel and accommodation expenses,Reis- en verblijfkosten
+chart_account_nl_4515,chart_nl,4515,Representation costs,Representatiekosten
+chart_account_nl_4520,chart_nl,4520,Advertising costs,Etalagekosten
+chart_account_nl_4525,chart_nl,4525,Advertisements,Advertenties
+chart_account_nl_4530,chart_nl,4530,Scholarship costs,Beurskosten
+chart_account_nl_4535,chart_nl,4535,Advertising costs,Etalagekosten
+chart_account_nl_4540,chart_nl,4540,Website costs,Websitekosten
+chart_account_nl_4550,chart_nl,4550,Bad debt write-off,Afschrijving dubieuze debiteuren
+chart_account_nl_4560,chart_nl,4560,Credit limitation debtors,Kredietbeperking debiteuren
+chart_account_nl_4570,chart_nl,4570,Freight costs,Vrachtkosten
+chart_account_nl_4590,chart_nl,4590,Other selling expenses,Overige verkoopkosten
+chart_account_nl_4601,chart_nl,4601,Audit fees,Accountantskosten
+chart_account_nl_4605,chart_nl,4605,Consultancy fees,Advieskosten
+chart_account_nl_4610,chart_nl,4610,Legal costs,Juridische kosten
+chart_account_nl_4620,chart_nl,4620,Insurance,Assuranties
+chart_account_nl_4621,chart_nl,4621,Administration fee,Administratiekosten
+chart_account_nl_4630,chart_nl,4630,Bank charges,Bankkosten
+chart_account_nl_4690,chart_nl,4690,Other overheads,Overige algemene kosten
+chart_account_nl_4705,chart_nl,4705,Mortgage interest,Rente hypotheek
+chart_account_nl_4710,chart_nl,4710,Loan interest,Rente lening
+chart_account_nl_4720,chart_nl,4720,Bank current account interest,Rente rekening-courant bank
+chart_account_nl_4790,chart_nl,4790,Other interest expenses,Overige rentelasten
+chart_account_nl_4795,chart_nl,4795,Other interest income,Overige rentebaten
+chart_account_nl_4805,chart_nl,4805,Goodwill,Goodwill
+chart_account_nl_4810,chart_nl,4810,Buildings / conversions,Gebouwen / verbouwingen
+chart_account_nl_4820,chart_nl,4820,Machinery,Machines
+chart_account_nl_4830,chart_nl,4830,Inventory,Inventaris
+chart_account_nl_4840,chart_nl,4840,Transport resources,Vervoermiddelen
+chart_account_nl_4901,chart_nl,4901,Book profit fixed assets,Boekwinst vaste activa
+chart_account_nl_4902,chart_nl,4902,Book loss fixed assets,Boekverlies vaste activa
+chart_account_nl_4910,chart_nl,4910,Small business scheme Turnover tax,Kleine ondernemingsregeling Omzetbelasting
+chart_account_nl_4920,chart_nl,4920,Exchange rate differences,Koersverschillen
+chart_account_nl_4930,chart_nl,4930,Payment differences,Betalingsverschillen
+chart_account_nl_4940,chart_nl,4940,Cash differences,Kasverschillen
+chart_account_nl_4950,chart_nl,4950,Other income,Overige baten
+chart_account_nl_4960,chart_nl,4960,Other expenses,Overige lasten
+chart_account_nl_4970,chart_nl,4970,Other income previous years,Overige baten voorgaande jaren
+chart_account_nl_4980,chart_nl,4980,Other expenses prior years,Overige lasten voorgaande jaren
+chart_account_nl_7000,chart_nl,7000,Cost price raw materials,Kostprijs grondstoffen
+chart_account_nl_7001,chart_nl,7001,Cost price NL trade goods 1,Kostprijs NL handelsgoederen 1
+chart_account_nl_7002,chart_nl,7002,Cost price within EU trade goods 1,Kostprijs binnen EU handelsgoederen 1
+chart_account_nl_7003,chart_nl,7003,Cost price outside EU trade goods 1,Kostprijs buiten EU handelsgoederen 1
+chart_account_nl_7004,chart_nl,7004,Cost Intercompany trade goods 1,Kostprijs Intercompany handelsgoederen 1
+chart_account_nl_7005,chart_nl,7005,Cost price NL trade goods 2,Kostprijs NL handelsgoederen 2
+chart_account_nl_7006,chart_nl,7006,Cost price within EU trade goods 2,Kostprijs binnen EU handelsgoederen 2
+chart_account_nl_7007,chart_nl,7007,Cost price outside EU trade goods 2,Kostprijs buiten EU handelsgoederen 2
+chart_account_nl_7008,chart_nl,7008,Cost Intercompany trade goods 2,Kostprijs Intercompany handelsgoederen 2
+chart_account_nl_7009,chart_nl,7009,Cost price NL trade goods 3,Kostprijs NL handelsgoederen 3
+chart_account_nl_7010,chart_nl,7010,Cost price within EU trade goods 3,Kostprijs binnen EU handelsgoederen 3
+chart_account_nl_7011,chart_nl,7011,Cost price outside EU trade goods 3,Kostprijs buiten EU handelsgoederen 3
+chart_account_nl_7012,chart_nl,7012,Cost Intercompany trade goods 3,Kostprijs Intercompany handelsgoederen 3
+chart_account_nl_7020,chart_nl,7020,Direct salary costs,Directe loonkosten
+chart_account_nl_7030,chart_nl,7030,Production results,Productieresultaten
+chart_account_nl_7040,chart_nl,7040,Cost of third-party work,Kostprijs werk derden
+chart_account_nl_7050,chart_nl,7050,Provision for raw material obsolescence,Voorziening incourante voorraad grondstof
+chart_account_nl_7051,chart_nl,7051,Provision for obsolete supplies of consumables,Voorziening incourante voorraad hulpstof
+chart_account_nl_7052,chart_nl,7052,Provision for obsolete stock of trade goods,Voorziening incourante voorraad handelsgoederen
+chart_account_nl_7060,chart_nl,7060,Purchasing costs,Inkoopkosten
+chart_account_nl_7061,chart_nl,7061,Purchasing commission,Inkoopprovisie
+chart_account_nl_7062,chart_nl,7062,Freight costs,Vrachtkosten
+chart_account_nl_7063,chart_nl,7063,Import costs,Invoerkosten
+chart_account_nl_7064,chart_nl,7064,Purchase bonuses,Inkoopbonussen
+chart_account_nl_7065,chart_nl,7065,Payment discount creditors,Betalingskorting crediteuren
+chart_account_nl_7070,chart_nl,7070,Warranty costs,Garantiekosten
+chart_account_nl_7071,chart_nl,7071,Change in warranty liability,Mutatie garantieverplichting
+chart_account_nl_7080,chart_nl,7080,Price differences cost,Prijsverschillen kostprijs
+chart_account_nl_7090,chart_nl,7090,Stock adjustment,Voorraadaanpassing
+chart_account_nl_7091,chart_nl,7091,Rejected stock,Afgekeurde voorraad
+chart_account_nl_8001,chart_nl,8001,Turnover NL trade goods 1,Omzet NL handelsgoederen 1
+chart_account_nl_8002,chart_nl,8002,Turnover within EU trade goods 1,Omzet binnen EU handelsgoederen 1
+chart_account_nl_8003,chart_nl,8003,Turnover outside EU trade goods 1,Omzet buiten EU handelsgoederen 1
+chart_account_nl_8004,chart_nl,8004,Turnover Intercompany trade goods 1,Omzet Intercompany handelsgoederen 1
+chart_account_nl_8005,chart_nl,8005,Turnover NL services 1,Omzet NL diensten 1
+chart_account_nl_8011,chart_nl,8011,Turnover NL trade goods 2,Omzet NL handelsgoederen 2
+chart_account_nl_8012,chart_nl,8012,Turnover within EU trade goods 2,Omzet binnen EU handelsgoederen 2
+chart_account_nl_8013,chart_nl,8013,Turnover outside EU trade goods 2,Omzet buiten EU handelsgoederen 2
+chart_account_nl_8014,chart_nl,8014,Turnover Intercompany trade goods 2,Omzet Intercompany handelsgoederen 2
+chart_account_nl_8015,chart_nl,8015,Turnover NL services 2,Omzet NL diensten 2
+chart_account_nl_8021,chart_nl,8021,Turnover NL trade goods 3,Omzet NL handelsgoederen 3
+chart_account_nl_8022,chart_nl,8022,Turnover within EU trade goods 3,Omzet binnen EU handelsgoederen 3
+chart_account_nl_8023,chart_nl,8023,Turnover outside EU trade goods 3,Omzet buiten EU handelsgoederen 2
+chart_account_nl_8024,chart_nl,8024,Turnover Intercompany trade goods 3,Omzet Intercompany handelsgoederen 3
+chart_account_nl_8025,chart_nl,8025,Turnover NL services 3,Omzet NL diensten 3
+chart_account_nl_8041,chart_nl,8041,Turnover NL third-party work,Omzet NL werk derden
+chart_account_nl_8042,chart_nl,8042,Turnover within EU third-party work,Omzet binnen EU werk derden
+chart_account_nl_8043,chart_nl,8043,Turnover outside EU third-party work,Omzet buiten EU werk derden
+chart_account_nl_8044,chart_nl,8044,Turnover Intercompany work third parties,Omzet Intercompany werk derden
+chart_account_nl_8065,chart_nl,8065,Payment discount debtors,Betalingskorting debiteuren
+chart_account_nl_8090,chart_nl,8090,Sundry other income,Diverse overige opbrengsten
+chart_account_nl_9011,chart_nl,9011,Installation/remote sales within EU trade goods 1,Installatie/afstandsverkopen binnen EU handelsgoederen 1
+chart_account_nl_9012,chart_nl,9012,Installation/remote sales within EU trade goods 2,Installatie/afstandsverkopen binnen EU handelsgoederen 2
+chart_account_nl_9013,chart_nl,9013,Installation/remote sales within EU trade goods 3,Installatie/afstandsverkopen binnen EU handelsgoederen 3
+chart_account_nl_9920,chart_nl,9920,Exchange rate differences,Koersverschillen
+chart_account_nl_10011,chart_nl,10011,Result of participating interests 1,Resultaat deelneming 1
+chart_account_nl_10012,chart_nl,10012,Result of participating interests 2,Resultaat deelneming 2
+chart_account_nl_10013,chart_nl,10013,Result of participating interests 3,Resultaat deelneming 3
+chart_account_nl_10150,chart_nl,10150,Reorganisation costs,Reorganisatiekosten
+chart_account_nl_10200,chart_nl,10200,Error account,Foutenrekening
+chart_account_nl_10900,chart_nl,10900,Corporate tax,Vennootschapsbelasting
+chart_account_nl_10950,chart_nl,10950,Corporation tax previous years,Vennootschapsbelasting voorgaande jaren
+chart_account_nl_20000,chart_nl,20000,Undistributed Profits/Losses,Niet-uitgekeerde winsten/verliezen

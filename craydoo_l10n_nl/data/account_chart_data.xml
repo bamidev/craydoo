@@ -1,0 +1,5 @@
+<odoo>
+    <record id="chart_nl" model="cd.account.chart">
+        <field name="name">Netherlands</field>
+    </record>
+</odoo>
