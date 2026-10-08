@@ -10,9 +10,9 @@ class ResConfigSettings(models.TransientModel):
     company_default_credit_account = fields.Many2one(
         related='company_id.default_credit_account', readonly=False)
 
-    default_ledger = fields.Many2one(
+    fallback_ledger_id = fields.Many2one(
         'cd.account.ledger', config_parameter='craydoo_account.default_ledger')
-    default_debit_account = fields.Many2one(
+    fallback_debit_account_id = fields.Many2one(
         'cd.account.account', config_parameter='craydoo_account.default_debit_account')
-    default_credit_account = fields.Many2one(
+    fallback_credit_account_id = fields.Many2one(
         'cd.account.account', config_parameter='craydoo_account.default_credit_account')

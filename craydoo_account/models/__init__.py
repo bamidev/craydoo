@@ -2,6 +2,8 @@ from . import account_locked_mixin
 from . import tigerbeetle_record
 from . import account_ledger
 from . import account_account
+from . import account_chart
+from . import account_chart_account
 from . import account_transfer
 from . import account_tax_tag
 from . import account_tax_allocation

@@ -19,6 +19,7 @@
         'views/account_tax_tag_views.xml',
         'views/account_ledger_views.xml',
         'views/account_account_views.xml',
+        'views/account_chart_wizard_views.xml',
         'views/account_transfer_views.xml',
         'views/res_config_settings_views.xml',
     ],

@@ -5,11 +5,14 @@ from ..fields import UInt128
 from .tigerbeetle_client import create_account
 
 
+IMMUTABLE_FIELDS = [
+    'tigerbeetle_id', 'code', 'flags', 'ledger'
+]
+
+
 class AccountAccount(models.Model):
-    """ A Tigerbeetle account. Identity fields (tigerbeetle_id/ledger/code)
-    are stored locally in Postgres - they never change after creation in
-    Tigerbeetle anyway, so caching them means listing/searching/archiving
-    doesn't need a live Tigerbeetle connection.
+    """ An accounting account.
+    Any 
 
     Creatable and `active` is freely writable (a purely local annotation,
     never sent to Tigerbeetle), but `tigerbeetle_id`/`ledger`/`code`/`flags`
@@ -18,13 +21,15 @@ class AccountAccount(models.Model):
     """
     _name = 'cd.account.account'
     _description = 'Tigerbeetle Account'
-    _rec_name = 'tigerbeetle_id'
+    _rec_name = 'name'
 
-    tigerbeetle_id = UInt128(required=True, index=True, readonly=True, copy=False)
-    ledger = fields.Many2one('cd.account.ledger', required=True, readonly=True)
-    code = fields.Integer(readonly=True)
-    flags = fields.Integer(readonly=True)
     active = fields.Boolean(default=True)
+    tigerbeetle_id = UInt128(required=True, index=True, readonly=True, copy=False)
+    name = fields.Char(required=True, translate=True)
+
+    code = fields.Integer(required=True, readonly=True)
+    flags = fields.Integer(required=True, readonly=True, default=0)
+    ledger = fields.Many2one('cd.account.ledger', required=True, readonly=True)
 
     _tigerbeetle_id_unique = models.Constraint(
         'UNIQUE(tigerbeetle_id)', 'A Tigerbeetle account can only be cached once.')
@@ -40,10 +45,12 @@ class AccountAccount(models.Model):
                     self.env, ledger=ledger.number, code=vals.get('code', 0))
         return super().create(vals_list)
 
-    def write(self, vals):
-        if set(vals) - {'active'}:
-            raise UserError(_("Only 'active' can be changed on a Tigerbeetle account."))
-        return super().write(vals)
+        #def write(self, vals):
+        #immutable = set(vals) & set(IMMUTABLE_FIELDS)
+        #if immutable:
+        #    labels = ', '.join(self._fields[f].string for f in immutable)
+        #    raise UserError(_("%(fields)s can't be changed once set.", fields=labels))
+        #return super().write(vals)
 
     def unlink(self):
         raise UserError(_("Tigerbeetle accounts can't be deleted."))

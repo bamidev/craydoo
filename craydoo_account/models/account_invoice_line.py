@@ -20,7 +20,7 @@ class AccountInvoiceLine(models.Model):
     _inherit = ['cd.account.locked_mixin']
 
     invoice = PartitionedMany2one('cd.account.invoice', required=True, ondelete='cascade')
-    date = fields.Date(related='invoice.date', store=True, readonly=True, required=True)
+    date = fields.Date(related='invoice.date', store=True, readonly=True, required=True, precompute=True)
     sequence = fields.Integer(default=10)
     name = fields.Char()
     quantity = fields.Float(default=1.0)

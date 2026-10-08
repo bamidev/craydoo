@@ -4,7 +4,6 @@
         <field name="model">cd.account.account</field>
         <field name="arch" type="xml">
             <list delete="false">
-                <field name="tigerbeetle_id"/>
                 <field name="ledger"/>
                 <field name="code"/>
                 <field name="active"/>
@@ -19,7 +18,7 @@
             <form delete="false">
                 <sheet>
                     <group>
-                        <field name="tigerbeetle_id" readonly="1"/>
+                        <field name="name" />
                         <field name="ledger" readonly="id"/>
                         <field name="code" readonly="id"/>
                     </group>

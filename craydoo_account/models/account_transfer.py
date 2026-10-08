@@ -23,7 +23,7 @@ class AccountTransfer(models.Model):
     debit_account = fields.Many2one('cd.account.account', readonly=True)
     credit_account = fields.Many2one('cd.account.account', readonly=True)
     flag_linked = fields.Boolean(readonly=True)
-    linked_ids = fields.Many2many('cd.account.transfer', readonly=True)
+    linked_ids = fields.Many2many('cd.account.transfer', store=False, readonly=True)
 
     def _tb_fetch(self, ids, field_names):
         if not ids:

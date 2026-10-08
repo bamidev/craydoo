@@ -15,7 +15,7 @@ def pre_init_hook(env):
 
 def post_init_hook(env):
     sync_tigerbeetle_accounts(env)
-    create_default_ledger_and_accounts(env)
+    create_default_ledger(env)
 
 
 def sync_tigerbeetle_accounts(env):
@@ -47,7 +47,10 @@ def sync_tigerbeetle_accounts(env):
             })
             ledgers[account.ledger] = ledger
         vals_list.append({
-            'tigerbeetle_id': account.id, 'ledger': ledger.id, 'code': account.code,
+            'tigerbeetle_id': account.id,
+            'ledger': ledger.id,
+            'code': account.code,
+            'name': 'Tigerbeetle account ' + str(account.code),
             'flags': int(account.flags),
         })
 
@@ -55,7 +58,7 @@ def sync_tigerbeetle_accounts(env):
         env['cd.account.account'].with_context(cd_account_sync=True).create(vals_list)
 
 
-def create_default_ledger_and_accounts(env):
+def create_default_ledger(env):
     """ If, even after `sync_tigerbeetle_accounts`, no ledger is known
     locally (a fresh Tigerbeetle cluster with nothing to sync), set up a
     default ledger and a default debit/credit account pair, and point the
@@ -67,11 +70,4 @@ def create_default_ledger_and_accounts(env):
     if env['cd.account.ledger'].search_count([]):
         return
 
-    ledger = env['cd.account.ledger'].create({'number': 1, 'name': 'Main Ledger'})
-    debit_account = env['cd.account.account'].create({'ledger': ledger.id, 'code': 1})
-    credit_account = env['cd.account.account'].create({'ledger': ledger.id, 'code': 2})
-
-    icp = env['ir.config_parameter'].sudo()
-    icp.set_param('craydoo_account.default_ledger', ledger.id)
-    icp.set_param('craydoo_account.default_debit_account', debit_account.id)
-    icp.set_param('craydoo_account.default_credit_account', credit_account.id)
+    ledger = env['cd.account.ledger'].create({'number': 0, 'name': 'Main Ledger'})

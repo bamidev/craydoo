@@ -51,7 +51,7 @@
     </record>
 
     <record id="action_account_invoice" model="ir.actions.act_window">
-        <field name="name">Posted Invoices</field>
+        <field name="name">Invoices</field>
         <field name="res_model">cd.account.invoice</field>
         <field name="view_mode">list,form</field>
         <field name="domain">[('locked', '=', True)]</field>
@@ -123,15 +123,16 @@
     </record>
 
     <record id="action_account_invoice_draft" model="ir.actions.act_window">
-        <field name="name">Invoices</field>
+        <field name="name">Draft Invoices</field>
         <field name="res_model">cd.account.invoice.draft</field>
         <field name="view_mode">list,form</field>
     </record>
 
     <menuitem id="menu_account_root" name="Accounting"/>
-    <menuitem id="menu_account_invoice" name="Invoices" parent="menu_account_root"
-              action="action_account_invoice_draft" sequence="10"/>
-    <menuitem id="menu_account_invoice_posted" name="Posted Invoices" parent="menu_account_root"
-              action="action_account_invoice" sequence="20"/>
+    <menuitem id="menu_account_invoice" name="Invoices" parent="menu_account_root" sequence="10"/>
+    <menuitem id="menu_account_invoice_posted" name="Invoices" parent="menu_account_invoice"
+              action="action_account_invoice" sequence="10"/>
+    <menuitem id="menu_account_invoice_draft" name="Drafts" parent="menu_account_invoice"
+              action="action_account_invoice_draft" sequence="20"/>
     <menuitem id="menu_account_config" name="Configuration" parent="menu_account_root" sequence="90"/>
 </odoo>

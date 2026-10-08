@@ -1,0 +1,29 @@
+<odoo>
+    <record id="view_account_chart_wizard_form" model="ir.ui.view">
+        <field name="name">cd.account.chart.wizard.form</field>
+        <field name="model">cd.account.chart.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="chart_id"/>
+                    <field name="ledger_id"/>
+                </group>
+                <footer>
+                    <button name="action_apply" type="object" string="Apply" class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_account_chart_wizard" model="ir.actions.act_window">
+        <field name="name">Apply Chart of Accounts</field>
+        <field name="res_model">cd.account.chart.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_account_chart_wizard" name="Apply Chart of Accounts"
+              parent="menu_account_config" action="action_account_chart_wizard" sequence="20"/>
+</odoo>
