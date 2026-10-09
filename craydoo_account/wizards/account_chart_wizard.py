@@ -8,6 +8,10 @@ class AccountChartWizard(models.TransientModel):
     code/name data - which ledger they belong to is chosen here, at apply
     time), then wires the resulting debit/credit accounts up as the
     company's sales defaults.
+
+    Applying onto a ledger that already has accounts is allowed, but asks
+    for confirmation first (`view_account_chart_wizard_confirm`), since
+    it's rarely intentional.
     """
     _name = 'cd.account.chart.wizard'
     _description = 'Apply Chart of Accounts'
@@ -23,7 +27,7 @@ class AccountChartWizard(models.TransientModel):
         if not entries:
             raise UserError(_("This chart of accounts has no accounts to create."))
         if not self.env.context.get('force_apply') and self.env['cd.account.account'].search_count(
-                [('ledger', '=', self.ledger_id.id)]):
+                [('ledger_id', '=', self.ledger_id.id)]):
             return {
                 'type': 'ir.actions.act_window',
                 'name': _("Confirm"),
@@ -35,19 +39,19 @@ class AccountChartWizard(models.TransientModel):
             }
 
         accounts = self.env['cd.account.account'].create([{
-            'ledger': self.ledger_id.id,
+            'ledger_id': self.ledger_id.id,
             'code': entry.code,
             'name': entry.name,
         } for entry in entries])
         account_by_entry_id = dict(zip(entries.ids, accounts.ids))
 
-        self.company_id.account_ledger = self.ledger_id
+        self.company_id.account_ledger_id = self.ledger_id
         chart = self.chart_id
         if chart.default_debit_account_id:
-            self.company_id.default_debit_account = account_by_entry_id[
+            self.company_id.default_debit_account_id = account_by_entry_id[
                 chart.default_debit_account_id.id]
         if chart.default_credit_account_id:
-            self.company_id.default_credit_account = account_by_entry_id[
+            self.company_id.default_credit_account_id = account_by_entry_id[
                 chart.default_credit_account_id.id]
 
         return {

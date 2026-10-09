@@ -5,5 +5,5 @@ class AccountTaxAllocation(models.AbstractModel):
     _name = 'cd.account.tax.allocation'
     _description = 'Tax Allocation'
 
-    invoice_lines = fields.One2many('cd.account.tax.allocation.line', 'invoice_tax')
-    refund_lines = fields.One2many('cd.account.tax.allocation.line', 'refund_tax')
+    invoice_line_ids = fields.One2many('cd.account.tax.allocation.line', 'invoice_tax_id')
+    refund_line_ids = fields.One2many('cd.account.tax.allocation.line', 'refund_tax_id')

@@ -26,11 +26,11 @@ class ContactInfo(models.Model):
     display_name = fields.Char(compute='_compute_display_name', store=True)
     active = fields.Boolean(default=True)
     locked = fields.Boolean(default=False, copy=False, index=True)
-    locked_copy = fields.Many2one('cd.contact.info', copy=False)
+    locked_copy_id = fields.Many2one('cd.contact.info', copy=False)
 
-    emails = fields.One2many('cd.contact.email', 'contact_info', string='Emails')
-    phones = fields.One2many('cd.contact.phone', 'contact_info', string='Phone Numbers')
-    websites = fields.One2many('cd.contact.website', 'contact_info', string='Websites')
+    email_ids = fields.One2many('cd.contact.email', 'contact_info_id', string='Emails')
+    phone_ids = fields.One2many('cd.contact.phone', 'contact_info_id', string='Phone Numbers')
+    website_ids = fields.One2many('cd.contact.website', 'contact_info_id', string='Websites')
     main_email = fields.Char(
         compute='_compute_main_email', inverse='_inverse_main_email', string='Email')
     main_phone = fields.Char(
@@ -41,10 +41,10 @@ class ContactInfo(models.Model):
         for info in self:
             info.display_name = info.name
 
-    @api.depends('emails.address', 'emails.is_primary')
+    @api.depends('email_ids.address', 'email_ids.is_primary')
     def _compute_main_email(self):
         for info in self:
-            email = info.emails.filtered('is_primary')[:1] or info.emails[:1]
+            email = info.email_ids.filtered('is_primary')[:1] or info.email_ids[:1]
             info.main_email = email.address
 
     def _inverse_main_email(self):
@@ -52,18 +52,18 @@ class ContactInfo(models.Model):
             return
 
         for info in self:
-            email = info.emails.filtered('is_primary')[:1] or info.emails[:1]
+            email = info.email_ids.filtered('is_primary')[:1] or info.email_ids[:1]
             if email:
                 email.address = info.main_email
             else:
                 self.env['cd.contact.email'].create({
-                    'contact_info': info.id, 'address': info.main_email, 'is_primary': True,
+                    'contact_info_id': info.id, 'address': info.main_email, 'is_primary': True,
                 })
 
-    @api.depends('phones.number', 'phones.is_primary')
+    @api.depends('phone_ids.number', 'phone_ids.is_primary')
     def _compute_main_phone(self):
         for info in self:
-            phone = info.phones.filtered('is_primary')[:1] or info.phones[:1]
+            phone = info.phone_ids.filtered('is_primary')[:1] or info.phone_ids[:1]
             info.main_phone = phone.number
 
     def _inverse_main_phone(self):
@@ -71,12 +71,12 @@ class ContactInfo(models.Model):
             return
 
         for info in self:
-            phone = info.phones.filtered('is_primary')[:1] or info.phones[:1]
+            phone = info.phone_ids.filtered('is_primary')[:1] or info.phone_ids[:1]
             if phone:
                 phone.number = info.main_phone
             else:
                 self.env['cd.contact.phone'].create({
-                    'contact_info': info.id, 'number': info.main_phone, 'is_primary': True,
+                    'contact_info_id': info.id, 'number': info.main_phone, 'is_primary': True,
                 })
 
     street = fields.Char()
@@ -84,11 +84,11 @@ class ContactInfo(models.Model):
     address_extra = fields.Char()
     city = fields.Char()
     zip = fields.Char(string='ZIP')
-    state = fields.Many2one(
+    state_id = fields.Many2one(
         'res.country.state', ondelete='restrict',
-        domain="[('country_id', '=?', country)]",
+        domain="[('country_id', '=?', country_id)]",
     )
-    country = fields.Many2one('res.country', ondelete='restrict')
+    country_id = fields.Many2one('res.country', ondelete='restrict')
 
     tz = fields.Selection(_tz_get, string='Timezone')
 
@@ -96,16 +96,16 @@ class ContactInfo(models.Model):
 
     def write(self, vals):
         res = super().write(vals)
-        if set(vals) - {'locked', 'locked_copy'}:
+        if set(vals) - {'locked', 'locked_copy_id'}:
             for info in self:
-                if info.locked_copy:
-                    info.locked_copy = False
+                if info.locked_copy_id:
+                    info.locked_copy_id = False
         return res
 
     def create_locked_copy(self):
         self.ensure_one()
         if self.locked:
             return self
-        if not self.locked_copy:
-            self.locked_copy = self.copy({'locked': True})
-        return self.locked_copy
+        if not self.locked_copy_id:
+            self.locked_copy_id = self.copy({'locked': True})
+        return self.locked_copy_id

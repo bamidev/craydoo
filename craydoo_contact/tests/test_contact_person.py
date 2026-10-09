@@ -10,25 +10,25 @@ class TestContactPerson(TransactionCase):
             'name': 'John Doe',
             'city': 'Rotterdam',
         })
-        self.assertTrue(person.contact_info)
-        self.assertEqual(person.contact_info.name, 'John Doe')
-        self.assertEqual(person.contact_info.city, 'Rotterdam')
+        self.assertTrue(person.contact_info_id)
+        self.assertEqual(person.contact_info_id.name, 'John Doe')
+        self.assertEqual(person.contact_info_id.city, 'Rotterdam')
 
     def test_create_with_explicit_contact_info(self):
         info = self.env['cd.contact.info'].create({'name': 'Existing Info'})
-        person = self.env['cd.contact.person'].create({'contact_info': info.id})
-        self.assertEqual(person.contact_info, info)
+        person = self.env['cd.contact.person'].create({'contact_info_id': info.id})
+        self.assertEqual(person.contact_info_id, info)
         self.assertEqual(person.name, 'Existing Info')
 
     def test_editing_person_writes_through_to_contact_info(self):
         person = self.env['cd.contact.person'].create({'name': 'Jane Roe'})
         person.city = 'Eindhoven'
-        self.assertEqual(person.contact_info.city, 'Eindhoven')
+        self.assertEqual(person.contact_info_id.city, 'Eindhoven')
 
     def test_cannot_link_to_locked_contact_info(self):
         info = self.env['cd.contact.info'].create({'name': 'Locked Info', 'locked': True})
         with self.assertRaises(ValidationError):
-            self.env['cd.contact.person'].create({'contact_info': info.id})
+            self.env['cd.contact.person'].create({'contact_info_id': info.id})
 
     def test_function_is_specific_to_person(self):
         person = self.env['cd.contact.person'].create({

@@ -8,7 +8,7 @@ class ContactPhone(models.Model):
     _rec_name = 'number'
     _order = 'is_primary desc, id'
 
-    contact_info = fields.Many2one('cd.contact.info', required=True, ondelete='cascade')
+    contact_info_id = fields.Many2one('cd.contact.info', required=True, ondelete='cascade')
     number = fields.Char(required=True)
     type = fields.Selection(
         [
@@ -18,7 +18,7 @@ class ContactPhone(models.Model):
         ],
         required=True, default='phone',
     )
-    locked = fields.Boolean(related='contact_info.locked', store=True)
+    locked = fields.Boolean(related='contact_info_id.locked', store=True)
 
     @api.constrains('number')
     def _check_number(self):

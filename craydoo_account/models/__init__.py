@@ -1,5 +1,4 @@
 from . import account_locked_mixin
-from . import tigerbeetle_record
 from . import account_ledger
 from . import account_account
 from . import account_chart
@@ -10,7 +9,6 @@ from . import account_tax_allocation
 from . import account_tax_allocation_line
 from . import account_tax
 from . import res_company
-from . import res_config_settings
 from . import account_invoice
 from . import account_invoice_line
 from . import account_invoice_draft

@@ -1,12 +1,11 @@
 {
     'name': 'Craydoo Account',
     'version': '20.0.1.0.0',
-    'summary': 'Tigerbeetle-backed accounting for the Craydoo suite',
+    'summary': 'Accounting for the Craydoo suite',
     'category': 'Accounting',
     'author': 'Craydoo',
     'license': 'LGPL-3',
     'depends': ['base', 'mail', 'craydoo_contact'],
-    'external_dependencies': {'python': ['tigerbeetle']},
     'pre_init_hook': 'pre_init_hook',
     'post_init_hook': 'post_init_hook',
     'data': [
@@ -21,6 +20,5 @@
         'views/account_account_views.xml',
         'views/account_chart_wizard_views.xml',
         'views/account_transfer_views.xml',
-        'views/res_config_settings_views.xml',
     ],
 }

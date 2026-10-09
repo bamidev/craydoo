@@ -28,19 +28,19 @@
                     </group>
                     <notebook>
                         <page string="Invoice Allocation">
-                            <field name="invoice_lines">
+                            <field name="invoice_line_ids">
                                 <list editable="bottom">
                                     <field name="account_id"/>
-                                    <field name="tags" widget="many2many_tags"/>
+                                    <field name="tag_ids" widget="many2many_tags"/>
                                     <field name="percentage"/>
                                 </list>
                             </field>
                         </page>
                         <page string="Refund Allocation">
-                            <field name="refund_lines">
+                            <field name="refund_line_ids">
                                 <list editable="bottom">
                                     <field name="account_id"/>
-                                    <field name="tags" widget="many2many_tags"/>
+                                    <field name="tag_ids" widget="many2many_tags"/>
                                     <field name="percentage"/>
                                 </list>
                             </field>

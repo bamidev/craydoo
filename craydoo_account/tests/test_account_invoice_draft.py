@@ -1,37 +1,63 @@
+from odoo import Command
 from odoo.exceptions import UserError
 from odoo.tests import TransactionCase, tagged
 
 
 @tagged('post_install', '-at_install')
 class TestAccountInvoiceDraft(TransactionCase):
-    """ Only covers what doesn't require a live Tigerbeetle cluster -
-    `action_post`'s happy path (actually creating transfers) needs one and
-    isn't exercised here.
-    """
-
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
         cls.contact = cls.env['cd.contact.person'].create({'name': 'Jane Doe'})
+        cls.ledger = cls.env['cd.account.ledger'].create({'name': 'Test Ledger'})
+        cls.debit_account = cls.env['cd.account.account'].create({
+            'name': 'Debtors', 'code': '1100', 'ledger_id': cls.ledger.id,
+        })
+        cls.credit_account = cls.env['cd.account.account'].create({
+            'name': 'Sales', 'code': '8000', 'ledger_id': cls.ledger.id,
+        })
 
     def test_create_auto_creates_invoice(self):
-        draft = self.env['cd.account.invoice.draft'].create({'debtor': self.contact.contact_info.id})
+        draft = self.env['cd.account.invoice.draft'].create({'debtor_id': self.contact.contact_info_id.id})
         self.assertTrue(draft.invoice_id)
-        self.assertEqual(draft.invoice_id.debtor, self.contact.contact_info)
+        self.assertEqual(draft.invoice_id.debtor_id, self.contact.contact_info_id)
 
     def test_create_with_explicit_invoice(self):
-        invoice = self.env['cd.account.invoice'].create({'debtor': self.contact.contact_info.id})
+        invoice = self.env['cd.account.invoice'].create({'debtor_id': self.contact.contact_info_id.id})
         draft = self.env['cd.account.invoice.draft'].create({'invoice_id': invoice.id})
         self.assertEqual(draft.invoice_id, invoice)
-        self.assertEqual(draft.debtor, self.contact.contact_info)
+        self.assertEqual(draft.debtor_id, self.contact.contact_info_id)
 
     def test_action_post_requires_accounts(self):
-        draft = self.env['cd.account.invoice.draft'].create({'debtor': self.contact.contact_info.id})
+        draft = self.env['cd.account.invoice.draft'].create({'debtor_id': self.contact.contact_info_id.id})
         with self.assertRaises(UserError):
             draft.action_post()
 
     def test_action_post_raises_if_already_locked(self):
-        draft = self.env['cd.account.invoice.draft'].create({'debtor': self.contact.contact_info.id})
+        draft = self.env['cd.account.invoice.draft'].create({'debtor_id': self.contact.contact_info_id.id})
         draft.invoice_id.locked = True
         with self.assertRaises(UserError):
             draft.action_post()
+
+    def test_action_post_creates_transfer(self):
+        draft = self.env['cd.account.invoice.draft'].create({
+            'debtor_id': self.contact.contact_info_id.id,
+            'debit_account_id': self.debit_account.id,
+            'credit_account_id': self.credit_account.id,
+            'invoice_line_ids': [Command.create({'name': 'Line', 'price_unit': 10.0})],
+        })
+        draft.action_post()
+
+        invoice = draft.invoice_id
+        self.assertTrue(invoice.locked)
+        transfer = invoice.transfer_id
+        self.assertTrue(transfer)
+        self.assertEqual(transfer.debit_account_id, self.debit_account)
+        self.assertEqual(transfer.credit_account_id, self.credit_account)
+        self.assertEqual(
+            transfer.amount, round(invoice.amount_total * 10 ** invoice.currency_id.decimal_places))
+
+        with self.assertRaises(UserError):
+            transfer.write({'amount': 1})
+        with self.assertRaises(UserError):
+            transfer.unlink()

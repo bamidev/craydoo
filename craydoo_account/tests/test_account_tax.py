@@ -33,8 +33,8 @@ class TestAccountTax(TransactionCase):
         tax = self.env['cd.account.tax'].create({'name': '21%', 'amount': 21.0})
         tag = self.env['cd.account.tax.tag'].create({'name': 'Box 1'})
         line = self.env['cd.account.tax.allocation.line'].create({
-            'invoice_tax': tax.id, 'account_id': 1234, 'tags': [(6, 0, [tag.id])],
+            'invoice_tax_id': tax.id, 'account_id': 1234, 'tag_ids': [(6, 0, [tag.id])],
             'percentage': 100.0,
         })
-        self.assertIn(line, tax.invoice_lines)
-        self.assertNotIn(line, tax.refund_lines)
+        self.assertIn(line, tax.invoice_line_ids)
+        self.assertNotIn(line, tax.refund_line_ids)

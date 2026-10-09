@@ -40,14 +40,14 @@ class TestContactInfo(TransactionCase):
 
     def test_phones_one2many(self):
         self.env['cd.contact.phone'].create({
-            'contact_info': self.info.id, 'number': '+31612345678', 'type': 'mobile',
+            'contact_info_id': self.info.id, 'number': '+31612345678', 'type': 'mobile',
         })
-        self.assertEqual(len(self.info.phones), 1)
-        self.assertEqual(self.info.phones.number, '+31612345678')
+        self.assertEqual(len(self.info.phone_ids), 1)
+        self.assertEqual(self.info.phone_ids.number, '+31612345678')
 
     def test_locking_contact_info_locks_its_phones(self):
         phone = self.env['cd.contact.phone'].create({
-            'contact_info': self.info.id, 'number': '+31612345678',
+            'contact_info_id': self.info.id, 'number': '+31612345678',
         })
         self.info.locked = True
         self.assertTrue(phone.locked)

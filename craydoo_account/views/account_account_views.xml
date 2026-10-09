@@ -1,12 +1,25 @@
 <odoo>
+    <record id="view_account_account_search" model="ir.ui.view">
+        <field name="name">cd.account.account.search</field>
+        <field name="model">cd.account.account</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="code"/>
+                <filter name="current_ledger" string="My Company's Ledger"
+                        domain="[('ledger_id.company_ids', 'in', allowed_company_ids)]"/>
+            </search>
+        </field>
+    </record>
+
     <record id="view_account_account_list" model="ir.ui.view">
         <field name="name">cd.account.account.list</field>
         <field name="model">cd.account.account</field>
         <field name="arch" type="xml">
-            <list delete="false">
+            <list>
                 <field name="name"/>
                 <field name="code"/>
-                <field name="ledger" optional="hide"/>
+                <field name="ledger_id" optional="hide"/>
             </list>
         </field>
     </record>
@@ -15,11 +28,11 @@
         <field name="name">cd.account.account.form</field>
         <field name="model">cd.account.account</field>
         <field name="arch" type="xml">
-            <form delete="false">
+            <form>
                 <sheet>
                     <group>
                         <field name="name" />
-                        <field name="ledger" readonly="id"/>
+                        <field name="ledger_id" readonly="id"/>
                         <field name="code" readonly="id"/>
                     </group>
                 </sheet>
@@ -31,9 +44,10 @@
         <field name="name">Accounts</field>
         <field name="res_model">cd.account.account</field>
         <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_current_ledger': 1}</field>
     </record>
 
-    <menuitem id="menu_account_tigerbeetle" name="General Ledger" parent="menu_account_root" sequence="80"/>
-    <menuitem id="menu_account_account" name="Accounts" parent="menu_account_tigerbeetle"
+    <menuitem id="menu_account_general_ledger" name="General Ledger" parent="menu_account_root" sequence="80"/>
+    <menuitem id="menu_account_account" name="Accounts" parent="menu_account_general_ledger"
               action="action_account_account" sequence="10"/>
 </odoo>

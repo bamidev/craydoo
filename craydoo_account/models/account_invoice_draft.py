@@ -1,11 +1,9 @@
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
-from .tigerbeetle_client import create_linked_transfers
-
 INVOICE_FIELD_NAMES = [
-    'name', 'debtor', 'language', 'date', 'due_date', 'currency',
-    'company_id', 'invoice_lines',
+    'name', 'debtor_id', 'language', 'date', 'due_date', 'currency_id',
+    'company_id', 'invoice_line_ids',
 ]
 
 
@@ -21,22 +19,22 @@ class AccountInvoiceDraft(models.Model):
     invoice_id = fields.Many2one('cd.account.invoice', required=True, ondelete='cascade', copy=False)
 
     name = fields.Char(related='invoice_id.name', readonly=False, store=True)
-    debtor = fields.Many2one(related='invoice_id.debtor', readonly=False)
+    debtor_id = fields.Many2one(related='invoice_id.debtor_id', readonly=False)
     language = fields.Selection(related='invoice_id.language', readonly=False)
     date = fields.Date(related='invoice_id.date', readonly=False)
     due_date = fields.Date(related='invoice_id.due_date', readonly=False)
-    currency = fields.Many2one(related='invoice_id.currency', readonly=False)
+    currency_id = fields.Many2one(related='invoice_id.currency_id', readonly=False)
     company_id = fields.Many2one(related='invoice_id.company_id', readonly=False)
-    invoice_lines = fields.One2many(related='invoice_id.invoice_lines', readonly=False)
-    amount_untaxed = fields.Monetary(related='invoice_id.amount_untaxed', currency_field='currency')
-    amount_tax = fields.Monetary(related='invoice_id.amount_tax', currency_field='currency')
-    amount_total = fields.Monetary(related='invoice_id.amount_total', currency_field='currency')
+    invoice_line_ids = fields.One2many(related='invoice_id.invoice_line_ids', readonly=False)
+    amount_untaxed = fields.Monetary(related='invoice_id.amount_untaxed', currency_field='currency_id')
+    amount_tax = fields.Monetary(related='invoice_id.amount_tax', currency_field='currency_id')
+    amount_total = fields.Monetary(related='invoice_id.amount_total', currency_field='currency_id')
     locked = fields.Boolean(related='invoice_id.locked')
 
     debit_account_id = fields.Many2one(
-        'cd.account.account', default=lambda self: self._default_account('default_debit_account'))
+        'cd.account.account', default=lambda self: self._default_account('default_debit_account_id'))
     credit_account_id = fields.Many2one(
-        'cd.account.account', default=lambda self: self._default_account('default_credit_account'))
+        'cd.account.account', default=lambda self: self._default_account('default_credit_account_id'))
 
     @api.model
     def _default_account(self, field):
@@ -48,11 +46,11 @@ class AccountInvoiceDraft(models.Model):
 
     @api.model
     def _default_credit_account(self):
-        return self._default_account('default_credit_account')
+        return self._default_account('default_credit_account_id')
 
     @api.model
     def _default_debit_account(self):
-        return self._default_account('default_debit_account')
+        return self._default_account('default_debit_account_id')
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -73,25 +71,21 @@ class AccountInvoiceDraft(models.Model):
                 raise UserError(_(
                     "No debit/credit account configured for this invoice, its "
                     "company, or the Accounting settings."))
-            if debit_account.ledger != credit_account.ledger:
+            if debit_account.ledger_id != credit_account.ledger_id:
                 raise UserError(_("The debit and credit accounts must belong to the same ledger."))
-            ledger = debit_account.ledger
+            ledger = debit_account.ledger_id
 
             invoice = draft.invoice_id
-            invoice.debtor = invoice.debtor.create_locked_copy()
+            invoice.debtor_id = invoice.debtor_id.create_locked_copy()
             if invoice.name == '/':
                 invoice.name = self.env['ir.sequence'].next_by_code('cd.account.invoice') or '/'
 
-            lines = invoice.invoice_lines
-            transfers = [{
+            invoice.transfer_id = self.env['cd.account.transfer'].create({
+                'ledger_id': ledger.id,
+                'code': 1,
+                'amount': round(invoice.amount_total * 10 ** invoice.currency_id.decimal_places),
                 'debit_account_id': debit_account.id,
                 'credit_account_id': credit_account.id,
-                'amount': round(line.price_total * 10 ** invoice.currency.decimal_places),
-                'ledger': ledger.number,
-                'code': 1,
-                'user_data_64': invoice.id,
-            } for line in lines]
-            for line, transfer_id in zip(lines, create_linked_transfers(self.env, transfers)):
-                line.tigerbeetle_id = transfer_id
+            }).id
 
             invoice.locked = True

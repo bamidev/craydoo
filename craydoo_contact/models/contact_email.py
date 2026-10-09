@@ -10,9 +10,9 @@ class ContactEmail(models.Model):
     _rec_name = 'address'
     _order = 'is_primary desc, id'
 
-    contact_info = fields.Many2one('cd.contact.info', required=True, ondelete='cascade')
+    contact_info_id = fields.Many2one('cd.contact.info', required=True, ondelete='cascade')
     address = fields.Char(required=True)
-    locked = fields.Boolean(related='contact_info.locked', store=True)
+    locked = fields.Boolean(related='contact_info_id.locked', store=True)
 
     @api.constrains('address')
     def _check_address(self):

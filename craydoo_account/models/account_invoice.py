@@ -18,27 +18,28 @@ class AccountInvoice(models.Model):
     active = fields.Boolean(default=True)
     locked = fields.Boolean(default=False, copy=False, index=True)
 
-    debtor = fields.Many2one('cd.contact.info', required=True, string="Billed to")
+    debtor_id = fields.Many2one('cd.contact.info', required=True, string="Billed to")
     language = fields.Selection(lambda self: self.env['res.lang'].get_installed())
 
     date = fields.Date(required=True, default=lambda self: fields.Date.context_today(self))
     due_date = fields.Date()
-    currency = fields.Many2one(
+    currency_id = fields.Many2one(
         'res.currency', required=True, default=lambda self: self.env.company.currency_id)
     company_id = fields.Many2one(
         'res.company', required=True, default=lambda self: self.env.company)
 
-    invoice_lines = fields.One2many('cd.account.invoice.line', 'invoice', copy=True)
+    invoice_line_ids = fields.One2many('cd.account.invoice.line', 'invoice_id', copy=True)
+    transfer_id = fields.Many2one('cd.account.transfer', copy=False, index=True, readonly=True)
 
-    amount_untaxed = fields.Monetary(compute='_compute_amounts', store=True, currency_field='currency')
-    amount_tax = fields.Monetary(compute='_compute_amounts', store=True, currency_field='currency')
-    amount_total = fields.Monetary(compute='_compute_amounts', store=True, currency_field='currency')
+    amount_untaxed = fields.Monetary(compute='_compute_amounts', store=True, currency_field='currency_id')
+    amount_tax = fields.Monetary(compute='_compute_amounts', store=True, currency_field='currency_id')
+    amount_total = fields.Monetary(compute='_compute_amounts', store=True, currency_field='currency_id')
 
-    @api.depends('invoice_lines.price_subtotal', 'invoice_lines.price_tax')
+    @api.depends('invoice_line_ids.price_subtotal', 'invoice_line_ids.price_tax')
     def _compute_amounts(self):
         for inv in self:
-            inv.amount_untaxed = sum(inv.invoice_lines.mapped('price_subtotal'))
-            inv.amount_tax = sum(inv.invoice_lines.mapped('price_tax'))
+            inv.amount_untaxed = sum(inv.invoice_line_ids.mapped('price_subtotal'))
+            inv.amount_tax = sum(inv.invoice_line_ids.mapped('price_tax'))
             inv.amount_total = inv.amount_untaxed + inv.amount_tax
 
     def write(self, vals):

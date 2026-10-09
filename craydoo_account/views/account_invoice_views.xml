@@ -5,7 +5,7 @@
         <field name="arch" type="xml">
             <list>
                 <field name="name"/>
-                <field name="debtor"/>
+                <field name="debtor_id"/>
                 <field name="date"/>
                 <field name="amount_total"/>
             </list>
@@ -19,20 +19,20 @@
             <form create="false" edit="false">
                 <sheet>
                     <group>
-                        <field name="debtor"/>
+                        <field name="debtor_id"/>
                         <field name="language"/>
                         <field name="date"/>
                         <field name="due_date"/>
-                        <field name="currency"/>
+                        <field name="currency_id"/>
                     </group>
                     <notebook>
                         <page string="Invoice Lines">
-                            <field name="invoice_lines">
+                            <field name="invoice_line_ids">
                                 <list>
                                     <field name="name"/>
                                     <field name="quantity"/>
                                     <field name="price_unit"/>
-                                    <field name="taxes" widget="many2many_tags"/>
+                                    <field name="tax_ids" widget="many2many_tags"/>
                                     <field name="price_subtotal"/>
                                     <field name="price_total"/>
                                 </list>
@@ -63,7 +63,7 @@
         <field name="arch" type="xml">
             <list>
                 <field name="name"/>
-                <field name="debtor"/>
+                <field name="debtor_id"/>
                 <field name="date"/>
                 <field name="amount_total"/>
                 <field name="locked"/>
@@ -87,19 +87,19 @@
                         </div>
                     </group>
                     <group>
-                        <field name="debtor" readonly="locked"/>
+                        <field name="debtor_id" readonly="locked"/>
                         <field name="language" readonly="locked"/>
                         <field name="due_date" readonly="locked"/>
-                        <field name="currency" readonly="locked"/>
+                        <field name="currency_id" readonly="locked"/>
                     </group>
                     <notebook>
                         <page string="Invoice Lines">
-                            <field name="invoice_lines" readonly="locked">
+                            <field name="invoice_line_ids" readonly="locked">
                                 <list editable="bottom">
                                     <field name="name"/>
                                     <field name="quantity"/>
                                     <field name="price_unit"/>
-                                    <field name="taxes" widget="many2many_tags"/>
+                                    <field name="tax_ids" widget="many2many_tags"/>
                                     <field name="price_subtotal"/>
                                     <field name="price_total"/>
                                 </list>

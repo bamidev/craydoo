@@ -8,7 +8,7 @@ class ContactPrimariesMixin(models.AbstractModel):
     _name = 'cd.contact.primaries_mixin'
     _description = 'Contact Primaries Mixin'
 
-    _primary_group_field = 'contact_info'
+    _primary_group_field = 'contact_info_id'
 
     is_primary = fields.Boolean(required=True, default=False)
 

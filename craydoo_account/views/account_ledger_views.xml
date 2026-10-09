@@ -4,7 +4,6 @@
         <field name="model">cd.account.ledger</field>
         <field name="arch" type="xml">
             <list editable="bottom" open_form_view="1">
-                <field name="number"/>
                 <field name="name"/>
             </list>
         </field>
@@ -23,7 +22,6 @@
                 <sheet>
                     <group>
                         <field name="name"/>
-                        <field name="number"/>
                     </group>
                 </sheet>
             </form>

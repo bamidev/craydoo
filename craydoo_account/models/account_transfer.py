@@ -1,68 +1,79 @@
-from odoo import fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import UserError
+from odoo.tools import SQL
 
 from ..fields import UInt128
-from .tigerbeetle_client import get_client, get_linked_transfer_ids, is_transfer_linked, query_filter
+
+_IMMUTABLE_SQL = SQL("""
+    CREATE OR REPLACE FUNCTION cd_account_transfer_immutable()
+    RETURNS trigger LANGUAGE plpgsql AS $$
+    BEGIN
+        IF TG_OP = 'DELETE' THEN
+            RAISE EXCEPTION 'Accounting history cannot be deleted';
+        ELSE
+            RAISE EXCEPTION 'Accounting history cannot be changed';
+        END IF;
+    END;
+    $$;
+    DROP TRIGGER IF EXISTS cd_account_transfer_immutable ON cd_account_transfer;
+    CREATE TRIGGER cd_account_transfer_immutable
+        BEFORE UPDATE OR DELETE ON cd_account_transfer
+        FOR EACH ROW EXECUTE FUNCTION cd_account_transfer_immutable();
+""")
 
 
 class AccountTransfer(models.Model):
-    """ A Tigerbeetle transfer, viewed live - no local copy. The record's
-    own `id` *is* the Tigerbeetle transfer id, same reasoning as
-    `cd.account.account`.
+    """ A posted double-entry transfer between two `cd.account.account`
+    records. Immutable once created - a transfer is a historical fact, not
+    something to revise after posting. Blocked at both the ORM level
+    (`write`/`unlink` below) and, as a backstop against anything that goes
+    around the ORM, by a Postgres trigger (`_auto_init`) that rejects every
+    update/delete unconditionally.
 
-    Only searching by id, or with no filter at all (page through
-    everything), is supported - see `cd.account.account` for why.
+    `backward_link_id`/`forward_link_ids` chain transfers that were posted
+    together as one atomic unit (e.g. every line of one invoice), so the
+    whole batch can still be walked as a group after the fact. `linked_ids`
+    is the full chain in both directions, for display.
     """
     _name = 'cd.account.transfer'
-    _description = 'Tigerbeetle Transfer'
-    _inherit = ['cd.account.tigerbeetle.record']
-    _rec_name = 'id'
+    _description = 'Transfer'
+    _order = 'id'
 
-    ledger = fields.Many2one('cd.account.ledger', readonly=True)
-    code = fields.Integer(readonly=True)
-    amount = UInt128(readonly=True)
-    debit_account = fields.Many2one('cd.account.account', readonly=True)
-    credit_account = fields.Many2one('cd.account.account', readonly=True)
-    flag_linked = fields.Boolean(readonly=True)
-    linked_ids = fields.Many2many('cd.account.transfer', store=False, readonly=True)
+    ledger_id = fields.Many2one('cd.account.ledger', required=True, readonly=True)
+    code = fields.Integer(required=True, readonly=True)
+    amount = UInt128(required=True, readonly=True)
+    debit_account_id = fields.Many2one(
+        'cd.account.account', required=True, readonly=True, ondelete='restrict')
+    credit_account_id = fields.Many2one(
+        'cd.account.account', required=True, readonly=True, ondelete='restrict')
 
-    def _tb_fetch(self, ids, field_names):
-        if not ids:
-            return {}
-        transfers = get_client(self.env).lookup_transfers(list(ids))
-        ledgers = {
-            l.number: l for l in self.env['cd.account.ledger'].search(
-                [('number', 'in', [t.ledger for t in transfers])])
-        }
-        account_ids = {t.debit_account_id for t in transfers} | {t.credit_account_id for t in transfers}
-        accounts = {
-            a.tigerbeetle_id: a for a in self.env['cd.account.account'].search(
-                [('tigerbeetle_id', 'in', list(account_ids))])
-        }
-        data = {}
-        for t in transfers:
-            ledger = ledgers.get(t.ledger)
-            debit = accounts.get(t.debit_account_id)
-            credit = accounts.get(t.credit_account_id)
-            row = {
-                'ledger': (ledger.id, ledger.display_name) if ledger else False,
-                'code': t.code,
-                'amount': t.amount,
-                'debit_account': (debit.id, debit.display_name) if debit else False,
-                'credit_account': (credit.id, credit.display_name) if credit else False,
-                'flag_linked': is_transfer_linked(t.flags),
-            }
-            if 'linked_ids' in field_names:
-                row['linked_ids'] = get_linked_transfer_ids(self.env, t)
-            data[t.id] = row
-        return data
+    backward_link_id = fields.Many2one(
+        'cd.account.transfer', readonly=True, ondelete='restrict')
+    forward_link_ids = fields.One2many(
+        'cd.account.transfer', 'backward_link_id', readonly=True)
+    linked_ids = fields.Many2many('cd.account.transfer', compute='_compute_linked_ids')
 
-    def _tb_search_ids(self, domain):
-        client = get_client(self.env)
-        ids = self._tb_ids_from_domain(domain)
-        if ids is not None:
-            return [t.id for t in client.lookup_transfers(ids)]
-        if domain:
-            raise NotImplementedError(
-                "cd.account.transfer only supports searching by id; browse a "
-                "specific id instead of filtering.")
-        return [t.id for t in client.query_transfers(query_filter())]
+    @api.depends('backward_link_id', 'forward_link_ids')
+    def _compute_linked_ids(self):
+        for transfer in self:
+            linked = self.env['cd.account.transfer']
+            cur = transfer.backward_link_id
+            while cur:
+                linked |= cur
+                cur = cur.backward_link_id
+            cur = transfer.forward_link_ids
+            while cur:
+                linked |= cur
+                cur = cur.forward_link_ids
+            transfer.linked_ids = linked
+
+    def _auto_init(self):
+        result = super()._auto_init()
+        self.env.cr.execute(_IMMUTABLE_SQL)
+        return result
+
+    def write(self, vals):
+        raise UserError(_("Accounting history cannot be changed."))
+
+    def unlink(self):
+        raise UserError(_("Accounting history cannot be deleted."))
