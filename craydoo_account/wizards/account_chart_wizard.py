@@ -22,10 +22,17 @@ class AccountChartWizard(models.TransientModel):
         entries = self.chart_id.account_ids
         if not entries:
             raise UserError(_("This chart of accounts has no accounts to create."))
-        if self.env['cd.account.account'].search_count([('ledger', '=', self.ledger_id.id)]):
-            raise UserError(_(
-                "%(ledger)s already has accounts. Choose an empty ledger.",
-                ledger=self.ledger_id.name))
+        if not self.env.context.get('force_apply') and self.env['cd.account.account'].search_count(
+                [('ledger', '=', self.ledger_id.id)]):
+            return {
+                'type': 'ir.actions.act_window',
+                'name': _("Confirm"),
+                'res_model': self._name,
+                'res_id': self.id,
+                'view_mode': 'form',
+                'view_id': self.env.ref('craydoo_account.view_account_chart_wizard_confirm').id,
+                'target': 'new',
+            }
 
         accounts = self.env['cd.account.account'].create([{
             'ledger': self.ledger_id.id,

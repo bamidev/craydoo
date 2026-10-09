@@ -4,9 +4,9 @@
         <field name="model">cd.account.account</field>
         <field name="arch" type="xml">
             <list delete="false">
-                <field name="ledger"/>
+                <field name="name"/>
                 <field name="code"/>
-                <field name="active"/>
+                <field name="ledger" optional="hide"/>
             </list>
         </field>
     </record>

@@ -7,10 +7,28 @@
                 <group>
                     <field name="company_id" groups="base.group_multi_company"/>
                     <field name="chart_id"/>
-                    <field name="ledger_id"/>
+                    <field name="ledger_id" invisible="1"/>
                 </group>
                 <footer>
                     <button name="action_apply" type="object" string="Apply" class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_account_chart_wizard_confirm" model="ir.ui.view">
+        <field name="name">cd.account.chart.wizard.confirm</field>
+        <field name="model">cd.account.chart.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <div class="alert alert-warning" role="alert">
+                    <field name="ledger_id" readonly="1"/> already has accounts.
+                    Applying this chart will add more accounts to it.
+                </div>
+                <footer>
+                    <button name="action_apply" type="object" string="Apply Anyway"
+                            class="btn-primary" context="{'force_apply': 1}"/>
                     <button string="Cancel" special="cancel" class="btn-secondary"/>
                 </footer>
             </form>
@@ -21,9 +39,7 @@
         <field name="name">Apply Chart of Accounts</field>
         <field name="res_model">cd.account.chart.wizard</field>
         <field name="view_mode">form</field>
+        <field name="view_id" ref="view_account_chart_wizard_form"/>
         <field name="target">new</field>
     </record>
-
-    <menuitem id="menu_account_chart_wizard" name="Apply Chart of Accounts"
-              parent="menu_account_config" action="action_account_chart_wizard" sequence="20"/>
 </odoo>

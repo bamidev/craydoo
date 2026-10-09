@@ -3,10 +3,30 @@
         <field name="name">cd.account.ledger.list</field>
         <field name="model">cd.account.ledger</field>
         <field name="arch" type="xml">
-            <list editable="bottom">
+            <list editable="bottom" open_form_view="1">
                 <field name="number"/>
                 <field name="name"/>
             </list>
+        </field>
+    </record>
+
+    <record id="view_account_ledger_form" model="ir.ui.view">
+        <field name="name">cd.account.ledger.form</field>
+        <field name="model">cd.account.ledger</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="%(craydoo_account.action_account_chart_wizard)d" type="action"
+                            string="Apply Chart of Accounts" class="btn-primary"
+                            context="{'default_ledger_id': id}"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="number"/>
+                    </group>
+                </sheet>
+            </form>
         </field>
     </record>
 
