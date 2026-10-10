@@ -34,6 +34,7 @@
                         <field name="name" />
                         <field name="ledger_id" readonly="id"/>
                         <field name="code" readonly="id"/>
+                        <field name="allow_reconciles"/>
                     </group>
                 </sheet>
             </form>

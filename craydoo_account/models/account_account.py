@@ -21,6 +21,7 @@ class AccountAccount(models.Model):
 
     code = fields.Char(required=True, readonly=True, size=8)
     ledger_id = fields.Many2one('cd.account.ledger', required=True, readonly=True)
+    allow_reconciles = fields.Boolean(default=False)
 
     fiscal_year_balance_ids = fields.One2many('cd.account.fiscal.year.account.balance', 'account_id')
     debit_total = UBigInteger(compute='_compute_totals', store=True)

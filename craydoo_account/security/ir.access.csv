@@ -21,3 +21,6 @@ access_cd_account_fiscal_year_user,cd.account.fiscal.year.user,cd.account.fiscal
 access_cd_account_fiscal_year_admin,cd.account.fiscal.year.admin,cd.account.fiscal.year,group_account_admin,cru,
 access_cd_account_fiscal_year_account_balance_user,cd.account.fiscal.year.account.balance.user,cd.account.fiscal.year.account.balance,group_account_user,r,
 access_cd_account_fiscal_year_account_balance_admin,cd.account.fiscal.year.account.balance.admin,cd.account.fiscal.year.account.balance,group_account_admin,r,
+access_cd_account_reconcile_user,cd.account.reconcile.user,cd.account.reconcile,group_account_user,crud,
+access_cd_account_reconcile_part_user,cd.account.reconcile.part.user,cd.account.reconcile.part,group_account_user,crud,
+access_cd_account_reconcile_wizard_user,cd.account.reconcile.wizard.user,cd.account.reconcile.wizard,group_account_user,crud,

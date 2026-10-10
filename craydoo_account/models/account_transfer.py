@@ -56,6 +56,21 @@ class AccountTransfer(models.Model):
     is_linked = fields.Boolean(default=False, readonly=True)
     linked_ids = fields.Many2many('cd.account.transfer', compute='_compute_linked_ids')
 
+    debit_reconcile_part_ids = fields.One2many('cd.account.reconcile.part', 'debit_transfer_id')
+    credit_reconcile_part_ids = fields.One2many('cd.account.reconcile.part', 'credit_transfer_id')
+    reconciled_amount = fields.Integer(compute='_compute_residual_amount')
+    residual_amount = fields.Integer(compute='_compute_residual_amount')
+
+    @api.depends(
+        'amount', 'debit_reconcile_part_ids.amount', 'credit_reconcile_part_ids.amount')
+    def _compute_residual_amount(self):
+        for transfer in self:
+            reconciled = (
+                sum(transfer.debit_reconcile_part_ids.mapped('amount'))
+                + sum(transfer.credit_reconcile_part_ids.mapped('amount')))
+            transfer.reconciled_amount = reconciled
+            transfer.residual_amount = transfer.amount - reconciled
+
     @api.depends('is_linked')
     def _compute_linked_ids(self):
         for transfer in self:

@@ -4,6 +4,7 @@ from . import account_fiscal_year
 from . import account_account
 from . import account_chart
 from . import account_transfer
+from . import account_reconcile
 from . import account_tax_tag
 from . import account_tax_allocation
 from . import account_tax

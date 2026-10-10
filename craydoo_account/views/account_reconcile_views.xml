@@ -1,0 +1,80 @@
+<odoo>
+    <record id="view_account_reconcile_part_list" model="ir.ui.view">
+        <field name="name">cd.account.reconcile.part.list</field>
+        <field name="model">cd.account.reconcile.part</field>
+        <field name="arch" type="xml">
+            <list create="false" delete="false">
+                <field name="account_id"/>
+                <field name="debit_transfer_id"/>
+                <field name="credit_transfer_id"/>
+                <field name="amount"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_account_reconcile_list" model="ir.ui.view">
+        <field name="name">cd.account.reconcile.list</field>
+        <field name="model">cd.account.reconcile</field>
+        <field name="arch" type="xml">
+            <list create="false" delete="false">
+                <field name="id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_account_reconcile_form" model="ir.ui.view">
+        <field name="name">cd.account.reconcile.form</field>
+        <field name="model">cd.account.reconcile</field>
+        <field name="arch" type="xml">
+            <form create="false" delete="false">
+                <sheet>
+                    <field name="part_ids">
+                        <list>
+                            <field name="account_id"/>
+                            <field name="debit_transfer_id"/>
+                            <field name="credit_transfer_id"/>
+                            <field name="amount"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_account_reconcile" model="ir.actions.act_window">
+        <field name="name">Reconciliations</field>
+        <field name="res_model">cd.account.reconcile</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_account_reconcile_wizard_form" model="ir.ui.view">
+        <field name="name">cd.account.reconcile.wizard.form</field>
+        <field name="model">cd.account.reconcile.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="account_id"/>
+                    <field name="debit_transfer_id"/>
+                    <field name="credit_transfer_id"/>
+                    <field name="amount"/>
+                </group>
+                <footer>
+                    <button name="action_reconcile" type="object" string="Reconcile" class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_account_reconcile_wizard" model="ir.actions.act_window">
+        <field name="name">Reconcile</field>
+        <field name="res_model">cd.account.reconcile.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_account_reconcile_wizard" name="Reconcile" parent="menu_account_general_ledger"
+              action="action_account_reconcile_wizard" sequence="15"/>
+    <menuitem id="menu_account_reconcile" name="Reconciliations" parent="menu_account_general_ledger"
+              action="action_account_reconcile" sequence="25"/>
+</odoo>
