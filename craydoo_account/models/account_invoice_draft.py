@@ -131,6 +131,7 @@ class AccountInvoiceDraft(models.Model):
                     'debit_account_id': debit_account.id,
                     'credit_account_id': account.id,
                     'is_linked': i > 0,
+                    'contact_source_id': invoice.debtor_id.source_id.id,
                 })
 
             invoice.transfer_id = last_transfer.id

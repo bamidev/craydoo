@@ -27,6 +27,7 @@ class ContactInfo(models.Model):
     active = fields.Boolean(default=True)
     locked = fields.Boolean(default=False, copy=False, index=True)
     locked_copy_id = fields.Many2one('cd.contact.info', copy=False)
+    source_id = fields.Many2one('cd.contact.info', readonly=True, index=True, copy=False)
 
     email_ids = fields.One2many('cd.contact.email', 'contact_info_id', string='Emails')
     phone_ids = fields.One2many('cd.contact.phone', 'contact_info_id', string='Phone Numbers')
@@ -107,5 +108,5 @@ class ContactInfo(models.Model):
         if self.locked:
             return self
         if not self.locked_copy_id:
-            self.locked_copy_id = self.copy({'locked': True})
+            self.locked_copy_id = self.copy({'locked': True, 'source_id': self.id})
         return self.locked_copy_id

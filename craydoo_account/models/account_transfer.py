@@ -51,6 +51,7 @@ class AccountTransfer(models.Model):
         'cd.account.account', required=True, readonly=True, ondelete='restrict')
     credit_account_id = fields.Many2one(
         'cd.account.account', required=True, readonly=True, ondelete='restrict')
+    contact_source_id = fields.Many2one('cd.contact.info', readonly=True, index=True)
 
     is_linked = fields.Boolean(default=False, readonly=True)
     linked_ids = fields.Many2many('cd.account.transfer', compute='_compute_linked_ids')
