@@ -81,21 +81,21 @@ class TestAccountInvoiceDraft(TransactionCase):
         draft.action_post()
 
         invoice = draft.invoice_id
-        revenue_transfer = invoice.transfer_id
-        self.assertEqual(revenue_transfer.debit_account_id, self.debit_account)
-        self.assertEqual(revenue_transfer.credit_account_id, self.credit_account)
-        self.assertEqual(revenue_transfer.amount, 10000)
 
-        self.assertFalse(revenue_transfer.is_linked)
-        tax_transfer = revenue_transfer.linked_ids
-        self.assertTrue(tax_transfer)
+        # transfer_id is the *last* linked transfer - here, the tax leg.
+        tax_transfer = invoice.transfer_id
         self.assertTrue(tax_transfer.is_linked)
         self.assertEqual(tax_transfer.debit_account_id, self.debit_account)
         self.assertEqual(tax_transfer.credit_account_id, vat_account)
         self.assertEqual(tax_transfer.amount, 2100)
 
-        self.assertIn(tax_transfer, revenue_transfer.linked_ids)
-        self.assertIn(revenue_transfer, tax_transfer.linked_ids)
+        # transfer_ids (transfer_id.linked_ids) finds the rest of the chain.
+        self.assertEqual(invoice.transfer_ids, tax_transfer.linked_ids)
+        revenue_transfer = invoice.transfer_ids
+        self.assertFalse(revenue_transfer.is_linked)
+        self.assertEqual(revenue_transfer.debit_account_id, self.debit_account)
+        self.assertEqual(revenue_transfer.credit_account_id, self.credit_account)
+        self.assertEqual(revenue_transfer.amount, 10000)
 
     def test_action_post_requires_tax_allocation(self):
         tax = self.env['cd.account.tax'].create({

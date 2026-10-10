@@ -31,6 +31,7 @@ class AccountInvoice(models.Model):
 
     invoice_line_ids = fields.One2many('cd.account.invoice.line', 'invoice_id', copy=True)
     transfer_id = fields.Many2one('cd.account.transfer', copy=False, index=True, readonly=True)
+    transfer_ids = fields.Many2many('cd.account.transfer', related='transfer_id.linked_ids')
 
     amount_untaxed = fields.Monetary(compute='_compute_amounts', store=True, currency_field='currency_id')
     amount_tax = fields.Monetary(compute='_compute_amounts', store=True, currency_field='currency_id')

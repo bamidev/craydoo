@@ -121,9 +121,9 @@ class AccountInvoiceDraft(models.Model):
                         "%(account)s doesn't belong to the same ledger as %(debit_account)s.",
                         account=account.name, debit_account=debit_account.name))
 
-            first_transfer = None
+            last_transfer = None
             for i, (account, amount) in enumerate(legs):
-                transfer = self.env['cd.account.transfer'].create({
+                last_transfer = self.env['cd.account.transfer'].create({
                     'date': fields.Date.context_today(self),
                     'ledger_id': ledger.id,
                     'type': 'invoice',
@@ -132,9 +132,8 @@ class AccountInvoiceDraft(models.Model):
                     'credit_account_id': account.id,
                     'is_linked': i > 0,
                 })
-                first_transfer = first_transfer or transfer
 
-            invoice.transfer_id = first_transfer.id
-            invoice.date = first_transfer.date
+            invoice.transfer_id = last_transfer.id
+            invoice.date = last_transfer.date
 
             invoice.locked = True
