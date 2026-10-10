@@ -17,3 +17,7 @@ access_cd_account_chart_account_user,cd.account.chart.account.user,cd.account.ch
 access_cd_account_chart_account_admin,cd.account.chart.account.admin,cd.account.chart.account,group_account_admin,crud,
 access_cd_account_chart_wizard_admin,cd.account.chart.wizard.admin,cd.account.chart.wizard,group_account_admin,crud,
 access_cd_account_transfer_user,cd.account.transfer.user,cd.account.transfer,group_account_user,cr,
+access_cd_account_fiscal_year_user,cd.account.fiscal.year.user,cd.account.fiscal.year,group_account_user,r,
+access_cd_account_fiscal_year_admin,cd.account.fiscal.year.admin,cd.account.fiscal.year,group_account_admin,cru,
+access_cd_account_fiscal_year_account_balance_user,cd.account.fiscal.year.account.balance.user,cd.account.fiscal.year.account.balance,group_account_user,r,
+access_cd_account_fiscal_year_account_balance_admin,cd.account.fiscal.year.account.balance.admin,cd.account.fiscal.year.account.balance,group_account_admin,r,

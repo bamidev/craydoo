@@ -2,7 +2,7 @@ from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 from odoo.tools import SQL
 
-from ..fields import BigInteger, UBigInteger
+from ..fields import UBigInteger
 
 _IMMUTABLE_SQL = SQL("""
     CREATE OR REPLACE FUNCTION cd_account_transfer_immutable()
@@ -39,6 +39,7 @@ class AccountTransfer(models.Model):
     _description = 'Transfer'
     _order = 'id'
 
+    date = fields.Date(required=True, readonly=True, default=fields.Date.context_today)
     ledger_id = fields.Many2one('cd.account.ledger', required=True, readonly=True)
     code = fields.Integer(required=True, readonly=True)
     amount = UBigInteger(required=True, readonly=True)
@@ -46,8 +47,6 @@ class AccountTransfer(models.Model):
         'cd.account.account', required=True, readonly=True, ondelete='restrict')
     credit_account_id = fields.Many2one(
         'cd.account.account', required=True, readonly=True, ondelete='restrict')
-    debit_account_total = BigInteger(compute='_compute_account_totals', store=True, readonly=True)
-    credit_account_total = BigInteger(compute='_compute_account_totals', store=True, readonly=True)
 
     backward_link_id = fields.Many2one(
         'cd.account.transfer', readonly=True, ondelete='restrict')
@@ -69,28 +68,32 @@ class AccountTransfer(models.Model):
                 cur = cur.forward_link_ids
             transfer.linked_ids = linked
 
-    def _find_total(self, account_id, exclude_id=False):
-        """ `account_id`'s latest known running total - whichever of
-        `debit_account_total`/`credit_account_total` its most recent prior
-        transfer (on either side) last set, or 0 if it's never appeared on
-        either side of a transfer yet.
+    def _bump_fiscal_year_balance(self, account_id, year, field, amount):
+        """ `sudo()` throughout - regular users can only read
+        `cd.account.fiscal.year`/`cd.account.fiscal.year.account.balance`,
+        but still need to be able to post invoices, which bumps them.
         """
-        domain = ['|', ('debit_account_id', '=', account_id), ('credit_account_id', '=', account_id)]
-        if exclude_id:
-            domain = [('id', '!=', exclude_id)] + domain
-        prev = self.search(domain, order='id desc', limit=1)
-        if not prev:
-            return 0
-        total_field = 'debit_account_total' if prev.debit_account_id.id == account_id else 'credit_account_total'
-        return prev[total_field]
+        FiscalYear = self.env['cd.account.fiscal.year'].sudo()
+        fiscal_year = FiscalYear.search([('year', '=', year)])
+        if not fiscal_year:
+            fiscal_year = FiscalYear.create({'year': year})
 
-    @api.depends('debit_account_id', 'credit_account_id', 'amount')
-    def _compute_account_totals(self):
-        for transfer in self:
-            transfer.debit_account_total = transfer._find_total(
-                transfer.debit_account_id.id, exclude_id=transfer.id) - transfer.amount
-            transfer.credit_account_total = transfer._find_total(
-                transfer.credit_account_id.id, exclude_id=transfer.id) + transfer.amount
+        Balance = self.env['cd.account.fiscal.year.account.balance'].sudo()
+        balance = Balance.search([
+            ('fiscal_year_id', '=', fiscal_year.id), ('account_id', '=', account_id),
+        ])
+        if not balance:
+            balance = Balance.create({'fiscal_year_id': fiscal_year.id, 'account_id': account_id})
+        balance[field] = balance[field] + amount
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        transfers = super().create(vals_list)
+        for transfer in transfers:
+            year = transfer.date.year
+            self._bump_fiscal_year_balance(transfer.debit_account_id.id, year, 'debit_total', transfer.amount)
+            self._bump_fiscal_year_balance(transfer.credit_account_id.id, year, 'credit_total', transfer.amount)
+        return transfers
 
     def _auto_init(self):
         result = super()._auto_init()

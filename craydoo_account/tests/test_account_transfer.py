@@ -1,3 +1,4 @@
+from odoo.exceptions import UserError
 from odoo.tests import TransactionCase, tagged
 
 
@@ -15,36 +16,71 @@ class TestAccountTransfer(TransactionCase):
         ])
         cls.ledger = ledger
 
-    def _post(self, debit_account, credit_account, amount):
+    def _post(self, debit_account, credit_account, amount, date):
         return self.env['cd.account.transfer'].create({
-            'ledger_id': self.ledger.id, 'code': 1, 'amount': amount,
+            'date': date, 'ledger_id': self.ledger.id, 'code': 1, 'amount': amount,
             'debit_account_id': debit_account.id, 'credit_account_id': credit_account.id,
         })
 
+    def _balance(self, account, year):
+        return self.env['cd.account.fiscal.year.account.balance'].search([
+            ('account_id', '=', account.id), ('fiscal_year_id.year', '=', year),
+        ])
+
     def test_totals_stay_correct_across_several_transfers(self):
-        # A --100--> B: A is debited (-100), B is credited (+100).
-        transfer1 = self._post(self.account_a, self.account_b, 100)
-        self.assertEqual(transfer1.debit_account_total, -100)
-        self.assertEqual(transfer1.credit_account_total, 100)
+        # All within the same (safely past, never "current") fiscal year.
+        self._post(self.account_a, self.account_b, 100, '2020-01-10')
+        self._post(self.account_b, self.account_c, 50, '2020-02-10')
+        self._post(self.account_a, self.account_c, 30, '2020-03-10')
 
-        # B --50--> C: B was last credited to 100, now debited.
-        transfer2 = self._post(self.account_b, self.account_c, 50)
-        self.assertEqual(transfer2.debit_account_total, 50)
-        self.assertEqual(transfer2.credit_account_total, 50)
+        balance_a = self._balance(self.account_a, 2020)
+        balance_b = self._balance(self.account_b, 2020)
+        balance_c = self._balance(self.account_c, 2020)
 
-        # A --30--> C: A was last debited to -100; C was last credited to 50.
-        transfer3 = self._post(self.account_a, self.account_c, 30)
-        self.assertEqual(transfer3.debit_account_total, -130)
-        self.assertEqual(transfer3.credit_account_total, 80)
+        self.assertEqual(balance_a.debit_total, 130)
+        self.assertEqual(balance_a.credit_total, 0)
+        self.assertEqual(balance_a.closing_debit, 130)
+        self.assertEqual(balance_a.closing_credit, 0)
+        self.assertEqual(balance_a.closing_balance, -130)
 
-        # Earlier transfers keep their own snapshot - nothing retroactively changes.
-        self.assertEqual(transfer1.debit_account_total, -100)
-        self.assertEqual(transfer1.credit_account_total, 100)
-        self.assertEqual(transfer2.debit_account_total, 50)
-        self.assertEqual(transfer2.credit_account_total, 50)
+        self.assertEqual(balance_b.debit_total, 50)
+        self.assertEqual(balance_b.credit_total, 100)
+        self.assertEqual(balance_b.closing_balance, 50)
 
-        # cd.account.account.total reflects each account's latest transfer,
-        # and can be negative (A has only ever been debited).
-        self.assertEqual(self.account_a.total, -130)
-        self.assertEqual(self.account_b.total, 50)
-        self.assertEqual(self.account_c.total, 80)
+        self.assertEqual(balance_c.debit_total, 0)
+        self.assertEqual(balance_c.credit_total, 80)
+        self.assertEqual(balance_c.closing_balance, 80)
+
+        # cd.account.account totals sum/filter across its fiscal year balances.
+        self.assertEqual(self.account_a.debit_total, 130)
+        self.assertEqual(self.account_a.credit_total, 0)
+        self.assertEqual(self.account_a.debit_year_total, 0)  # 2020 isn't the current year
+        self.assertEqual(self.account_a.credit_year_total, 0)
+
+    def test_opening_balance_carries_forward_to_next_year(self):
+        self._post(self.account_a, self.account_b, 100, '2020-06-01')
+        self._post(self.account_a, self.account_b, 40, '2021-01-15')
+
+        balance_2020 = self._balance(self.account_a, 2020)
+        balance_2021 = self._balance(self.account_a, 2021)
+
+        self.assertEqual(balance_2020.closing_debit, 100)
+        self.assertEqual(balance_2020.closing_credit, 0)
+        self.assertEqual(balance_2020.closing_balance, -100)
+
+        # 2021 opens with exactly what 2020 closed with.
+        self.assertEqual(balance_2021.opening_debit, 100)
+        self.assertEqual(balance_2021.opening_credit, 0)
+        self.assertEqual(balance_2021.opening_balance, -100)
+
+        # Plus its own year's activity on top.
+        self.assertEqual(balance_2021.debit_total, 40)
+        self.assertEqual(balance_2021.closing_debit, 140)
+        self.assertEqual(balance_2021.closing_balance, -140)
+
+    def test_transfer_is_immutable(self):
+        transfer = self._post(self.account_a, self.account_b, 10, '2020-01-01')
+        with self.assertRaises(UserError):
+            transfer.write({'amount': 1})
+        with self.assertRaises(UserError):
+            transfer.unlink()
