@@ -27,6 +27,25 @@ class UBigInteger(fields.Integer):
             cr, lambda cr: sql.add_constraint(cr, model._table, conname, definition), conname)
 
 
+class UInteger(fields.Integer):
+    """ Non-negative integer, stored as Postgres's native `integer` (`int4`)
+    - just a CHECK constraint restricting it to 0 or above, no column-type
+    override needed.
+    """
+    def update_db_column(self, model, column):
+        super().update_db_column(model, column)
+        cr = model.env.cr
+        conname = f'{model._table}_{self.name}_uinteger'
+        definition = f'CHECK ({self.name} >= 0)'
+        current_definition = sql.constraint_definition(cr, model._table, conname)
+        if current_definition == definition:
+            return
+        if current_definition:
+            sql.drop_constraint(cr, model._table, conname)
+        model.pool.post_constraint(
+            cr, lambda cr: sql.add_constraint(cr, model._table, conname, definition), conname)
+
+
 class BigInteger(fields.Integer):
     """ Signed 64-bit integer, stored as a native Postgres `bigint` (`int8`)
     instead of the usual 32-bit `integer` - for values that need the full

@@ -18,7 +18,7 @@ class TestAccountTransfer(TransactionCase):
 
     def _post(self, debit_account, credit_account, amount, date):
         return self.env['cd.account.transfer'].create({
-            'date': date, 'ledger_id': self.ledger.id, 'code': 1, 'amount': amount,
+            'date': date, 'ledger_id': self.ledger.id, 'type': 'invoice', 'amount': amount,
             'debit_account_id': debit_account.id, 'credit_account_id': credit_account.id,
         })
 

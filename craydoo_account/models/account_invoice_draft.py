@@ -82,7 +82,7 @@ class AccountInvoiceDraft(models.Model):
 
             transfer = self.env['cd.account.transfer'].create({
                 'ledger_id': ledger.id,
-                'code': 1,
+                'type': 'invoice',
                 'amount': round(invoice.amount_total * 10 ** invoice.currency_id.decimal_places),
                 'debit_account_id': debit_account.id,
                 'credit_account_id': credit_account.id,

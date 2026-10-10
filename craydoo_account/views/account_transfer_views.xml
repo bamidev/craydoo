@@ -6,7 +6,7 @@
             <list create="false" delete="false">
                 <field name="id"/>
                 <field name="ledger_id"/>
-                <field name="code"/>
+                <field name="type"/>
                 <field name="debit_account_id"/>
                 <field name="credit_account_id"/>
                 <field name="amount"/>
@@ -22,7 +22,7 @@
                 <sheet>
                     <group>
                         <field name="ledger_id"/>
-                        <field name="code"/>
+                        <field name="type"/>
                         <field name="linked_ids"/>
                     </group>
                     <group string="Amount">

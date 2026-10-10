@@ -2,7 +2,11 @@ from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 from odoo.tools import SQL
 
-from ..fields import UBigInteger
+from ..fields import UInteger
+
+TRANSFER_TYPES = [
+    ('invoice', 'Invoice'),
+]
 
 _IMMUTABLE_SQL = SQL("""
     CREATE OR REPLACE FUNCTION cd_account_transfer_immutable()
@@ -39,10 +43,10 @@ class AccountTransfer(models.Model):
     _description = 'Transfer'
     _order = 'id'
 
+    amount = UInteger(required=True, readonly=True)
     date = fields.Date(required=True, readonly=True, default=fields.Date.context_today)
     ledger_id = fields.Many2one('cd.account.ledger', required=True, readonly=True)
-    code = fields.Integer(required=True, readonly=True)
-    amount = UBigInteger(required=True, readonly=True)
+    type = fields.Selection(TRANSFER_TYPES, required=True, readonly=True)
     debit_account_id = fields.Many2one(
         'cd.account.account', required=True, readonly=True, ondelete='restrict')
     credit_account_id = fields.Many2one(
