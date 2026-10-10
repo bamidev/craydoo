@@ -2,7 +2,7 @@ from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 from odoo.tools import SQL
 
-from ..fields import UInt128
+from ..fields import BigInteger, UBigInteger
 
 _IMMUTABLE_SQL = SQL("""
     CREATE OR REPLACE FUNCTION cd_account_transfer_immutable()
@@ -41,11 +41,13 @@ class AccountTransfer(models.Model):
 
     ledger_id = fields.Many2one('cd.account.ledger', required=True, readonly=True)
     code = fields.Integer(required=True, readonly=True)
-    amount = UInt128(required=True, readonly=True)
+    amount = UBigInteger(required=True, readonly=True)
     debit_account_id = fields.Many2one(
         'cd.account.account', required=True, readonly=True, ondelete='restrict')
     credit_account_id = fields.Many2one(
         'cd.account.account', required=True, readonly=True, ondelete='restrict')
+    debit_account_total = BigInteger(compute='_compute_account_totals', store=True, readonly=True)
+    credit_account_total = BigInteger(compute='_compute_account_totals', store=True, readonly=True)
 
     backward_link_id = fields.Many2one(
         'cd.account.transfer', readonly=True, ondelete='restrict')
@@ -66,6 +68,29 @@ class AccountTransfer(models.Model):
                 linked |= cur
                 cur = cur.forward_link_ids
             transfer.linked_ids = linked
+
+    def _find_total(self, account_id, exclude_id=False):
+        """ `account_id`'s latest known running total - whichever of
+        `debit_account_total`/`credit_account_total` its most recent prior
+        transfer (on either side) last set, or 0 if it's never appeared on
+        either side of a transfer yet.
+        """
+        domain = ['|', ('debit_account_id', '=', account_id), ('credit_account_id', '=', account_id)]
+        if exclude_id:
+            domain = [('id', '!=', exclude_id)] + domain
+        prev = self.search(domain, order='id desc', limit=1)
+        if not prev:
+            return 0
+        total_field = 'debit_account_total' if prev.debit_account_id.id == account_id else 'credit_account_total'
+        return prev[total_field]
+
+    @api.depends('debit_account_id', 'credit_account_id', 'amount')
+    def _compute_account_totals(self):
+        for transfer in self:
+            transfer.debit_account_total = transfer._find_total(
+                transfer.debit_account_id.id, exclude_id=transfer.id) - transfer.amount
+            transfer.credit_account_total = transfer._find_total(
+                transfer.credit_account_id.id, exclude_id=transfer.id) + transfer.amount
 
     def _auto_init(self):
         result = super()._auto_init()

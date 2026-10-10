@@ -1,5 +1,7 @@
 from odoo import fields, models
 
+from ..fields import BigInteger
+
 
 class AccountAccount(models.Model):
     """ An accounting account.
@@ -19,3 +21,9 @@ class AccountAccount(models.Model):
 
     code = fields.Char(required=True, readonly=True, size=8)
     ledger_id = fields.Many2one('cd.account.ledger', required=True, readonly=True)
+
+    total = BigInteger(compute='_compute_total')
+
+    def _compute_total(self):
+        for account in self:
+            account.total = self.env['cd.account.transfer']._find_total(account.id)

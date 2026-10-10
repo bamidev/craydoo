@@ -1,24 +1,23 @@
 from odoo import fields
 from odoo.tools import sql
 
-UINT128_MAX = (1 << 128) - 1
+UBIGINTEGER_MAX = (1 << 63) - 1
 
 
-class UInt128(fields.Integer):
-    """ Unsigned 128-bit integer, for Tigerbeetle ids: plain `fields.Integer`
-    maps to a 32-bit Postgres column, and even `bigint` only covers 64 bits
-    signed - neither can hold a Tigerbeetle id, which is a u128. Postgres has
-    no native 128-bit integer type, so this is stored as an unbounded
-    `numeric` column with a CHECK constraint restricting it to the uint128
-    range.
+class UBigInteger(fields.Integer):
+    """ Non-negative integer stored as a native Postgres `bigint` (`int8`).
+    `bigint` itself is signed 64-bit, and Postgres has no native unsigned
+    integer type at all, so this only ever uses the non-negative half of
+    that range - 0 to 2**63-1 (63 bits of magnitude, not 64) - via a CHECK
+    constraint.
     """
-    _column_type = ('numeric', 'numeric')
+    _column_type = ('int8', 'bigint')
 
     def update_db_column(self, model, column):
         super().update_db_column(model, column)
         cr = model.env.cr
-        conname = f'{model._table}_{self.name}_uint128'
-        definition = f'CHECK ({self.name} BETWEEN 0 AND {UINT128_MAX})'
+        conname = f'{model._table}_{self.name}_ubiginteger'
+        definition = f'CHECK ({self.name} BETWEEN 0 AND {UBIGINTEGER_MAX})'
         current_definition = sql.constraint_definition(cr, model._table, conname)
         if current_definition == definition:
             return
@@ -26,6 +25,16 @@ class UInt128(fields.Integer):
             sql.drop_constraint(cr, model._table, conname)
         model.pool.post_constraint(
             cr, lambda cr: sql.add_constraint(cr, model._table, conname, definition), conname)
+
+
+class BigInteger(fields.Integer):
+    """ Signed 64-bit integer, stored as a native Postgres `bigint` (`int8`)
+    instead of the usual 32-bit `integer` - for values that need the full
+    64-bit signed range and can legitimately go negative (e.g. a running
+    account balance), unlike `UBigInteger`. No CHECK constraint needed:
+    `bigint`'s native range already *is* the signed 64-bit range.
+    """
+    _column_type = ('int8', 'bigint')
 
 
 class PartitionedMany2one(fields.Many2one):
