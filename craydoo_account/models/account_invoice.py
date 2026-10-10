@@ -50,6 +50,21 @@ class AccountInvoice(models.Model):
                 raise UserError(_("Only unlocked invoices can be archived."))
         return super().write(vals)
 
+    def _tax_breakdown(self):
+        """ `{tax: amount}` for every tax used on this invoice's lines,
+        amount aggregated across all lines it applies to.
+        """
+        self.ensure_one()
+        totals = {}
+        for line in self.invoice_line_ids:
+            if not line.tax_ids:
+                continue
+            res = line.tax_ids.compute_all(line.price_unit, quantity=line.quantity)
+            for entry in res['taxes']:
+                tax = self.env['cd.account.tax'].browse(entry['id'])
+                totals[tax] = totals.get(tax, 0.0) + entry['amount']
+        return totals
+
     @api.model
     def _cron_ensure_partitions(self):
         """ Keep the forward end of every partitioned table's range

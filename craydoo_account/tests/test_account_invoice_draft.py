@@ -61,3 +61,51 @@ class TestAccountInvoiceDraft(TransactionCase):
             transfer.write({'amount': 1})
         with self.assertRaises(UserError):
             transfer.unlink()
+
+    def test_action_post_splits_tax_across_allocations(self):
+        vat_account = self.env['cd.account.account'].create({
+            'name': 'VAT Payable', 'code': '2200', 'ledger_id': self.ledger.id,
+        })
+        tax = self.env['cd.account.tax'].create({
+            'name': '21%', 'amount_type': 'percent', 'amount': 21.0,
+            'invoice_line_ids': [Command.create({'account_id': vat_account.id, 'percentage': 100.0})],
+        })
+        draft = self.env['cd.account.invoice.draft'].create({
+            'debtor_id': self.contact.contact_info_id.id,
+            'debit_account_id': self.debit_account.id,
+            'credit_account_id': self.credit_account.id,
+            'invoice_line_ids': [Command.create({
+                'name': 'Line', 'price_unit': 100.0, 'tax_ids': [Command.link(tax.id)],
+            })],
+        })
+        draft.action_post()
+
+        invoice = draft.invoice_id
+        revenue_transfer = invoice.transfer_id
+        self.assertEqual(revenue_transfer.debit_account_id, self.debit_account)
+        self.assertEqual(revenue_transfer.credit_account_id, self.credit_account)
+        self.assertEqual(revenue_transfer.amount, 10000)
+
+        tax_transfer = revenue_transfer.forward_link_ids
+        self.assertTrue(tax_transfer)
+        self.assertEqual(tax_transfer.debit_account_id, self.debit_account)
+        self.assertEqual(tax_transfer.credit_account_id, vat_account)
+        self.assertEqual(tax_transfer.amount, 2100)
+
+        self.assertIn(tax_transfer, revenue_transfer.linked_ids)
+        self.assertIn(revenue_transfer, tax_transfer.linked_ids)
+
+    def test_action_post_requires_tax_allocation(self):
+        tax = self.env['cd.account.tax'].create({
+            'name': '21% unconfigured', 'amount_type': 'percent', 'amount': 21.0,
+        })
+        draft = self.env['cd.account.invoice.draft'].create({
+            'debtor_id': self.contact.contact_info_id.id,
+            'debit_account_id': self.debit_account.id,
+            'credit_account_id': self.credit_account.id,
+            'invoice_line_ids': [Command.create({
+                'name': 'Line', 'price_unit': 100.0, 'tax_ids': [Command.link(tax.id)],
+            })],
+        })
+        with self.assertRaises(UserError):
+            draft.action_post()
