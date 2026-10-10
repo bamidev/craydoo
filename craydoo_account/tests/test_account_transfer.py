@@ -16,10 +16,11 @@ class TestAccountTransfer(TransactionCase):
         ])
         cls.ledger = ledger
 
-    def _post(self, debit_account, credit_account, amount, date):
+    def _post(self, debit_account, credit_account, amount, date, is_linked=False):
         return self.env['cd.account.transfer'].create({
             'date': date, 'ledger_id': self.ledger.id, 'type': 'invoice', 'amount': amount,
             'debit_account_id': debit_account.id, 'credit_account_id': credit_account.id,
+            'is_linked': is_linked,
         })
 
     def _balance(self, account, year):
@@ -77,6 +78,18 @@ class TestAccountTransfer(TransactionCase):
         self.assertEqual(balance_2021.debit_total, 40)
         self.assertEqual(balance_2021.closing_debit, 140)
         self.assertEqual(balance_2021.closing_balance, -140)
+
+    def test_linked_ids_walks_the_whole_chain_both_ways(self):
+        t1 = self._post(self.account_a, self.account_b, 10, '2020-01-01')
+        t2 = self._post(self.account_a, self.account_c, 20, '2020-01-01', is_linked=True)
+        t3 = self._post(self.account_b, self.account_c, 30, '2020-01-01', is_linked=True)
+        # Not part of the chain - adjacent by id, but not flagged as linked.
+        t4 = self._post(self.account_a, self.account_b, 40, '2020-01-01')
+
+        self.assertEqual(t1.linked_ids, t2 | t3)
+        self.assertEqual(t2.linked_ids, t1 | t3)
+        self.assertEqual(t3.linked_ids, t1 | t2)
+        self.assertFalse(t4.linked_ids)
 
     def test_transfer_is_immutable(self):
         transfer = self._post(self.account_a, self.account_b, 10, '2020-01-01')

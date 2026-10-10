@@ -52,24 +52,29 @@ class AccountTransfer(models.Model):
     credit_account_id = fields.Many2one(
         'cd.account.account', required=True, readonly=True, ondelete='restrict')
 
-    backward_link_id = fields.Many2one(
-        'cd.account.transfer', readonly=True, ondelete='restrict')
-    forward_link_ids = fields.One2many(
-        'cd.account.transfer', 'backward_link_id', readonly=True)
+    is_linked = fields.Boolean(default=False, readonly=True)
     linked_ids = fields.Many2many('cd.account.transfer', compute='_compute_linked_ids')
 
-    @api.depends('backward_link_id', 'forward_link_ids')
+    @api.depends('is_linked')
     def _compute_linked_ids(self):
         for transfer in self:
             linked = self.env['cd.account.transfer']
-            cur = transfer.backward_link_id
-            while cur:
+
+            cur = transfer
+            while cur.is_linked:
+                cur = self.browse(cur.id - 1)
+                if not cur.exists():
+                    break
                 linked |= cur
-                cur = cur.backward_link_id
-            cur = transfer.forward_link_ids
-            while cur:
-                linked |= cur
-                cur = cur.forward_link_ids
+
+            cur = transfer
+            while True:
+                nxt = self.browse(cur.id + 1)
+                if not (nxt.exists() and nxt.is_linked):
+                    break
+                linked |= nxt
+                cur = nxt
+
             transfer.linked_ids = linked
 
     def _bump_fiscal_year_balance(self, account_id, year, field, amount):
@@ -92,6 +97,12 @@ class AccountTransfer(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        # Held until this transaction commits/rolls back, so every create()
+        # within it - even across several separate calls - sees a table no
+        # one else is concurrently inserting into, keeping `is_linked`'s
+        # "previous id" assumption valid for the whole batch.
+        self.env.cr.execute(SQL("LOCK TABLE cd_account_transfer IN EXCLUSIVE MODE"))
+
         transfers = super().create(vals_list)
         for transfer in transfers:
             year = transfer.date.year

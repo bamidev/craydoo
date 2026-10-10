@@ -86,8 +86,10 @@ class TestAccountInvoiceDraft(TransactionCase):
         self.assertEqual(revenue_transfer.credit_account_id, self.credit_account)
         self.assertEqual(revenue_transfer.amount, 10000)
 
-        tax_transfer = revenue_transfer.forward_link_ids
+        self.assertFalse(revenue_transfer.is_linked)
+        tax_transfer = revenue_transfer.linked_ids
         self.assertTrue(tax_transfer)
+        self.assertTrue(tax_transfer.is_linked)
         self.assertEqual(tax_transfer.debit_account_id, self.debit_account)
         self.assertEqual(tax_transfer.credit_account_id, vat_account)
         self.assertEqual(tax_transfer.amount, 2100)
