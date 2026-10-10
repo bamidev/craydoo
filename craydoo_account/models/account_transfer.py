@@ -58,8 +58,8 @@ class AccountTransfer(models.Model):
 
     debit_reconcile_part_ids = fields.One2many('cd.account.reconcile.part', 'debit_transfer_id')
     credit_reconcile_part_ids = fields.One2many('cd.account.reconcile.part', 'credit_transfer_id')
-    reconciled_amount = fields.Integer(compute='_compute_residual_amount')
-    residual_amount = fields.Integer(compute='_compute_residual_amount')
+    reconciled_amount = fields.Integer(compute='_compute_residual_amount', store=True)
+    residual_amount = fields.Integer(compute='_compute_residual_amount', store=True)
 
     @api.depends(
         'amount', 'debit_reconcile_part_ids.amount', 'credit_reconcile_part_ids.amount')
