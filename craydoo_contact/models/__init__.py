@@ -4,6 +4,7 @@ from . import contact_info
 from . import contact_email
 from . import contact_phone
 from . import contact_website
+from . import contact_language
 from . import contact_mixin
 from . import contact_person
 from . import contact_company

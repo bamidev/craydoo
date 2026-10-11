@@ -11,3 +11,5 @@ access_cd_contact_email_user,cd.contact.email.user,cd.contact.email,base.group_u
 access_cd_contact_email_editor,cd.contact.email.editor,cd.contact.email,group_contact_editor,crud,
 access_cd_contact_website_user,cd.contact.website.user,cd.contact.website,base.group_user,r,
 access_cd_contact_website_editor,cd.contact.website.editor,cd.contact.website,group_contact_editor,crud,
+access_cd_contact_language_user,cd.contact.language.user,cd.contact.language,base.group_user,r,
+access_cd_contact_language_editor,cd.contact.language.editor,cd.contact.language,group_contact_editor,crud,

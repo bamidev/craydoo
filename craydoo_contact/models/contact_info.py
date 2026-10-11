@@ -32,10 +32,14 @@ class ContactInfo(models.Model):
     email_ids = fields.One2many('cd.contact.email', 'contact_info_id', string='Emails')
     phone_ids = fields.One2many('cd.contact.phone', 'contact_info_id', string='Phone Numbers')
     website_ids = fields.One2many('cd.contact.website', 'contact_info_id', string='Websites')
+    language_ids = fields.One2many('cd.contact.language', 'contact_info_id', string='Languages')
     main_email = fields.Char(
         compute='_compute_main_email', inverse='_inverse_main_email', string='Email')
     main_phone = fields.Char(
         compute='_compute_main_phone', inverse='_inverse_main_phone', string='Phone')
+    primary_language_id = fields.Many2one(
+        'res.lang', compute='_compute_primary_language_id', inverse='_inverse_primary_language_id',
+        string='Language')
 
     @api.depends('name')
     def _compute_display_name(self):
@@ -78,6 +82,26 @@ class ContactInfo(models.Model):
             else:
                 self.env['cd.contact.phone'].create({
                     'contact_info_id': info.id, 'number': info.main_phone, 'is_primary': True,
+                })
+
+    @api.depends('language_ids.language_id', 'language_ids.is_primary')
+    def _compute_primary_language_id(self):
+        for info in self:
+            language = info.language_ids.filtered('is_primary')[:1] or info.language_ids[:1]
+            info.primary_language_id = language.language_id
+
+    def _inverse_primary_language_id(self):
+        if not self.primary_language_id:
+            return
+
+        for info in self:
+            language = info.language_ids.filtered('is_primary')[:1] or info.language_ids[:1]
+            if language:
+                language.language_id = info.primary_language_id
+            else:
+                self.env['cd.contact.language'].create({
+                    'contact_info_id': info.id, 'language_id': info.primary_language_id.id,
+                    'is_primary': True,
                 })
 
     street = fields.Char()
