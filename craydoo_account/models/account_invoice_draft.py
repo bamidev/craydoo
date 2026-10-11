@@ -19,7 +19,7 @@ class AccountInvoiceDraft(models.Model):
     invoice_id = fields.Many2one('cd.account.invoice', required=True, ondelete='cascade', copy=False)
 
     name = fields.Char(related='invoice_id.name', readonly=False, store=True)
-    debtor_id = fields.Many2one(related='invoice_id.debtor_id', readonly=False)
+    debtor_id = fields.Many2one(related='invoice_id.debtor_id', readonly=False, domain=[("locked", "=", False)]) # Only use unlocked contacts in drafts, because those refer to actually managed contacts, while a locked copy is stored on the posted invoice.
     language = fields.Selection(related='invoice_id.language', readonly=False)
     date = fields.Date(related='invoice_id.date', readonly=False)
     due_date = fields.Date(related='invoice_id.due_date', readonly=False)
