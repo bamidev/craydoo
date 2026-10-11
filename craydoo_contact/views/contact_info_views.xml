@@ -5,12 +5,6 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
-                    <field name="locked" invisible="1"/>
-                    <group invisible="not locked">
-                        <div class="alert alert-info" role="alert">
-                            This record is locked and cannot be modified.
-                        </div>
-                    </group>
                     <group>
                         <field name="name"/>
                     </group>
@@ -37,6 +31,7 @@
                                 <list editable="bottom">
                                     <field name="url"/>
                                     <field name="type"/>
+                                    <field name="is_primary"/>
                                 </list>
                             </field>
                         </page>

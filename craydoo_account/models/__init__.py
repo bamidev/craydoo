@@ -1,4 +1,6 @@
 from . import account_locked_mixin
+from . import account_address
+from . import contact_info
 from . import account_ledger
 from . import account_fiscal_year
 from . import account_account

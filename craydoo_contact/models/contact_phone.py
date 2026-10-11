@@ -4,7 +4,7 @@ from odoo import api, fields, models
 class ContactPhone(models.Model):
     _name = 'cd.contact.phone'
     _description = 'Phone Number'
-    _inherit = ['cd.contact.primaries_mixin', 'cd.contact.locked_mixin']
+    _inherit = ['cd.contact.primaries_mixin']
     _rec_name = 'number'
     _order = 'is_primary desc, id'
 
@@ -18,7 +18,6 @@ class ContactPhone(models.Model):
         ],
         required=True, default='phone',
     )
-    locked = fields.Boolean(related='contact_info_id.locked', store=True)
 
     @api.constrains('number')
     def _check_number(self):

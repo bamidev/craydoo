@@ -1,5 +1,5 @@
-from . import contact_locked_mixin
 from . import contact_primaries_mixin
+from . import contact_address_mixin
 from . import contact_info
 from . import contact_email
 from . import contact_phone

@@ -1,4 +1,5 @@
 id,name,model_id,group_id/id,operation,domain
+access_cd_account_address_user,cd.account.address.user,cd.account.address,group_account_user,r,
 access_cd_account_invoice_user,cd.account.invoice.user,cd.account.invoice,group_account_user,crud,
 access_cd_account_invoice_line_user,cd.account.invoice.line.user,cd.account.invoice.line,group_account_user,crud,
 access_cd_account_invoice_draft_user,cd.account.invoice.draft.user,cd.account.invoice.draft,group_account_user,crud,

@@ -19,8 +19,10 @@ class AccountInvoice(models.Model):
     active = fields.Boolean(default=True)
     locked = fields.Boolean(default=False, copy=False, index=True)
 
-    debtor_id = fields.Many2one('cd.contact.info', required=True, string="Billed to")
-    language = fields.Selection(lambda self: self.env['res.lang'].get_installed())
+    billing_address_id = fields.Many2one(
+        'cd.account.address', required=True, readonly=True, copy=False, ondelete='restrict',
+        string="Billing Address")
+    language_id = fields.Many2one('res.lang')
 
     date = fields.Date(required=True, default=lambda self: fields.Date.context_today(self))
     due_date = fields.Date()

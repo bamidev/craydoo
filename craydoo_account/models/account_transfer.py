@@ -34,10 +34,13 @@ class AccountTransfer(models.Model):
     around the ORM, by a Postgres trigger (`_auto_init`) that rejects every
     update/delete unconditionally.
 
-    `backward_link_id`/`forward_link_ids` chain transfers that were posted
-    together as one atomic unit (e.g. every line of one invoice), so the
-    whole batch can still be walked as a group after the fact. `linked_ids`
-    is the full chain in both directions, for display.
+    `is_linked` means this transfer is linked to the one immediately before
+    it by `id` (the two were posted together as one atomic unit, e.g. two
+    legs of one invoice) - so chains only ever reference adjacent ids, with
+    no explicit foreign key. That only holds up if nothing else can insert
+    a row in between while a multi-transfer batch is being created, which
+    is why `create` takes a table lock for the rest of the transaction
+    before inserting anything.
     """
     _name = 'cd.account.transfer'
     _description = 'Transfer'

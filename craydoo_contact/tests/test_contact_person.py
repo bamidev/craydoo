@@ -25,11 +25,6 @@ class TestContactPerson(TransactionCase):
         person.city = 'Eindhoven'
         self.assertEqual(person.contact_info_id.city, 'Eindhoven')
 
-    def test_cannot_link_to_locked_contact_info(self):
-        info = self.env['cd.contact.info'].create({'name': 'Locked Info', 'locked': True})
-        with self.assertRaises(ValidationError):
-            self.env['cd.contact.person'].create({'contact_info_id': info.id})
-
     def test_function_is_specific_to_person(self):
         person = self.env['cd.contact.person'].create({
             'name': 'Jane Roe', 'function': 'Engineer',

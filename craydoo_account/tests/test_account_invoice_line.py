@@ -7,10 +7,8 @@ class TestAccountInvoiceLine(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.contact = cls.env['cd.contact.person'].create({'name': 'Jane Doe'})
-        cls.invoice = cls.env['cd.account.invoice'].create({
-            'debtor_id': cls.contact.contact_info_id.id,
-        })
+        address = cls.env['cd.account.address'].create({'name': 'Jane Doe'})
+        cls.invoice = cls.env['cd.account.invoice'].create({'billing_address_id': address.id})
         cls.tax = cls.env['cd.account.tax'].create({
             'name': '20%', 'amount_type': 'percent', 'amount': 20.0,
         })

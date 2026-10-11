@@ -8,14 +8,14 @@ class TestAccountInvoice(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.contact = cls.env['cd.contact.person'].create({'name': 'Jane Doe'})
+        cls.address = cls.env['cd.account.address'].create({'name': 'Jane Doe'})
 
     def test_amount_total_computed_from_lines(self):
         tax = self.env['cd.account.tax'].create({
             'name': '10%', 'amount_type': 'percent', 'amount': 10.0,
         })
         invoice = self.env['cd.account.invoice'].create({
-            'debtor_id': self.contact.contact_info_id.id,
+            'billing_address_id': self.address.id,
             'invoice_line_ids': [(0, 0, {
                 'name': 'Consulting', 'quantity': 2, 'price_unit': 100.0,
                 'tax_ids': [(6, 0, [tax.id])],
@@ -26,24 +26,24 @@ class TestAccountInvoice(TransactionCase):
         self.assertAlmostEqual(invoice.amount_total, 220.0)
 
     def test_locked_invoice_cannot_be_written(self):
-        invoice = self.env['cd.account.invoice'].create({'debtor_id': self.contact.contact_info_id.id})
+        invoice = self.env['cd.account.invoice'].create({'billing_address_id': self.address.id})
         invoice.locked = True
         with self.assertRaises(UserError):
             invoice.write({'date': '2026-01-01'})
 
     def test_locked_write_allowed_with_context_flag(self):
-        invoice = self.env['cd.account.invoice'].create({'debtor_id': self.contact.contact_info_id.id})
+        invoice = self.env['cd.account.invoice'].create({'billing_address_id': self.address.id})
         invoice.locked = True
         invoice.with_context(craydoo_allow_locked_write=True).write({'date': '2026-01-01'})
         self.assertEqual(str(invoice.date), '2026-01-01')
 
     def test_only_unlocked_invoices_can_be_archived(self):
-        invoice = self.env['cd.account.invoice'].create({'debtor_id': self.contact.contact_info_id.id})
+        invoice = self.env['cd.account.invoice'].create({'billing_address_id': self.address.id})
         invoice.locked = True
         with self.assertRaises(UserError):
             invoice.active = False
 
     def test_unlocked_invoice_can_be_archived(self):
-        invoice = self.env['cd.account.invoice'].create({'debtor_id': self.contact.contact_info_id.id})
+        invoice = self.env['cd.account.invoice'].create({'billing_address_id': self.address.id})
         invoice.active = False
         self.assertFalse(invoice.active)

@@ -2,7 +2,7 @@ from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 INVOICE_FIELD_NAMES = [
-    'name', 'debtor_id', 'language', 'date', 'due_date', 'currency_id',
+    'name', 'language_id', 'date', 'due_date', 'currency_id',
     'company_id', 'invoice_line_ids',
 ]
 
@@ -19,8 +19,10 @@ class AccountInvoiceDraft(models.Model):
     invoice_id = fields.Many2one('cd.account.invoice', required=True, ondelete='cascade', copy=False)
 
     name = fields.Char(related='invoice_id.name', readonly=False, store=True)
-    debtor_id = fields.Many2one(related='invoice_id.debtor_id', readonly=False, domain=[("locked", "=", False)]) # Only use unlocked contacts in drafts, because those refer to actually managed contacts, while a locked copy is stored on the posted invoice.
-    language = fields.Selection(related='invoice_id.language', readonly=False)
+    billing_contact_id = fields.Many2one('cd.contact.info', required=True, string="Billed to")
+    language_id = fields.Many2one(
+        related='invoice_id.language_id', readonly=False,
+        default=lambda i: i.billing_contact_id.primary_language_id)
     date = fields.Date(related='invoice_id.date', readonly=False)
     due_date = fields.Date(related='invoice_id.due_date', readonly=False)
     currency_id = fields.Many2one(related='invoice_id.currency_id', readonly=False)
@@ -57,6 +59,8 @@ class AccountInvoiceDraft(models.Model):
         for vals in vals_list:
             if not vals.get('invoice_id'):
                 invoice_vals = {f: vals[f] for f in INVOICE_FIELD_NAMES if f in vals}
+                contact = self.env['cd.contact.info'].browse(vals.get('billing_contact_id'))
+                invoice_vals['billing_address_id'] = contact.get_address().id
                 vals['invoice_id'] = self.env['cd.account.invoice'].create(invoice_vals).id
         return super().create(vals_list)
 
@@ -105,7 +109,7 @@ class AccountInvoiceDraft(models.Model):
             ledger = debit_account.ledger_id
 
             invoice = draft.invoice_id
-            invoice.debtor_id = invoice.debtor_id.create_locked_copy()
+            invoice.billing_address_id = draft.billing_contact_id.get_address()
             if invoice.name == '/':
                 invoice.name = self.env['ir.sequence'].next_by_code('cd.account.invoice') or '/'
 
@@ -131,7 +135,7 @@ class AccountInvoiceDraft(models.Model):
                     'debit_account_id': debit_account.id,
                     'credit_account_id': account.id,
                     'is_linked': i > 0,
-                    'contact_source_id': invoice.debtor_id.source_id.id,
+                    'contact_source_id': draft.billing_contact_id.id,
                 })
 
             invoice.transfer_id = last_transfer.id

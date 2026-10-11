@@ -1,9 +1,8 @@
-from odoo import _, api, fields, models
-from odoo.exceptions import ValidationError
+from odoo import api, fields, models
 
 INFO_FIELD_NAMES = [
-    'name', 'email_ids', 'phone_ids', 'website_ids', 'street', 'house', 'address_extra',
-    'city', 'zip', 'state_id', 'country_id', 'tz', 'company_id',
+    'name', 'email_ids', 'phone_ids', 'website_ids', 'language_ids', 'street', 'house',
+    'address_extra', 'city', 'zip', 'state_id', 'country_id', 'tz', 'company_id',
 ]
 
 
@@ -29,6 +28,8 @@ class ContactMixin(models.AbstractModel):
     email_ids = fields.One2many(related='contact_info_id.email_ids', readonly=False)
     phone_ids = fields.One2many(related='contact_info_id.phone_ids', readonly=False)
     website_ids = fields.One2many(related='contact_info_id.website_ids', readonly=False)
+    language_ids = fields.One2many(related='contact_info_id.language_ids', readonly=False)
+    primary_language_id = fields.Many2one(related='contact_info_id.primary_language_id', readonly=False)
     street = fields.Char(related='contact_info_id.street', readonly=False)
     house = fields.Char(related='contact_info_id.house', readonly=False)
     address_extra = fields.Char(
@@ -52,12 +53,3 @@ class ContactMixin(models.AbstractModel):
     def _compute_display_name(self):
         for this in self:
             this.display_name = this.contact_info_id.display_name
-
-    @api.constrains('contact_info_id')
-    def _check_contact_info_unlocked(self):
-        for rec in self:
-            if rec.contact_info_id.locked:
-                raise ValidationError(_(
-                    "%(contact)s is locked and can no longer be linked to %(record)s.",
-                    contact=rec.contact_info_id.display_name, record=rec.display_name,
-                ))

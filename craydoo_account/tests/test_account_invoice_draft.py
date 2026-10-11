@@ -18,30 +18,38 @@ class TestAccountInvoiceDraft(TransactionCase):
         })
 
     def test_create_auto_creates_invoice(self):
-        draft = self.env['cd.account.invoice.draft'].create({'debtor_id': self.contact.contact_info_id.id})
+        draft = self.env['cd.account.invoice.draft'].create({
+            'billing_contact_id': self.contact.contact_info_id.id,
+        })
         self.assertTrue(draft.invoice_id)
-        self.assertEqual(draft.invoice_id.debtor_id, self.contact.contact_info_id)
 
     def test_create_with_explicit_invoice(self):
-        invoice = self.env['cd.account.invoice'].create({'debtor_id': self.contact.contact_info_id.id})
-        draft = self.env['cd.account.invoice.draft'].create({'invoice_id': invoice.id})
+        address = self.env['cd.account.address'].create({'name': 'Jane Doe'})
+        invoice = self.env['cd.account.invoice'].create({'billing_address_id': address.id})
+        draft = self.env['cd.account.invoice.draft'].create({
+            'invoice_id': invoice.id, 'billing_contact_id': self.contact.contact_info_id.id,
+        })
         self.assertEqual(draft.invoice_id, invoice)
-        self.assertEqual(draft.debtor_id, self.contact.contact_info_id)
+        self.assertEqual(draft.billing_contact_id, self.contact.contact_info_id)
 
     def test_action_post_requires_accounts(self):
-        draft = self.env['cd.account.invoice.draft'].create({'debtor_id': self.contact.contact_info_id.id})
+        draft = self.env['cd.account.invoice.draft'].create({
+            'billing_contact_id': self.contact.contact_info_id.id,
+        })
         with self.assertRaises(UserError):
             draft.action_post()
 
     def test_action_post_raises_if_already_locked(self):
-        draft = self.env['cd.account.invoice.draft'].create({'debtor_id': self.contact.contact_info_id.id})
+        draft = self.env['cd.account.invoice.draft'].create({
+            'billing_contact_id': self.contact.contact_info_id.id,
+        })
         draft.invoice_id.locked = True
         with self.assertRaises(UserError):
             draft.action_post()
 
     def test_action_post_creates_transfer(self):
         draft = self.env['cd.account.invoice.draft'].create({
-            'debtor_id': self.contact.contact_info_id.id,
+            'billing_contact_id': self.contact.contact_info_id.id,
             'debit_account_id': self.debit_account.id,
             'credit_account_id': self.credit_account.id,
             'invoice_line_ids': [Command.create({'name': 'Line', 'price_unit': 10.0})],
@@ -50,6 +58,7 @@ class TestAccountInvoiceDraft(TransactionCase):
 
         invoice = draft.invoice_id
         self.assertTrue(invoice.locked)
+        self.assertEqual(invoice.billing_address_id.name, self.contact.contact_info_id.name)
         transfer = invoice.transfer_id
         self.assertTrue(transfer)
         self.assertEqual(transfer.debit_account_id, self.debit_account)
@@ -71,7 +80,7 @@ class TestAccountInvoiceDraft(TransactionCase):
             'invoice_line_ids': [Command.create({'account_id': vat_account.id, 'percentage': 100.0})],
         })
         draft = self.env['cd.account.invoice.draft'].create({
-            'debtor_id': self.contact.contact_info_id.id,
+            'billing_contact_id': self.contact.contact_info_id.id,
             'debit_account_id': self.debit_account.id,
             'credit_account_id': self.credit_account.id,
             'invoice_line_ids': [Command.create({
@@ -102,7 +111,7 @@ class TestAccountInvoiceDraft(TransactionCase):
             'name': '21% unconfigured', 'amount_type': 'percent', 'amount': 21.0,
         })
         draft = self.env['cd.account.invoice.draft'].create({
-            'debtor_id': self.contact.contact_info_id.id,
+            'billing_contact_id': self.contact.contact_info_id.id,
             'debit_account_id': self.debit_account.id,
             'credit_account_id': self.credit_account.id,
             'invoice_line_ids': [Command.create({
