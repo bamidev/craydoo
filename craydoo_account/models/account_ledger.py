@@ -8,4 +8,6 @@ class AccountLedger(models.Model):
     _order = 'name'
 
     name = fields.Char(required=True)
+    currency_id = fields.Many2one(
+        'res.currency', required=True, default=lambda self: self.env.company.currency_id)
     company_ids = fields.One2many('res.company', 'account_ledger_id')

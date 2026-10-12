@@ -6,9 +6,7 @@ from ..partition import PARTITIONED_TABLES, ensure_year_partitions
 
 
 class AccountInvoice(models.Model):
-    """ Its table, `cd_account_invoice`, is natively range-partitioned by
-    `date` (see `craydoo_account.partition`) - `date` is therefore
-    required, so every row always has a partition to land in.
+    """ An invoice
     """
     _name = 'cd.account.invoice'
     _description = 'Invoice'
