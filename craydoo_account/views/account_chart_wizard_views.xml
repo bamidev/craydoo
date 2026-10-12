@@ -42,4 +42,7 @@
         <field name="view_id" ref="view_account_chart_wizard_form"/>
         <field name="target">new</field>
     </record>
+
+    <menuitem id="menu_account_chart_wizard" name="Apply Chart of Accounts" parent="menu_account_config"
+              action="action_account_chart_wizard" sequence="5"/>
 </odoo>
