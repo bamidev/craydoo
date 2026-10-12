@@ -72,10 +72,10 @@ class AccountInvoice(models.Model):
     def _cron_ensure_partitions(self):
         """ Keep the forward end of every partitioned table's range
         supplied with partitions, so there's always one ready for next
-        year's invoices. Called monthly by an ir.cron.
+        year's invoices.
         """
         for tablename, date_column in PARTITIONED_TABLES:
-            ensure_year_partitions(self.env.cr, tablename, date_column)
+            ensure_year_partitions(self.env.cr, tablename)
 
 
 class AccountInvoiceLine(models.Model):

@@ -39,8 +39,8 @@ PARTITIONED_TABLES = [
     ('cd_account_invoice_line', 'date'),
 ]
 
-YEARS_BEHIND = 5
-YEARS_AHEAD = 2
+YEARS_BEHIND = 0
+YEARS_AHEAD = 1
 
 
 def create_partitioned_table(cr, tablename, date_column):
@@ -65,7 +65,7 @@ def create_partitioned_table(cr, tablename, date_column):
     ))
 
 
-def ensure_year_partitions(cr, tablename, date_column, years_behind=YEARS_BEHIND, years_ahead=YEARS_AHEAD):
+def ensure_year_partitions(cr, tablename, years_behind=YEARS_BEHIND, years_ahead=YEARS_AHEAD):
     """ Idempotently create one partition per calendar year, from
     `years_behind` years ago through `years_ahead` years from now, so
     there's always a partition ready for a backdated or future-dated row.

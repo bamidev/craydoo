@@ -9,7 +9,7 @@ def pre_init_hook(env):
     """
     for tablename, date_column in PARTITIONED_TABLES:
         create_partitioned_table(env.cr, tablename, date_column)
-        ensure_year_partitions(env.cr, tablename, date_column)
+        ensure_year_partitions(env.cr, tablename)
 
 
 def post_init_hook(env):
