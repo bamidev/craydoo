@@ -1,0 +1,5 @@
+<odoo noupdate="1">
+    <record id="account_ledger_main" model="cd.account.ledger">
+        <field name="name">Main Ledger</field>
+    </record>
+</odoo>

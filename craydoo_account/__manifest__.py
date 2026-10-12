@@ -7,10 +7,10 @@
     'license': 'LGPL-3',
     'depends': ['base', 'mail', 'craydoo_contact'],
     'pre_init_hook': 'pre_init_hook',
-    'post_init_hook': 'post_init_hook',
     'data': [
         'security/account_security.xml',
         'security/ir.access.csv',
+        'data/account_ledger_data.xml',
         'data/account_invoice_sequence.xml',
         'data/account_partition_cron.xml',
         'views/account_invoice_views.xml',
