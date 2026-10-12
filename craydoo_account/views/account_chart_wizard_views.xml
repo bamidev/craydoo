@@ -7,7 +7,7 @@
                 <group>
                     <field name="company_id" groups="base.group_multi_company"/>
                     <field name="chart_id"/>
-                    <field name="ledger_id" invisible="1"/>
+                    <field name="ledger_id"/>
                 </group>
                 <footer>
                     <button name="action_apply" type="object" string="Apply" class="btn-primary"/>

@@ -8,24 +8,37 @@ TRANSFER_TYPES = [
     ('invoice', 'Invoice'),
 ]
 
+TRANSFER_IMMUTABLE_COLUMNS = [
+    'date', 'ledger_id', 'type', 'debit_account_id', 'credit_account_id',
+    'contact_source_id', 'backward_link_id',
+]
+TRANSFER_POSTED_IMMUTABLE_COLUMNS = ['transfer_id', 'amount']
 
-def _immutable_sql(table):
-    """ A trigger that unconditionally rejects UPDATE/DELETE on `table` -
-    shared by every transfer-related table that needs to be immutable once
-    created, as a backstop against anything that goes around the ORM.
-    `table` is always one of this module's own hardcoded table names, never
-    external input, so plain string formatting is fine here.
+
+def _immutable_sql(table, immutable_columns):
+    """ A trigger that rejects DELETE, and rejects UPDATE of any column
+    named in `immutable_columns` - shared by every transfer-related table
+    that needs to be immutable once created, as a backstop against
+    anything that goes around the ORM. Columns not listed (e.g.
+    `cd.account.transfer`'s `reconciled_amount`/`residual_amount`, which
+    legitimately keep changing as a transfer gets reconciled over time)
+    stay freely writable.
+    `table`/`immutable_columns` are always this module's own hardcoded
+    names, never external input, so plain string formatting is fine here.
     """
     function = f'{table}_immutable'
+    old_row = ', '.join(f'OLD.{column}' for column in immutable_columns)
+    new_row = ', '.join(f'NEW.{column}' for column in immutable_columns)
     return SQL(f"""
         CREATE OR REPLACE FUNCTION {function}()
         RETURNS trigger LANGUAGE plpgsql AS $$
         BEGIN
             IF TG_OP = 'DELETE' THEN
                 RAISE EXCEPTION 'Accounting history cannot be deleted';
-            ELSE
+            ELSIF ROW({new_row}) IS DISTINCT FROM ROW({old_row}) THEN
                 RAISE EXCEPTION 'Accounting history cannot be changed';
             END IF;
+            RETURN NEW;
         END;
         $$;
         DROP TRIGGER IF EXISTS {function} ON {table};
@@ -33,6 +46,16 @@ def _immutable_sql(table):
             BEFORE UPDATE OR DELETE ON {table}
             FOR EACH ROW EXECUTE FUNCTION {function}();
     """)
+
+
+def _convert_to_ledger_amount(amount, currency, ledger_currency, company):
+    """ `amount` (minor units of `currency`) converted to `ledger_currency`
+    at today's rate, in `ledger_currency`'s own minor units.
+    """
+    converted = currency._convert(
+        amount / 10 ** currency.decimal_places, ledger_currency, company,
+        fields.Date.context_today(currency))
+    return round(converted * 10 ** ledger_currency.decimal_places)
 
 
 class AccountTransfer(models.Model):
@@ -69,7 +92,10 @@ class AccountTransfer(models.Model):
         'cd.account.account', required=True, readonly=True, ondelete='restrict')
     contact_source_id = fields.Many2one('cd.contact.info', readonly=True, index=True)
 
-    is_linked = fields.Boolean(default=False, readonly=True)
+    backward_link_id = fields.Many2one(
+        'cd.account.transfer', readonly=True, ondelete='restrict')
+    forward_link_ids = fields.One2many(
+        'cd.account.transfer', 'backward_link_id', readonly=True)
     linked_ids = fields.Many2many('cd.account.transfer', compute='_compute_linked_ids')
 
     posted_id = fields.One2many('cd.account.transfer.posted', 'transfer_id')
@@ -82,7 +108,7 @@ class AccountTransfer(models.Model):
 
     def _auto_init(self):
         result = super()._auto_init()
-        self.env.cr.execute(_immutable_sql(self._table))
+        self.env.cr.execute(_immutable_sql(self._table, TRANSFER_IMMUTABLE_COLUMNS))
         return result
 
     def _bump_fiscal_year_balance(self, account_id, year, field, amount):
@@ -103,25 +129,20 @@ class AccountTransfer(models.Model):
             balance = Balance.create({'fiscal_year_id': fiscal_year.id, 'account_id': account_id})
         balance[field] = balance[field] + amount
 
-    @api.depends('is_linked')
+    @api.depends('backward_link_id', 'forward_link_ids')
     def _compute_linked_ids(self):
         for transfer in self:
             linked = self.env['cd.account.transfer']
 
-            cur = transfer
-            while cur.is_linked:
-                cur = self.browse(cur.id - 1)
-                if not cur.exists():
-                    break
+            cur = transfer.backward_link_id
+            while cur:
                 linked |= cur
+                cur = cur.backward_link_id
 
-            cur = transfer
-            while True:
-                nxt = self.browse(cur.id + 1)
-                if not (nxt.exists() and nxt.is_linked):
-                    break
-                linked |= nxt
-                cur = nxt
+            cur = transfer.forward_link_ids
+            while cur:
+                linked |= cur
+                cur = cur.forward_link_ids
 
             transfer.linked_ids = linked
 
@@ -134,15 +155,6 @@ class AccountTransfer(models.Model):
                 + sum(transfer.credit_reconcile_part_ids.mapped('amount')))
             transfer.reconciled_amount = reconciled
             transfer.residual_amount = sum(transfer.posted_id.mapped('amount')) - reconciled
-
-    @api.model_create_multi
-    def create(self, vals_list):
-        # Held until this transaction commits/rolls back, so every create()
-        # within it - even across several separate calls - sees a table no
-        # one else is concurrently inserting into, keeping `is_linked`'s
-        # "previous id" assumption valid for the whole batch.
-        self.env.cr.execute(SQL("LOCK TABLE cd_account_transfer IN EXCLUSIVE MODE"))
-        return super().create(vals_list)
 
     def unlink(self):
         raise UserError(_("Accounting history cannot be deleted."))
@@ -166,7 +178,7 @@ class AccountTransferPosted(models.Model):
 
     def _auto_init(self):
         result = super()._auto_init()
-        self.env.cr.execute(_immutable_sql(self._table))
+        self.env.cr.execute(_immutable_sql(self._table, TRANSFER_POSTED_IMMUTABLE_COLUMNS))
         return result
 
     @api.model_create_multi
@@ -229,15 +241,30 @@ class AccountTransferPending(models.Model):
         got reconciled right now.
         """
         self.ensure_one()
-        ledger_currency = self.transfer_id.ledger_id.currency_id
-        converted = self.currency_id._convert(
-            self.amount / 10 ** self.currency_id.decimal_places,
-            ledger_currency, self.env.company, fields.Date.context_today(self))
-        return round(converted * 10 ** ledger_currency.decimal_places)
+        return _convert_to_ledger_amount(
+            self.amount, self.currency_id, self.transfer_id.ledger_id.currency_id, self.env.company)
 
 
-class AccountTransferDraft(models.Model):
-    """ An account transfer draft.
+class AccountTransferDraft(models.TransientModel):
+    """ A manually-entered transfer, not yet backed by any
+    `cd.account.transfer` - mutable, holding its own copies of the fields
+    `cd.account.transfer` would otherwise hold, since that record doesn't
+    exist until this draft is posted. Transient, since nothing about it
+    needs to outlive the request that posts it (or Odoo's usual
+    wizard-vacuuming if it never gets posted at all).
+
+    Posting creates the real transfer, then either:
+    - amount's currency already matches the ledger's: its
+      `cd.account.transfer.posted` directly, same as always.
+    - it doesn't, and `craydoo_account.transfer_convert_immediately` is
+      disabled (the default): a `cd.account.transfer.pending`, settled
+      later - see `cd.account.transfer.pending._action_post`.
+    - it doesn't, but that setting is enabled: its
+      `cd.account.transfer.posted` right away too, pre-converted at
+      today's rate instead of waiting for reconciliation.
+    Either way this draft then deletes itself - once posted there's
+    nothing left for it to represent, so no `transfer_id` back-reference
+    is kept.
     """
     _name = 'cd.account.transfer.draft'
     _description = 'Draft Transfer'
@@ -248,11 +275,28 @@ class AccountTransferDraft(models.Model):
     debit_account_id = fields.Many2one('cd.account.account', required=True, ondelete='restrict')
     credit_account_id = fields.Many2one('cd.account.account', required=True, ondelete='restrict')
     contact_source_id = fields.Many2one('cd.contact.info', index=True)
+    backward_link_id = fields.Many2one('cd.account.transfer')
 
     amount = UInteger(required=True)
     currency_id = fields.Many2one('res.currency', required=True)
 
+    def _ledger_amount(self):
+        """ This draft's amount converted to its ledger's currency at
+        today's rate.
+        """
+        self.ensure_one()
+        return _convert_to_ledger_amount(
+            self.amount, self.currency_id, self.ledger_id.currency_id, self.env.company)
+
     def action_post(self):
+        """ Posts every draft in `self`, in order, and returns the
+        `cd.account.transfer`s created for them (one per draft, same
+        order) - the caller's hook into the real records once this
+        transient draft has deleted itself.
+        """
+        convert_immediately = self.env['ir.config_parameter'].sudo().get_bool(
+            'craydoo_account.transfer_convert_immediately')
+        transfer_ids = []
         for draft in self:
             transfer = self.env['cd.account.transfer'].create({
                 'date': draft.date,
@@ -261,11 +305,13 @@ class AccountTransferDraft(models.Model):
                 'debit_account_id': draft.debit_account_id.id,
                 'credit_account_id': draft.credit_account_id.id,
                 'contact_source_id': draft.contact_source_id.id,
+                'backward_link_id': draft.backward_link_id.id,
             })
-            if draft.currency_id == draft.ledger_id.currency_id:
+            same_currency = draft.currency_id == draft.ledger_id.currency_id
+            if same_currency or convert_immediately:
                 self.env['cd.account.transfer.posted'].create({
                     'transfer_id': transfer.id,
-                    'amount': draft.amount,
+                    'amount': draft.amount if same_currency else draft._ledger_amount(),
                 })
             else:
                 self.env['cd.account.transfer.pending'].create({
@@ -273,4 +319,6 @@ class AccountTransferDraft(models.Model):
                     'amount': draft.amount,
                     'currency_id': draft.currency_id.id,
                 })
+            transfer_ids.append(transfer.id)
             draft.unlink()
+        return self.env['cd.account.transfer'].browse(transfer_ids)

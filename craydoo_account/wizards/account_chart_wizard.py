@@ -19,7 +19,8 @@ class AccountChartWizard(models.TransientModel):
     company_id = fields.Many2one(
         'res.company', required=True, default=lambda self: self.env.company)
     chart_id = fields.Many2one('cd.account.chart', required=True)
-    ledger_id = fields.Many2one('cd.account.ledger', required=True)
+    ledger_id = fields.Many2one(
+        'cd.account.ledger', required=True, default=lambda self: self.env.company.account_ledger_id)
 
     def action_apply(self):
         self.ensure_one()
@@ -38,12 +39,28 @@ class AccountChartWizard(models.TransientModel):
                 'target': 'new',
             }
 
-        accounts = self.env['cd.account.account'].create([{
-            'ledger_id': self.ledger_id.id,
-            'code': entry.code,
-            'name': entry.name,
-        } for entry in entries])
-        account_by_entry_id = dict(zip(entries.ids, accounts.ids))
+        existing_by_code = {
+            account.code: account
+            for account in self.env['cd.account.account'].search([('ledger_id', '=', self.ledger_id.id)])
+        }
+
+        account_by_entry_id = {}
+        to_create = []
+        for entry in entries:
+            existing = existing_by_code.get(entry.code)
+            if existing:
+                account_by_entry_id[entry.id] = existing.id
+            else:
+                to_create.append(entry)
+
+        if to_create:
+            accounts = self.env['cd.account.account'].create([{
+                'ledger_id': self.ledger_id.id,
+                'code': entry.code,
+                'name': entry.name,
+                'allow_reconciles': entry.allow_reconciles,
+            } for entry in to_create])
+            account_by_entry_id.update(zip([entry.id for entry in to_create], accounts.ids))
 
         self.company_id.account_ledger_id = self.ledger_id
         chart = self.chart_id
@@ -59,5 +76,5 @@ class AccountChartWizard(models.TransientModel):
             'name': _("Accounts"),
             'res_model': 'cd.account.account',
             'view_mode': 'list,form',
-            'domain': [('id', 'in', accounts.ids)],
+            'domain': [('id', 'in', list(account_by_entry_id.values()))],
         }

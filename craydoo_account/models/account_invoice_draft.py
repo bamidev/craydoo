@@ -25,13 +25,14 @@ class AccountInvoiceDraft(models.Model):
         default=lambda i: i.billing_contact_id.primary_language_id)
     date = fields.Date(related='invoice_id.date', readonly=False)
     due_date = fields.Date(related='invoice_id.due_date', readonly=False)
-    currency_id = fields.Many2one(related='invoice_id.currency_id', readonly=False)
+    currency_id = fields.Many2one(
+        related='invoice_id.currency_id', readonly=False,
+        default=lambda self: self.env.company.currency_id)
     company_id = fields.Many2one(related='invoice_id.company_id', readonly=False)
     invoice_line_ids = fields.One2many(related='invoice_id.invoice_line_ids', readonly=False)
     amount_untaxed = fields.Monetary(related='invoice_id.amount_untaxed', currency_field='currency_id')
     amount_tax = fields.Monetary(related='invoice_id.amount_tax', currency_field='currency_id')
     amount_total = fields.Monetary(related='invoice_id.amount_total', currency_field='currency_id')
-    locked = fields.Boolean(related='invoice_id.locked')
 
     debit_account_id = fields.Many2one(
         'cd.account.account', default=lambda self: self._default_account('default_debit_account_id'))
@@ -126,19 +127,29 @@ class AccountInvoiceDraft(models.Model):
                         account=account.name, debit_account=debit_account.name))
 
             last_transfer = None
-            for i, (account, amount) in enumerate(legs):
-                last_transfer = self.env['cd.account.transfer'].create({
+            for account, amount in legs:
+                transfer_draft = self.env['cd.account.transfer.draft'].create({
                     'date': fields.Date.context_today(self),
                     'ledger_id': ledger.id,
                     'type': 'invoice',
                     'amount': amount,
+                    'currency_id': invoice.currency_id.id,
                     'debit_account_id': debit_account.id,
                     'credit_account_id': account.id,
-                    'is_linked': i > 0,
+                    'backward_link_id': last_transfer.id if last_transfer else False,
                     'contact_source_id': draft.billing_contact_id.id,
                 })
+                last_transfer = transfer_draft.action_post()
 
             invoice.transfer_id = last_transfer.id
             invoice.date = last_transfer.date
 
             invoice.locked = True
+            draft.unlink()
+
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'cd.account.invoice',
+            'view_mode': 'form',
+            'res_id': invoice.id,
+        }

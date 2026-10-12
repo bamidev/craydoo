@@ -11,5 +11,6 @@ from . import account_tax_tag
 from . import account_tax_allocation
 from . import account_tax
 from . import res_company
+from . import res_config_settings
 from . import account_invoice
 from . import account_invoice_draft

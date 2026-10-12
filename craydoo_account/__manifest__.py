@@ -21,5 +21,7 @@
         'views/account_account_views.xml',
         'views/account_transfer_views.xml',
         'views/account_reconcile_views.xml',
+        'views/res_company_views.xml',
+        'views/res_config_settings_views.xml',
     ],
 }

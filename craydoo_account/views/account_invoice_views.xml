@@ -77,7 +77,6 @@
                 <field name="billing_contact_id"/>
                 <field name="date"/>
                 <field name="amount_total"/>
-                <field name="locked"/>
             </list>
         </field>
     </record>
@@ -88,24 +87,18 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="action_post" type="object" string="Post" invisible="locked"/>
+                    <button name="action_post" type="object" string="Post"/>
                 </header>
                 <sheet>
-                    <field name="locked" invisible="1"/>
-                    <group invisible="not locked">
-                        <div class="alert alert-info" role="alert">
-                            This invoice is locked and can only be changed by administrators.
-                        </div>
-                    </group>
                     <group>
-                        <field name="billing_contact_id" readonly="locked"/>
-                        <field name="language_id" readonly="locked"/>
-                        <field name="due_date" readonly="locked"/>
-                        <field name="currency_id" readonly="locked"/>
+                        <field name="billing_contact_id"/>
+                        <field name="language_id"/>
+                        <field name="due_date"/>
+                        <field name="currency_id"/>
                     </group>
                     <notebook>
                         <page string="Invoice Lines">
-                            <field name="invoice_line_ids" readonly="locked">
+                            <field name="invoice_line_ids">
                                 <list editable="bottom">
                                     <field name="name"/>
                                     <field name="quantity"/>
@@ -118,8 +111,8 @@
                         </page>
                         <page string="Accounting">
                             <group>
-                                <field name="debit_account_id" readonly="locked"/>
-                                <field name="credit_account_id" readonly="locked"/>
+                                <field name="debit_account_id"/>
+                                <field name="credit_account_id"/>
                             </group>
                         </page>
                     </notebook>

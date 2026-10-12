@@ -32,6 +32,7 @@ class AccountChartAccount(models.Model):
     chart_id = fields.Many2one('cd.account.chart', required=True, ondelete='cascade')
     code = fields.Char(required=True, size=8)
     name = fields.Char(required=True, translate=True)
+    allow_reconciles = fields.Boolean(default=False)
 
     _code_unique_per_chart = models.Constraint(
         'UNIQUE(chart_id, code)', 'An account code can only appear once per chart.')

@@ -16,12 +16,17 @@ class TestAccountTransfer(TransactionCase):
         ])
         cls.ledger = ledger
 
-    def _post(self, debit_account, credit_account, amount, date, is_linked=False):
-        return self.env['cd.account.transfer'].create({
-            'date': date, 'ledger_id': self.ledger.id, 'type': 'invoice', 'amount': amount,
+    def _post(self, debit_account, credit_account, amount, date, backward_link_id=None):
+        transfer = self.env['cd.account.transfer'].create({
+            'date': date, 'ledger_id': self.ledger.id, 'type': 'invoice',
             'debit_account_id': debit_account.id, 'credit_account_id': credit_account.id,
-            'is_linked': is_linked,
+            'backward_link_id': backward_link_id.id if backward_link_id else False,
         })
+        self.env['cd.account.transfer.posted'].create({
+            'transfer_id': transfer.id,
+            'amount': amount,
+        })
+        return transfer
 
     def _balance(self, account, year):
         return self.env['cd.account.fiscal.year.account.balance'].search([
@@ -81,9 +86,9 @@ class TestAccountTransfer(TransactionCase):
 
     def test_linked_ids_walks_the_whole_chain_both_ways(self):
         t1 = self._post(self.account_a, self.account_b, 10, '2020-01-01')
-        t2 = self._post(self.account_a, self.account_c, 20, '2020-01-01', is_linked=True)
-        t3 = self._post(self.account_b, self.account_c, 30, '2020-01-01', is_linked=True)
-        # Not part of the chain - adjacent by id, but not flagged as linked.
+        t2 = self._post(self.account_a, self.account_c, 20, '2020-01-01', backward_link_id=t1)
+        t3 = self._post(self.account_b, self.account_c, 30, '2020-01-01', backward_link_id=t2)
+        # Not part of the chain - no backward link set.
         t4 = self._post(self.account_a, self.account_b, 40, '2020-01-01')
 
         self.assertEqual(t1.linked_ids, t2 | t3)
@@ -94,6 +99,6 @@ class TestAccountTransfer(TransactionCase):
     def test_transfer_is_immutable(self):
         transfer = self._post(self.account_a, self.account_b, 10, '2020-01-01')
         with self.assertRaises(UserError):
-            transfer.write({'amount': 1})
+            transfer.write({'date': '2020-01-02'})
         with self.assertRaises(UserError):
             transfer.unlink()

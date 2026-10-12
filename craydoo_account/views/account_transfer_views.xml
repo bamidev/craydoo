@@ -9,7 +9,7 @@
                 <field name="type"/>
                 <field name="debit_account_id"/>
                 <field name="credit_account_id"/>
-                <field name="amount"/>
+                <field name="residual_amount"/>
             </list>
         </field>
     </record>
@@ -28,8 +28,27 @@
                     <group string="Amount">
                         <field name="debit_account_id"/>
                         <field name="credit_account_id"/>
-                        <field name="amount"/>
+                        <field name="residual_amount"/>
+                        <field name="reconciled_amount"/>
                     </group>
+                    <notebook>
+                        <page string="Posted">
+                            <field name="posted_id" readonly="1">
+                                <list>
+                                    <field name="amount"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Pending">
+                            <field name="pending_id" readonly="1">
+                                <list>
+                                    <field name="amount"/>
+                                    <field name="currency_id"/>
+                                    <field name="posted_id"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
@@ -41,6 +60,46 @@
         <field name="view_mode">list,form</field>
     </record>
 
+    <record id="view_account_transfer_posted_list" model="ir.ui.view">
+        <field name="name">cd.account.transfer.posted.list</field>
+        <field name="model">cd.account.transfer.posted</field>
+        <field name="arch" type="xml">
+            <list create="false" edit="false" delete="false">
+                <field name="transfer_id"/>
+                <field name="amount"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_account_transfer_posted" model="ir.actions.act_window">
+        <field name="name">Posted</field>
+        <field name="res_model">cd.account.transfer.posted</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <record id="view_account_transfer_pending_list" model="ir.ui.view">
+        <field name="name">cd.account.transfer.pending.list</field>
+        <field name="model">cd.account.transfer.pending</field>
+        <field name="arch" type="xml">
+            <list create="false" delete="false">
+                <field name="transfer_id"/>
+                <field name="amount"/>
+                <field name="currency_id"/>
+                <field name="posted_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_account_transfer_pending" model="ir.actions.act_window">
+        <field name="name">Pending</field>
+        <field name="res_model">cd.account.transfer.pending</field>
+        <field name="view_mode">list</field>
+    </record>
+
     <menuitem id="menu_account_transfer" name="Transfers" parent="menu_account_general_ledger"
               action="action_account_transfer" sequence="20"/>
+    <menuitem id="menu_account_transfer_pending" name="Pending" parent="menu_account_transfer"
+              action="action_account_transfer_pending" sequence="10"/>
+    <menuitem id="menu_account_transfer_posted" name="Posted" parent="menu_account_transfer"
+              action="action_account_transfer_posted" sequence="20"/>
 </odoo>

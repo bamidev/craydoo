@@ -16,6 +16,6 @@ class ContactInfo(models.Model):
             field: self[field].id if self._fields[field].type == 'many2one' else self[field]
             for field in ADDRESS_FIELD_NAMES
         }
-        Address = self.env['cd.account.address']
+        Address = self.env['cd.account.address'].sudo()
         address = Address.search([(field, '=', value) for field, value in vals.items()], limit=1)
         return address or Address.create({**vals, 'source_id': self.id})

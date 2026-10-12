@@ -54,9 +54,10 @@ class TestAccountInvoiceDraft(TransactionCase):
             'credit_account_id': self.credit_account.id,
             'invoice_line_ids': [Command.create({'name': 'Line', 'price_unit': 10.0})],
         })
+        invoice = draft.invoice_id
         draft.action_post()
 
-        invoice = draft.invoice_id
+        self.assertFalse(draft.exists())
         self.assertTrue(invoice.locked)
         self.assertEqual(invoice.billing_address_id.name, self.contact.contact_info_id.name)
         transfer = invoice.transfer_id
@@ -64,10 +65,11 @@ class TestAccountInvoiceDraft(TransactionCase):
         self.assertEqual(transfer.debit_account_id, self.debit_account)
         self.assertEqual(transfer.credit_account_id, self.credit_account)
         self.assertEqual(
-            transfer.amount, round(invoice.amount_total * 10 ** invoice.currency_id.decimal_places))
+            transfer.posted_id.amount,
+            round(invoice.amount_total * 10 ** invoice.currency_id.decimal_places))
 
         with self.assertRaises(UserError):
-            transfer.write({'amount': 1})
+            transfer.write({'date': '2020-01-02'})
         with self.assertRaises(UserError):
             transfer.unlink()
 
@@ -87,24 +89,23 @@ class TestAccountInvoiceDraft(TransactionCase):
                 'name': 'Line', 'price_unit': 100.0, 'tax_ids': [Command.link(tax.id)],
             })],
         })
-        draft.action_post()
-
         invoice = draft.invoice_id
+        draft.action_post()
 
         # transfer_id is the *last* linked transfer - here, the tax leg.
         tax_transfer = invoice.transfer_id
-        self.assertTrue(tax_transfer.is_linked)
+        self.assertTrue(tax_transfer.backward_link_id)
         self.assertEqual(tax_transfer.debit_account_id, self.debit_account)
         self.assertEqual(tax_transfer.credit_account_id, vat_account)
-        self.assertEqual(tax_transfer.amount, 2100)
+        self.assertEqual(tax_transfer.posted_id.amount, 2100)
 
         # transfer_ids (transfer_id.linked_ids) finds the rest of the chain.
         self.assertEqual(invoice.transfer_ids, tax_transfer.linked_ids)
         revenue_transfer = invoice.transfer_ids
-        self.assertFalse(revenue_transfer.is_linked)
+        self.assertFalse(revenue_transfer.backward_link_id)
         self.assertEqual(revenue_transfer.debit_account_id, self.debit_account)
         self.assertEqual(revenue_transfer.credit_account_id, self.credit_account)
-        self.assertEqual(revenue_transfer.amount, 10000)
+        self.assertEqual(revenue_transfer.posted_id.amount, 10000)
 
     def test_action_post_requires_tax_allocation(self):
         tax = self.env['cd.account.tax'].create({
