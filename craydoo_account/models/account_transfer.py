@@ -9,7 +9,7 @@ TRANSFER_TYPES = [
 ]
 
 TRANSFER_IMMUTABLE_COLUMNS = [
-    'date', 'ledger_id', 'type', 'debit_account_id', 'credit_account_id',
+    'name', 'date', 'ledger_id', 'type', 'debit_account_id', 'credit_account_id',
     'contact_source_id', 'backward_link_id',
 ]
 TRANSFER_POSTED_IMMUTABLE_COLUMNS = ['transfer_id', 'amount']
@@ -82,6 +82,9 @@ class AccountTransfer(models.Model):
     _name = 'cd.account.transfer'
     _description = 'Transfer'
     _order = 'id'
+    _rec_name = 'name'
+
+    name = fields.Char(required=True, readonly=True, copy=False, unique=True)
 
     date = fields.Date(required=True, readonly=True, default=fields.Date.context_today)
     ledger_id = fields.Many2one('cd.account.ledger', required=True, readonly=True)
@@ -110,6 +113,12 @@ class AccountTransfer(models.Model):
         result = super()._auto_init()
         self.env.cr.execute(_immutable_sql(self._table, TRANSFER_IMMUTABLE_COLUMNS))
         return result
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            vals['name'] = self.env['ir.sequence'].next_by_code('cd.account.transfer') or '/'
+        return super().create(vals_list)
 
     def _bump_fiscal_year_balance(self, account_id, year, field, amount):
         """ `sudo()` throughout - regular users can only read
@@ -163,6 +172,32 @@ class AccountTransfer(models.Model):
         raise UserError(_("Accounting history cannot be changed."))
 
 
+class AccountTransferChildMixin(models.AbstractModel):
+    """ Shared by `cd.account.transfer.posted`/`.pending`: related fields
+    mirroring their parent `cd.account.transfer`'s important fields, so a
+    view on either can show them without reaching through `transfer_id`.
+    """
+    _name = 'cd.account.transfer.child.mixin'
+    _description = 'Transfer Detail'
+
+    transfer_id = fields.Many2one(
+        'cd.account.transfer', required=True, readonly=True, ondelete='cascade', index=True)
+
+    name = fields.Char(related='transfer_id.name')
+    date = fields.Date(related='transfer_id.date')
+    ledger_id = fields.Many2one(related='transfer_id.ledger_id')
+    type = fields.Selection(related='transfer_id.type')
+    debit_account_id = fields.Many2one(related='transfer_id.debit_account_id')
+    credit_account_id = fields.Many2one(related='transfer_id.credit_account_id')
+    contact_source_id = fields.Many2one(related='transfer_id.contact_source_id')
+
+    @api.depends('amount', 'currency_id')
+    def _compute_amount_currency(self):
+        for rec in self:
+            rec.amount_currency = (
+                rec.amount / 10 ** rec.currency_id.decimal_places if rec.currency_id else 0)
+
+
 class AccountTransferPosted(models.Model):
     """ The final, immutable amount of a `cd.account.transfer`, in the
     ledger's own currency. Bumps the fiscal year balance at the moment it's
@@ -170,11 +205,13 @@ class AccountTransferPosted(models.Model):
     becomes part of the books.
     """
     _name = 'cd.account.transfer.posted'
+    _inherit = ['cd.account.transfer.child.mixin']
     _description = 'Posted Transfer Amount'
 
-    transfer_id = fields.Many2one(
-        'cd.account.transfer', required=True, readonly=True, ondelete='cascade', index=True)
     amount = UInteger(required=True, readonly=True)
+    currency_id = fields.Many2one(related='ledger_id.currency_id')
+    amount_currency = fields.Monetary(
+        compute='_compute_amount_currency', currency_field='currency_id', store=True)
 
     def _auto_init(self):
         result = super()._auto_init()
@@ -211,12 +248,13 @@ class AccountTransferPending(models.Model):
     what the original, pre-conversion amount was.
     """
     _name = 'cd.account.transfer.pending'
+    _inherit = ['cd.account.transfer.child.mixin']
     _description = 'Pending Transfer Amount'
 
-    transfer_id = fields.Many2one(
-        'cd.account.transfer', required=True, readonly=True, ondelete='cascade', index=True)
     amount = UInteger(required=True)
     currency_id = fields.Many2one('res.currency', required=True)
+    amount_currency = fields.Monetary(
+        compute='_compute_amount_currency', currency_field='currency_id')
     posted_id = fields.Many2one('cd.account.transfer.posted', readonly=True, copy=False)
     active = fields.Boolean(compute='_compute_active', store=True)
 

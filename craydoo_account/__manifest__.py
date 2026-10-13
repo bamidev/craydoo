@@ -12,6 +12,7 @@
         'security/ir.access.csv',
         'data/account_ledger_data.xml',
         'data/account_invoice_sequence.xml',
+        'data/account_transfer_sequence.xml',
         'data/account_partition_cron.xml',
         'views/account_invoice_views.xml',
         'views/account_tax_views.xml',

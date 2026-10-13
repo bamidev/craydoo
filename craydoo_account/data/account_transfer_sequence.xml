@@ -1,0 +1,8 @@
+<odoo noupdate="1">
+    <record id="seq_account_transfer" model="ir.sequence">
+        <field name="name">Transfer</field>
+        <field name="code">cd.account.transfer</field>
+        <field name="prefix">TRF/%(year)s/</field>
+        <field name="padding">4</field>
+    </record>
+</odoo>
