@@ -59,7 +59,8 @@ class TestAccountInvoiceDraft(TransactionCase):
 
         self.assertFalse(draft.exists())
         self.assertTrue(invoice.locked)
-        self.assertEqual(invoice.billing_address_id.name, self.contact.contact_info_id.name)
+        self.assertEqual(
+            invoice.billing_address_id.name, self.contact.contact_info_id.display_name)
         transfer = invoice.transfer_id
         self.assertTrue(transfer)
         self.assertEqual(transfer.debit_account_id, self.debit_account)
