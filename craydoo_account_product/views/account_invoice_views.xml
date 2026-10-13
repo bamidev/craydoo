@@ -1,0 +1,23 @@
+<odoo>
+    <record id="view_account_invoice_form_inherit_account_product" model="ir.ui.view">
+        <field name="name">cd.account.invoice.form.inherit.account.product</field>
+        <field name="model">cd.account.invoice</field>
+        <field name="inherit_id" ref="craydoo_account.view_account_invoice_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_line_ids']//field[@name='name']" position="before">
+                <field name="product_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_account_invoice_draft_form_inherit_account_product" model="ir.ui.view">
+        <field name="name">cd.account.invoice.draft.form.inherit.account.product</field>
+        <field name="model">cd.account.invoice.draft</field>
+        <field name="inherit_id" ref="craydoo_account.view_account_invoice_draft_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_line_ids']//field[@name='name']" position="before">
+                <field name="product_id"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
