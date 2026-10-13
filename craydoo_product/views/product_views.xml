@@ -58,6 +58,7 @@
                     <field name="variant_ids">
                         <list>
                             <field name="name"/>
+                            <field name="barcode"/>
                             <field name="variant_image" widget="image"/>
                         </list>
                     </field>
