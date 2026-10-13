@@ -11,19 +11,22 @@ class TestAccountInvoice(TransactionCase):
         cls.address = cls.env['cd.account.address'].create({'name': 'Jane Doe'})
 
     def test_amount_total_computed_from_lines(self):
+        # `price_include` - the tax's amount is already part of the
+        # configured price, so the invoice's `amount_total` stays at 200
+        # and `amount_untaxed` is what's left after carving the tax out.
         tax = self.env['cd.account.tax'].create({
-            'name': '10%', 'amount_type': 'percent', 'amount': 10.0,
+            'name': '10%', 'amount_type': 'percent', 'amount': 10.0, 'price_include': True,
         })
         invoice = self.env['cd.account.invoice'].create({
             'billing_address_id': self.address.id,
             'invoice_line_ids': [(0, 0, {
-                'name': 'Consulting', 'quantity': 2, 'price_unit': 100.0,
+                'name': 'Consulting', 'quantity': 2, 'amount_unit_currency': 100.0,
                 'tax_ids': [(6, 0, [tax.id])],
             })],
         })
-        self.assertAlmostEqual(invoice.amount_untaxed, 200.0)
-        self.assertAlmostEqual(invoice.amount_tax, 20.0)
-        self.assertAlmostEqual(invoice.amount_total, 220.0)
+        self.assertAlmostEqual(invoice.amount_untaxed_currency, 180.0)
+        self.assertAlmostEqual(invoice.amount_tax_currency, 20.0)
+        self.assertAlmostEqual(invoice.amount_total_currency, 200.0)
 
     def test_locked_invoice_cannot_be_written(self):
         invoice = self.env['cd.account.invoice'].create({'billing_address_id': self.address.id})

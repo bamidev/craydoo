@@ -52,7 +52,7 @@ class TestAccountInvoiceDraft(TransactionCase):
             'billing_contact_id': self.contact.contact_info_id.id,
             'debit_account_id': self.debit_account.id,
             'credit_account_id': self.credit_account.id,
-            'invoice_line_ids': [Command.create({'name': 'Line', 'price_unit': 10.0})],
+            'invoice_line_ids': [Command.create({'name': 'Line', 'amount_unit_currency': 10.0})],
         })
         invoice = draft.invoice_id
         draft.action_post()
@@ -65,9 +65,7 @@ class TestAccountInvoiceDraft(TransactionCase):
         self.assertTrue(transfer)
         self.assertEqual(transfer.debit_account_id, self.debit_account)
         self.assertEqual(transfer.credit_account_id, self.credit_account)
-        self.assertEqual(
-            transfer.posted_id.amount,
-            round(invoice.amount_total * 10 ** invoice.currency_id.decimal_places))
+        self.assertEqual(transfer.posted_id.amount, invoice.amount_total)
 
         with self.assertRaises(UserError):
             transfer.write({'date': '2020-01-02'})
@@ -87,7 +85,7 @@ class TestAccountInvoiceDraft(TransactionCase):
             'debit_account_id': self.debit_account.id,
             'credit_account_id': self.credit_account.id,
             'invoice_line_ids': [Command.create({
-                'name': 'Line', 'price_unit': 100.0, 'tax_ids': [Command.link(tax.id)],
+                'name': 'Line', 'amount_unit_currency': 100.0, 'tax_ids': [Command.link(tax.id)],
             })],
         })
         invoice = draft.invoice_id
@@ -117,7 +115,7 @@ class TestAccountInvoiceDraft(TransactionCase):
             'debit_account_id': self.debit_account.id,
             'credit_account_id': self.credit_account.id,
             'invoice_line_ids': [Command.create({
-                'name': 'Line', 'price_unit': 100.0, 'tax_ids': [Command.link(tax.id)],
+                'name': 'Line', 'amount_unit_currency': 100.0, 'tax_ids': [Command.link(tax.id)],
             })],
         })
         with self.assertRaises(UserError):

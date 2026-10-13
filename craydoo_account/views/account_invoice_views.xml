@@ -15,10 +15,11 @@
                     <button type="action" name="%(craydoo_account.action_account_invoice_draft_new)d"
                             string="New" class="btn-primary" display="always"/>
                 </header>
+                <field name="currency_id" column_invisible="1"/>
                 <field name="name"/>
                 <field name="billing_address_id"/>
                 <field name="date"/>
-                <field name="amount_total"/>
+                <field name="amount_total_currency"/>
             </list>
         </field>
     </record>
@@ -40,20 +41,21 @@
                         <page string="Invoice Lines">
                             <field name="invoice_line_ids">
                                 <list>
+                                    <field name="currency_id" column_invisible="1"/>
                                     <field name="name"/>
                                     <field name="quantity"/>
-                                    <field name="price_unit"/>
+                                    <field name="amount_unit_currency"/>
                                     <field name="tax_ids" widget="many2many_tags"/>
-                                    <field name="price_subtotal"/>
-                                    <field name="price_total"/>
+                                    <field name="amount_revenue_currency"/>
+                                    <field name="amount_total_currency"/>
                                 </list>
                             </field>
                         </page>
                     </notebook>
                     <group class="oe_subtotal_footer">
-                        <field name="amount_untaxed"/>
-                        <field name="amount_tax"/>
-                        <field name="amount_total"/>
+                        <field name="amount_untaxed_currency"/>
+                        <field name="amount_tax_currency"/>
+                        <field name="amount_total_currency"/>
                     </group>
                 </sheet>
                 <chatter/>
@@ -73,10 +75,11 @@
         <field name="model">cd.account.invoice.draft</field>
         <field name="arch" type="xml">
             <list>
+                <field name="currency_id" column_invisible="1"/>
                 <field name="name"/>
                 <field name="billing_contact_id"/>
                 <field name="date"/>
-                <field name="amount_total"/>
+                <field name="amount_total_currency"/>
             </list>
         </field>
     </record>
@@ -100,12 +103,13 @@
                         <page string="Invoice Lines">
                             <field name="invoice_line_ids">
                                 <list editable="bottom">
+                                    <field name="currency_id" column_invisible="1"/>
                                     <field name="name"/>
                                     <field name="quantity"/>
-                                    <field name="price_unit"/>
+                                    <field name="amount_unit_currency"/>
                                     <field name="tax_ids" widget="many2many_tags"/>
-                                    <field name="price_subtotal"/>
-                                    <field name="price_total"/>
+                                    <field name="amount_revenue_currency" readonly="1"/>
+                                    <field name="amount_total_currency" readonly="1"/>
                                 </list>
                             </field>
                         </page>
@@ -117,9 +121,9 @@
                         </page>
                     </notebook>
                     <group class="oe_subtotal_footer">
-                        <field name="amount_untaxed"/>
-                        <field name="amount_tax"/>
-                        <field name="amount_total"/>
+                        <field name="amount_untaxed_currency"/>
+                        <field name="amount_tax_currency"/>
+                        <field name="amount_total_currency"/>
                     </group>
                 </sheet>
             </form>

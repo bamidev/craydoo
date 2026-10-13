@@ -14,25 +14,11 @@ class AccountInvoiceDraft(models.Model):
     `cd.account.invoice` holds the real (eventually locked) data.
     """
     _name = 'cd.account.invoice.draft'
+    _inherits = {'cd.account.invoice': 'invoice_id'}
     _description = 'Invoice Draft'
 
     invoice_id = fields.Many2one('cd.account.invoice', required=True, ondelete='cascade', copy=False)
-
-    name = fields.Char(related='invoice_id.name', readonly=False, store=True)
     billing_contact_id = fields.Many2one('cd.contact.info', required=True, string="Billed to")
-    language_id = fields.Many2one(
-        related='invoice_id.language_id', readonly=False,
-        default=lambda i: i.billing_contact_id.primary_language_id)
-    date = fields.Date(related='invoice_id.date', readonly=False)
-    due_date = fields.Date(related='invoice_id.due_date', readonly=False)
-    currency_id = fields.Many2one(
-        related='invoice_id.currency_id', readonly=False,
-        default=lambda self: self.env.company.currency_id)
-    company_id = fields.Many2one(related='invoice_id.company_id', readonly=False)
-    invoice_line_ids = fields.One2many(related='invoice_id.invoice_line_ids', readonly=False)
-    amount_untaxed = fields.Monetary(related='invoice_id.amount_untaxed', currency_field='currency_id')
-    amount_tax = fields.Monetary(related='invoice_id.amount_tax', currency_field='currency_id')
-    amount_total = fields.Monetary(related='invoice_id.amount_total', currency_field='currency_id')
 
     debit_account_id = fields.Many2one(
         'cd.account.account', default=lambda self: self._default_account('default_debit_account_id'))
@@ -62,10 +48,11 @@ class AccountInvoiceDraft(models.Model):
                 invoice_vals = {f: vals[f] for f in INVOICE_FIELD_NAMES if f in vals}
                 contact = self.env['cd.contact.info'].browse(vals.get('billing_contact_id'))
                 invoice_vals['billing_address_id'] = contact.get_address().id
+                invoice_vals.setdefault('language_id', contact.primary_language_id.id)
                 vals['invoice_id'] = self.env['cd.account.invoice'].create(invoice_vals).id
         return super().create(vals_list)
 
-    def _tax_legs(self, invoice, currency_factor):
+    def _tax_legs(self, invoice):
         """ `(account, amount)` pairs (amount in minor currency units) for
         every tax used on `invoice`, split across that tax's configured
         `cd.account.tax.allocation.line`s by `percentage`. The last
@@ -82,7 +69,7 @@ class AccountInvoiceDraft(models.Model):
                     "%(tax)s has no configured account allocation - set up where "
                     "its amount should post before invoicing with it.", tax=tax.name))
 
-            tax_amount = round(amount * currency_factor)
+            tax_amount = amount
             allocated = 0
             for i, allocation in enumerate(allocations):
                 if not allocation.account_id:
@@ -95,6 +82,35 @@ class AccountInvoiceDraft(models.Model):
                 allocated += portion
                 legs.append((allocation.account_id, portion))
         return legs
+
+    def _revenue_legs(self, invoice, revenue_amount, fallback_account):
+        """ `(account, amount)` pairs (amount in minor currency units) for
+        `invoice`'s pre-tax revenue (`revenue_amount`), split across its
+        lines by the account each one resolves via
+        `cd.account.invoice.line._get_default_account_id` (falling back
+        to `fallback_account` when a line doesn't resolve one), then
+        grouped - so e.g. two lines resolving to the same account end up
+        as one leg, not two. The last line absorbs whatever's left of
+        `revenue_amount` after the others, so the legs always sum to
+        exactly `revenue_amount` (a line's own `amount_revenue` can drift
+        from that by a cent or two, since tax is rounded per-tax for
+        `_tax_legs` but per-line there).
+        """
+        lines = invoice.invoice_line_ids
+        totals = {}
+        allocated = 0
+        for i, line in enumerate(lines):
+            account = line._get_default_account_id() or fallback_account
+            if not account:
+                raise UserError(_(
+                    "%(line)s has no account configured to post to.", line=line.name))
+            if i == len(lines) - 1:
+                portion = revenue_amount - allocated
+            else:
+                portion = line.amount_revenue
+            allocated += portion
+            totals[account] = totals.get(account, 0) + portion
+        return list(totals.items())
 
     def action_post(self):
         for draft in self:
@@ -114,12 +130,11 @@ class AccountInvoiceDraft(models.Model):
             if invoice.name == '/':
                 invoice.name = self.env['ir.sequence'].next_by_code('cd.account.invoice') or '/'
 
-            currency_factor = 10 ** invoice.currency_id.decimal_places
-            total_amount = round(invoice.amount_total * currency_factor)
-            tax_legs = self._tax_legs(invoice, currency_factor)
-            revenue_amount = total_amount - sum(amount for _account, amount in tax_legs)
+            tax_legs = self._tax_legs(invoice)
+            revenue_amount = invoice.amount_total - sum(amount for _account, amount in tax_legs)
+            revenue_legs = self._revenue_legs(invoice, revenue_amount, credit_account)
 
-            legs = [(credit_account, revenue_amount)] + tax_legs
+            legs = revenue_legs + tax_legs
             for account, _amount in legs:
                 if account.ledger_id != ledger:
                     raise UserError(_(

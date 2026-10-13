@@ -1,3 +1,5 @@
+from math import floor
+
 from odoo import fields, models
 
 
@@ -27,32 +29,28 @@ class AccountTax(models.Model):
         self.ensure_one()
         if self.amount_type == 'fixed':
             return self.amount * quantity
-        if self.price_include:
-            return base_amount - base_amount / (1 + self.amount / 100.0)
-        return base_amount * self.amount / 100.0
+        return floor(base_amount * self.amount / 100.0)
 
     def compute_all(self, price_unit, quantity=1.0):
         """ Apply every tax in self to `price_unit * quantity`, mirroring a
         trimmed version of Odoo's own `account.tax.compute_all`: no
-        compounding between taxes, no rounding methods, just a flat
-        included/excluded split per tax.
-        """
-        base = price_unit * quantity
-        included_total = 0.0
-        excluded_total = 0.0
-        taxes_data = []
-        for tax in self:
-            tax_amount = tax._compute_amount(base, quantity)
-            if tax.price_include:
-                included_total += tax_amount
-            else:
-                excluded_total += tax_amount
-            taxes_data.append({'id': tax.id, 'name': tax.name, 'amount': tax_amount})
+        compounding between taxes, just a flat sum of each tax's own
+        amount against the untouched base.
 
-        total_excluded = base - included_total
-        total_included = total_excluded + included_total + excluded_total
-        return {
-            'total_excluded': total_excluded,
-            'total_included': total_included,
-            'taxes': taxes_data,
-        }
+        Returns `(amount, tax_amount, total_amount)`:
+        - `amount`: `price_unit * quantity`, untouched by tax.
+        - `tax_amount`: every tax's own amount, summed.
+        - `total_amount`: `amount` plus whatever tax isn't already
+          included in it - an excluded tax adds to the total; an
+          included one doesn't, since it's already part of `amount`.
+        """
+        amount = price_unit * quantity
+        tax_amount = 0
+        excluded_amount = 0
+        for tax in self:
+            this_tax_amount = tax._compute_amount(amount, quantity)
+            tax_amount += this_tax_amount
+            if not tax.price_include:
+                excluded_amount += this_tax_amount
+        total_amount = amount + excluded_amount
+        return amount, tax_amount, total_amount
