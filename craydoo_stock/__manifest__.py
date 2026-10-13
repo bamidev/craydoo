@@ -7,6 +7,7 @@
     'license': 'LGPL-3',
     'depends': ['base', 'craydoo_product'],
     'data': [
+        'security/stock_security.xml',
         'security/ir.access.csv',
         'data/stock_transfer_sequence.xml',
         'data/stock_picking_order_sequence.xml',
@@ -15,5 +16,7 @@
         'views/stock_serial_lot_views.xml',
         'views/stock_transfer_views.xml',
         'views/stock_picking_order_views.xml',
+        'views/product_template_views.xml',
+        'views/product_template_enable_tracking_wizard_views.xml',
     ],
 }

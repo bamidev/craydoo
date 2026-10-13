@@ -5,3 +5,5 @@ from . import stock_serial
 from . import stock_lot
 from . import stock_transfer
 from . import stock_picking_order
+from . import product_template
+from . import product_template_enable_tracking_wizard

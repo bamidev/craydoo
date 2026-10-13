@@ -41,8 +41,29 @@ class StockTransfer(models.Model):
             })
         quantity.quantity += delta
 
+    def _check_tracking(self, vals):
+        """ Enforces `cd.product.template.track_by_serial`/`track_by_lot`:
+        a transfer of a tracked product must actually carry the matching
+        serial/lot - and a serial, by definition, covers exactly one unit.
+        """
+        product = self.env['cd.product.variant'].browse(vals.get('product_id'))
+        template = product.template_id
+        if template.track_by_serial:
+            if not vals.get('serial_id'):
+                raise UserError(_(
+                    "%(product)s is tracked by serial number - set one.", product=product.name))
+            if vals.get('quantity') != 1:
+                raise UserError(_(
+                    "%(product)s is tracked by serial number - quantity must be 1.",
+                    product=product.name))
+        if template.track_by_lot and not vals.get('lot_id'):
+            raise UserError(_(
+                "%(product)s is tracked by lot - set one.", product=product.name))
+
     @api.model_create_multi
     def create(self, vals_list):
+        for vals in vals_list:
+            self._check_tracking(vals)
         transfers = super().create(vals_list)
         for transfer in transfers:
             transfer._bump_quantity(transfer.location_id.id, -transfer.quantity)

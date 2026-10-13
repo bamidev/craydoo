@@ -51,6 +51,8 @@
                     <group>
                         <field name="name"/>
                         <field name="category_id"/>
+                        <field name="track_by_serial"/>
+                        <field name="track_by_lot"/>
                     </group>
                     <field name="attributes"/>
                     <field name="variant_ids">
