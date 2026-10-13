@@ -172,24 +172,12 @@ class AccountTransfer(models.Model):
         raise UserError(_("Accounting history cannot be changed."))
 
 
-class AccountTransferChildMixin(models.AbstractModel):
-    """ Shared by `cd.account.transfer.posted`/`.pending`: related fields
-    mirroring their parent `cd.account.transfer`'s important fields, so a
-    view on either can show them without reaching through `transfer_id`.
+class AccountTransferMixin(models.AbstractModel):
+    """ Shared by `cd.account.transfer.posted`/`.pending`, since both
+    carry their own `amount`/`currency_id` the same way.
     """
-    _name = 'cd.account.transfer.child.mixin'
-    _description = 'Transfer Detail'
-
-    transfer_id = fields.Many2one(
-        'cd.account.transfer', required=True, readonly=True, ondelete='cascade', index=True)
-
-    name = fields.Char(related='transfer_id.name')
-    date = fields.Date(related='transfer_id.date')
-    ledger_id = fields.Many2one(related='transfer_id.ledger_id')
-    type = fields.Selection(related='transfer_id.type')
-    debit_account_id = fields.Many2one(related='transfer_id.debit_account_id')
-    credit_account_id = fields.Many2one(related='transfer_id.credit_account_id')
-    billing_contact_id = fields.Many2one(related='transfer_id.billing_contact_id')
+    _name = 'cd.account.transfer.mixin'
+    _description = 'Transfer Amount'
 
     @api.depends('amount', 'currency_id')
     def _compute_amount_currency(self):
@@ -205,9 +193,12 @@ class AccountTransferPosted(models.Model):
     becomes part of the books.
     """
     _name = 'cd.account.transfer.posted'
-    _inherit = ['cd.account.transfer.child.mixin']
+    _inherit = ['cd.account.transfer.mixin']
+    _inherits = {'cd.account.transfer': 'transfer_id'}
     _description = 'Posted Transfer Amount'
 
+    transfer_id = fields.Many2one(
+        'cd.account.transfer', required=True, readonly=True, ondelete='restrict', index=True)
     amount = UInteger(required=True, readonly=True)
     currency_id = fields.Many2one(related='ledger_id.currency_id')
     amount_currency = fields.Monetary(
@@ -248,9 +239,12 @@ class AccountTransferPending(models.Model):
     what the original, pre-conversion amount was.
     """
     _name = 'cd.account.transfer.pending'
-    _inherit = ['cd.account.transfer.child.mixin']
+    _inherit = ['cd.account.transfer.mixin']
+    _inherits = {'cd.account.transfer': 'transfer_id'}
     _description = 'Pending Transfer Amount'
 
+    transfer_id = fields.Many2one(
+        'cd.account.transfer', required=True, readonly=True, ondelete='restrict', index=True)
     amount = UInteger(required=True)
     currency_id = fields.Many2one('res.currency', required=True)
     amount_currency = fields.Monetary(
