@@ -1,0 +1,8 @@
+<odoo noupdate="1">
+    <record id="seq_stock_transfer" model="ir.sequence">
+        <field name="name">Stock Transfer</field>
+        <field name="code">cd.stock.transfer</field>
+        <field name="prefix">ST/%(year)s/</field>
+        <field name="padding">4</field>
+    </record>
+</odoo>

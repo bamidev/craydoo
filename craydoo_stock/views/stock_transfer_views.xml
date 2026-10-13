@@ -1,0 +1,65 @@
+<odoo>
+    <record id="view_stock_transfer_list" model="ir.ui.view">
+        <field name="name">cd.stock.transfer.list</field>
+        <field name="model">cd.stock.transfer</field>
+        <field name="arch" type="xml">
+            <list create="false" edit="false" delete="false">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="product_id"/>
+                <field name="quantity"/>
+                <field name="location_id"/>
+                <field name="location_dest_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_stock_transfer_form" model="ir.ui.view">
+        <field name="name">cd.stock.transfer.form</field>
+        <field name="model">cd.stock.transfer</field>
+        <field name="arch" type="xml">
+            <form create="false" edit="false" delete="false">
+                <sheet>
+                    <h1><field name="name"/></h1>
+                    <group>
+                        <field name="date"/>
+                        <field name="product_id"/>
+                        <field name="quantity"/>
+                        <field name="location_id"/>
+                        <field name="location_dest_id"/>
+                        <field name="group_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_stock_transfer" model="ir.actions.act_window">
+        <field name="name">Transfers</field>
+        <field name="res_model">cd.stock.transfer</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_stock_transfer_group_form" model="ir.ui.view">
+        <field name="name">cd.stock.transfer.group.form</field>
+        <field name="model">cd.stock.transfer.group</field>
+        <field name="arch" type="xml">
+            <form create="false" delete="false">
+                <sheet>
+                    <field name="transfer_ids">
+                        <list>
+                            <field name="name"/>
+                            <field name="product_id"/>
+                            <field name="quantity"/>
+                            <field name="location_id"/>
+                            <field name="location_dest_id"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <menuitem id="menu_stock_transfer" name="Transfers" parent="menu_stock_root"
+              action="action_stock_transfer" sequence="20"/>
+</odoo>

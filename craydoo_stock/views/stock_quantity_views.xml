@@ -1,0 +1,41 @@
+<odoo>
+    <record id="view_stock_quantity_list" model="ir.ui.view">
+        <field name="name">cd.stock.quantity.list</field>
+        <field name="model">cd.stock.quantity</field>
+        <field name="arch" type="xml">
+            <list create="false" edit="false" delete="false">
+                <field name="product_id"/>
+                <field name="location_id"/>
+                <field name="quantity"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_stock_quantity_form" model="ir.ui.view">
+        <field name="name">cd.stock.quantity.form</field>
+        <field name="model">cd.stock.quantity</field>
+        <field name="arch" type="xml">
+            <form create="false" delete="false">
+                <header>
+                    <button name="action_recompute_quantity" type="object" string="Recompute"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="product_id"/>
+                        <field name="location_id"/>
+                        <field name="quantity"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_stock_quantity" model="ir.actions.act_window">
+        <field name="name">On-Hand Quantities</field>
+        <field name="res_model">cd.stock.quantity</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_stock_quantity" name="On-Hand Quantities" parent="menu_stock_root"
+              action="action_stock_quantity" sequence="30"/>
+</odoo>

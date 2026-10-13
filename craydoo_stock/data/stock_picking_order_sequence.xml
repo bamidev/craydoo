@@ -1,0 +1,8 @@
+<odoo noupdate="1">
+    <record id="seq_stock_picking_order" model="ir.sequence">
+        <field name="name">Picking Order</field>
+        <field name="code">cd.stock.picking.order</field>
+        <field name="prefix">PICK/%(year)s/</field>
+        <field name="padding">4</field>
+    </record>
+</odoo>

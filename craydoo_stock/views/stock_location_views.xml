@@ -1,0 +1,78 @@
+<odoo>
+    <record id="view_stock_warehouse_list" model="ir.ui.view">
+        <field name="name">cd.stock.warehouse.list</field>
+        <field name="model">cd.stock.warehouse</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_stock_warehouse_form" model="ir.ui.view">
+        <field name="name">cd.stock.warehouse.form</field>
+        <field name="model">cd.stock.warehouse</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                    <field name="location_ids">
+                        <list>
+                            <field name="name"/>
+                            <field name="usage"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_stock_warehouse" model="ir.actions.act_window">
+        <field name="name">Warehouses</field>
+        <field name="res_model">cd.stock.warehouse</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_stock_location_list" model="ir.ui.view">
+        <field name="name">cd.stock.location.list</field>
+        <field name="model">cd.stock.location</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="usage"/>
+                <field name="warehouse_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_stock_location_form" model="ir.ui.view">
+        <field name="name">cd.stock.location.form</field>
+        <field name="model">cd.stock.location</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="usage"/>
+                        <field name="warehouse_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_stock_location" model="ir.actions.act_window">
+        <field name="name">Locations</field>
+        <field name="res_model">cd.stock.location</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_stock_root" name="Inventory"/>
+    <menuitem id="menu_stock_config" name="Configuration" parent="menu_stock_root" sequence="90"/>
+    <menuitem id="menu_stock_warehouse" name="Warehouses" parent="menu_stock_config"
+              action="action_stock_warehouse" sequence="10"/>
+    <menuitem id="menu_stock_location" name="Locations" parent="menu_stock_config"
+              action="action_stock_location" sequence="20"/>
+</odoo>

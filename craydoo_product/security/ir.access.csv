@@ -1,0 +1,4 @@
+id,name,model_id,group_id/id,operation,domain
+access_cd_product_category_user,cd.product.category.user,cd.product.category,base.group_user,crud,
+access_cd_product_template_user,cd.product.template.user,cd.product.template,base.group_user,crud,
+access_cd_product_variant_user,cd.product.variant.user,cd.product.variant,base.group_user,crud,

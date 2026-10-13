@@ -1,0 +1,79 @@
+<odoo>
+    <record id="view_product_category_list" model="ir.ui.view">
+        <field name="name">cd.product.category.list</field>
+        <field name="model">cd.product.category</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_product_category_form" model="ir.ui.view">
+        <field name="name">cd.product.category.form</field>
+        <field name="model">cd.product.category</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                    <field name="attributes_definition"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_product_category" model="ir.actions.act_window">
+        <field name="name">Product Categories</field>
+        <field name="res_model">cd.product.category</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_product_template_list" model="ir.ui.view">
+        <field name="name">cd.product.template.list</field>
+        <field name="model">cd.product.template</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="category_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_product_template_form" model="ir.ui.view">
+        <field name="name">cd.product.template.form</field>
+        <field name="model">cd.product.template</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <group>
+                        <field name="name"/>
+                        <field name="category_id"/>
+                    </group>
+                    <field name="attributes"/>
+                    <field name="variant_ids">
+                        <list>
+                            <field name="name"/>
+                            <field name="variant_image" widget="image"/>
+                        </list>
+                    </field>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_product_template" model="ir.actions.act_window">
+        <field name="name">Products</field>
+        <field name="res_model">cd.product.template</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_product_root" name="Products"/>
+    <menuitem id="menu_product_template" name="Products" parent="menu_product_root"
+              action="action_product_template" sequence="10"/>
+    <menuitem id="menu_product_category" name="Categories" parent="menu_product_root"
+              action="action_product_category" sequence="20"/>
+</odoo>
