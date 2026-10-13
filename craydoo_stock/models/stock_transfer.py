@@ -23,6 +23,8 @@ class StockTransfer(models.Model):
         'cd.stock.location', required=True, readonly=True, ondelete='restrict')
     group_id = fields.Many2one(
         'cd.stock.transfer.group', readonly=True, ondelete='restrict')
+    serial_id = fields.Many2one('cd.stock.serial', readonly=True, ondelete='restrict')
+    lot_id = fields.Many2one('cd.stock.lot', readonly=True, ondelete='restrict')
 
     def _bump_quantity(self, location_id, delta):
         """ `sudo()` - regular users can only read `cd.stock.quantity`,

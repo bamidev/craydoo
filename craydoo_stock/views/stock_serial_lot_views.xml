@@ -1,0 +1,70 @@
+<odoo>
+    <record id="view_stock_serial_list" model="ir.ui.view">
+        <field name="name">cd.stock.serial.list</field>
+        <field name="model">cd.stock.serial</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="serial"/>
+                <field name="product_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_stock_serial_form" model="ir.ui.view">
+        <field name="name">cd.stock.serial.form</field>
+        <field name="model">cd.stock.serial</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="serial"/>
+                        <field name="product_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_stock_serial" model="ir.actions.act_window">
+        <field name="name">Serial Numbers</field>
+        <field name="res_model">cd.stock.serial</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_stock_lot_list" model="ir.ui.view">
+        <field name="name">cd.stock.lot.list</field>
+        <field name="model">cd.stock.lot</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="product_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_stock_lot_form" model="ir.ui.view">
+        <field name="name">cd.stock.lot.form</field>
+        <field name="model">cd.stock.lot</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="product_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_stock_lot" model="ir.actions.act_window">
+        <field name="name">Lots</field>
+        <field name="res_model">cd.stock.lot</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_stock_serial" name="Serial Numbers" parent="menu_stock_config"
+              action="action_stock_serial" sequence="30"/>
+    <menuitem id="menu_stock_lot" name="Lots" parent="menu_stock_config"
+              action="action_stock_lot" sequence="40"/>
+</odoo>

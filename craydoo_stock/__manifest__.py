@@ -12,6 +12,7 @@
         'data/stock_picking_order_sequence.xml',
         'views/stock_location_views.xml',
         'views/stock_quantity_views.xml',
+        'views/stock_serial_lot_views.xml',
         'views/stock_transfer_views.xml',
         'views/stock_picking_order_views.xml',
     ],

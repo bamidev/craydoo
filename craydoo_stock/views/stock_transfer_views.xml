@@ -28,6 +28,8 @@
                         <field name="location_id"/>
                         <field name="location_dest_id"/>
                         <field name="group_id"/>
+                        <field name="serial_id"/>
+                        <field name="lot_id"/>
                     </group>
                 </sheet>
             </form>

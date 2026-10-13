@@ -2,6 +2,8 @@ id,name,model_id,group_id/id,operation,domain
 access_cd_stock_warehouse_user,cd.stock.warehouse.user,cd.stock.warehouse,base.group_user,crud,
 access_cd_stock_location_user,cd.stock.location.user,cd.stock.location,base.group_user,crud,
 access_cd_stock_quantity_user,cd.stock.quantity.user,cd.stock.quantity,base.group_user,r,
+access_cd_stock_serial_user,cd.stock.serial.user,cd.stock.serial,base.group_user,crud,
+access_cd_stock_lot_user,cd.stock.lot.user,cd.stock.lot,base.group_user,crud,
 access_cd_stock_transfer_user,cd.stock.transfer.user,cd.stock.transfer,base.group_user,cr,
 access_cd_stock_transfer_group_user,cd.stock.transfer.group.user,cd.stock.transfer.group,base.group_user,cr,
 access_cd_stock_picking_order_user,cd.stock.picking.order.user,cd.stock.picking.order,base.group_user,crud,
