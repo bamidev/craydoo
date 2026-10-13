@@ -45,7 +45,7 @@
                         <field name="date"/>
                         <field name="ledger_id"/>
                         <field name="type"/>
-                        <field name="contact_source_id"/>
+                        <field name="billing_contact_id"/>
                     </group>
                     <group name="accounts" string="Accounts">
                         <field name="debit_account_id"/>

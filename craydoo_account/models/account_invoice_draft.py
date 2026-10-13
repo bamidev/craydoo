@@ -137,7 +137,7 @@ class AccountInvoiceDraft(models.Model):
                     'debit_account_id': debit_account.id,
                     'credit_account_id': account.id,
                     'backward_link_id': last_transfer.id if last_transfer else False,
-                    'contact_source_id': draft.billing_contact_id.id,
+                    'billing_contact_id': draft.billing_contact_id.id,
                 })
                 last_transfer = transfer_draft.action_post()
 

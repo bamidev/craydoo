@@ -10,7 +10,7 @@ TRANSFER_TYPES = [
 
 TRANSFER_IMMUTABLE_COLUMNS = [
     'name', 'date', 'ledger_id', 'type', 'debit_account_id', 'credit_account_id',
-    'contact_source_id', 'backward_link_id',
+    'billing_contact_id', 'backward_link_id',
 ]
 TRANSFER_POSTED_IMMUTABLE_COLUMNS = ['transfer_id', 'amount']
 
@@ -93,7 +93,7 @@ class AccountTransfer(models.Model):
         'cd.account.account', required=True, readonly=True, ondelete='restrict')
     credit_account_id = fields.Many2one(
         'cd.account.account', required=True, readonly=True, ondelete='restrict')
-    contact_source_id = fields.Many2one('cd.contact.info', readonly=True, index=True)
+    billing_contact_id = fields.Many2one('cd.contact.info', readonly=True, index=True)
 
     backward_link_id = fields.Many2one(
         'cd.account.transfer', readonly=True, ondelete='restrict')
@@ -189,7 +189,7 @@ class AccountTransferChildMixin(models.AbstractModel):
     type = fields.Selection(related='transfer_id.type')
     debit_account_id = fields.Many2one(related='transfer_id.debit_account_id')
     credit_account_id = fields.Many2one(related='transfer_id.credit_account_id')
-    contact_source_id = fields.Many2one(related='transfer_id.contact_source_id')
+    billing_contact_id = fields.Many2one(related='transfer_id.billing_contact_id')
 
     @api.depends('amount', 'currency_id')
     def _compute_amount_currency(self):
@@ -312,7 +312,7 @@ class AccountTransferDraft(models.TransientModel):
     type = fields.Selection(TRANSFER_TYPES, required=True)
     debit_account_id = fields.Many2one('cd.account.account', required=True, ondelete='restrict')
     credit_account_id = fields.Many2one('cd.account.account', required=True, ondelete='restrict')
-    contact_source_id = fields.Many2one('cd.contact.info', index=True)
+    billing_contact_id = fields.Many2one('cd.contact.info', index=True)
     backward_link_id = fields.Many2one('cd.account.transfer')
 
     amount = UInteger(required=True)
@@ -342,7 +342,7 @@ class AccountTransferDraft(models.TransientModel):
                 'type': draft.type,
                 'debit_account_id': draft.debit_account_id.id,
                 'credit_account_id': draft.credit_account_id.id,
-                'contact_source_id': draft.contact_source_id.id,
+                'billing_contact_id': draft.billing_contact_id.id,
                 'backward_link_id': draft.backward_link_id.id,
             })
             same_currency = draft.currency_id == draft.ledger_id.currency_id
