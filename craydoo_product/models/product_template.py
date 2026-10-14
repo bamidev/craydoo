@@ -10,7 +10,7 @@ class ProductTemplate(models.Model):
     image = fields.Image()
     track_by_serial = fields.Boolean(required=True, default=False, readonly=True)
     track_by_lot = fields.Boolean(required=True, default=False)
-    category_id = fields.Many2one('cd.product.category', required=True)
+    category_id = fields.Many2one('cd.product.category')
     attributes = fields.Properties(
         definition_record='category_id', definition_record_field='attributes_definition')
     variant_ids = fields.One2many('cd.product.variant', 'template_id')
