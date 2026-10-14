@@ -1,4 +1,50 @@
 <odoo>
+    <record id="view_account_invoice_draft_form" model="ir.ui.view">
+        <field name="name">cd.account.invoice.draft.form</field>
+        <field name="model">cd.account.invoice.draft</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_post" type="object" string="Post"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="billing_contact_id"/>
+                        <field name="language_id"/>
+                        <field name="due_date"/>
+                        <field name="currency_id"/>
+                    </group>
+                    <notebook>
+                        <page string="Invoice Lines">
+                            <field name="invoice_line_ids">
+                                <list editable="bottom">
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <field name="name"/>
+                                    <field name="quantity"/>
+                                    <field name="amount_unit_currency"/>
+                                    <field name="tax_ids" widget="many2many_tags"/>
+                                    <field name="amount_revenue_currency" readonly="1"/>
+                                    <field name="amount_total_currency" readonly="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Accounting">
+                            <group>
+                                <field name="debit_account_id"/>
+                                <field name="credit_account_id"/>
+                            </group>
+                        </page>
+                    </notebook>
+                    <group class="oe_subtotal_footer">
+                        <field name="amount_untaxed_currency"/>
+                        <field name="amount_tax_currency"/>
+                        <field name="amount_total_currency"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
     <record id="action_account_invoice_draft_new" model="ir.actions.act_window">
         <field name="name">New Invoice Draft</field>
         <field name="res_model">cd.account.invoice.draft</field>
@@ -81,52 +127,6 @@
                 <field name="date"/>
                 <field name="amount_total_currency"/>
             </list>
-        </field>
-    </record>
-
-    <record id="view_account_invoice_draft_form" model="ir.ui.view">
-        <field name="name">cd.account.invoice.draft.form</field>
-        <field name="model">cd.account.invoice.draft</field>
-        <field name="arch" type="xml">
-            <form>
-                <header>
-                    <button name="action_post" type="object" string="Post"/>
-                </header>
-                <sheet>
-                    <group>
-                        <field name="billing_contact_id"/>
-                        <field name="language_id"/>
-                        <field name="due_date"/>
-                        <field name="currency_id"/>
-                    </group>
-                    <notebook>
-                        <page string="Invoice Lines">
-                            <field name="invoice_line_ids">
-                                <list editable="bottom">
-                                    <field name="currency_id" column_invisible="1"/>
-                                    <field name="name"/>
-                                    <field name="quantity"/>
-                                    <field name="amount_unit_currency"/>
-                                    <field name="tax_ids" widget="many2many_tags"/>
-                                    <field name="amount_revenue_currency" readonly="1"/>
-                                    <field name="amount_total_currency" readonly="1"/>
-                                </list>
-                            </field>
-                        </page>
-                        <page string="Accounting">
-                            <group>
-                                <field name="debit_account_id"/>
-                                <field name="credit_account_id"/>
-                            </group>
-                        </page>
-                    </notebook>
-                    <group class="oe_subtotal_footer">
-                        <field name="amount_untaxed_currency"/>
-                        <field name="amount_tax_currency"/>
-                        <field name="amount_total_currency"/>
-                    </group>
-                </sheet>
-            </form>
         </field>
     </record>
 
