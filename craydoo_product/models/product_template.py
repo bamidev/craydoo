@@ -8,6 +8,7 @@ class ProductTemplate(models.Model):
 
     name = fields.Char(required=True)
     image = fields.Image()
+    uom_id = fields.Many2one('uom.uom')
     track_by_serial = fields.Boolean(required=True, default=False, readonly=True)
     track_by_lot = fields.Boolean(required=True, default=False)
     category_id = fields.Many2one('cd.product.category')
