@@ -18,12 +18,12 @@ class StockTransfer(models.Model):
     date = fields.Date(required=True, readonly=True, default=fields.Date.context_today)
     product_id = fields.Many2one('cd.product.variant', required=True, readonly=True)
     quantity = fields.Integer(required=True, readonly=True)
-    location_id = fields.Many2one(
+    location_src_id = fields.Many2one(
         'cd.stock.location', required=True, readonly=True, ondelete='restrict')
     location_dest_id = fields.Many2one(
         'cd.stock.location', required=True, readonly=True, ondelete='restrict')
-    group_id = fields.Many2one(
-        'cd.stock.transfer.group', readonly=True, ondelete='restrict')
+    plan_id = fields.Many2one(
+        'cd.stock.transfer.plan', readonly=True, ondelete='restrict')
     serial_id = fields.Many2one('cd.stock.serial', readonly=True, ondelete='restrict')
     lot_id = fields.Many2one('cd.stock.lot', readonly=True, ondelete='restrict')
 
@@ -78,12 +78,13 @@ class StockTransfer(models.Model):
         raise UserError(_("Stock history cannot be changed."))
 
 
-class StockTransferGroup(models.Model):
-    """ Links several `cd.stock.transfer`s together as belonging to one
-    warehouse operation - e.g. every transfer generated from validating
-    one `cd.stock.picking.order`.
+class StockTransferPlan(models.Model):
+    """ The plan of one or several stock transfers.
     """
-    _name = 'cd.stock.transfer.group'
-    _description = 'Stock Transfer Group'
+    _name = 'cd.stock.transfer.plan'
+    _description = 'Stock Transfer Plan'
 
+    product_id = fields.Many2one('cd.product.variant', required=True, readonly=True)
+    demand = fields.Integer(required=True)
     transfer_ids = fields.One2many('cd.stock.transfer', 'group_id')
+
