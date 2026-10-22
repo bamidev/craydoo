@@ -20,7 +20,6 @@ class StockPickingOrder(models.Model):
         default=lambda self: self.env['ir.sequence'].next_by_code('cd.stock.picking.order'))
     state = fields.Selection(ORDER_STATES, required=True, readonly=True, default='draft')
     order_line_ids = fields.One2many('cd.stock.picking.order.line', 'order_id')
-    group_id = fields.Many2one('cd.stock.transfer.group', readonly=True, copy=False)
 
     def action_validate(self):
         for order in self:
@@ -53,3 +52,4 @@ class StockPickingOrderLine(models.Model):
     quantity = fields.Integer(required=True)
     location_id = fields.Many2one('cd.stock.location', required=True)
     location_dest_id = fields.Many2one('cd.stock.location', required=True)
+    plan_id = fields.Many2one('cd.stock.transfer.plan', readonly=True, copy=False)

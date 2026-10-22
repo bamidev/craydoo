@@ -86,5 +86,5 @@ class StockTransferPlan(models.Model):
 
     product_id = fields.Many2one('cd.product.variant', required=True, readonly=True)
     demand = fields.Integer(required=True)
-    transfer_ids = fields.One2many('cd.stock.transfer', 'group_id')
+    transfer_ids = fields.One2many('cd.stock.transfer', 'plan_id')
 
