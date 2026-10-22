@@ -151,7 +151,7 @@ class AccountInvoiceLine(models.Model):
             line.amount_tax = tax_amount
             line.amount_revenue = total_amount - tax_amount
 
-    def _get_default_account_id(self):
+    def get_default_account_id(self):
         """ The account this line's revenue should post to - hook point,
         overridden by `craydoo_account_product` to resolve it from the
         line's product once that module is installed. No such default

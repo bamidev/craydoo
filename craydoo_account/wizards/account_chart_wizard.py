@@ -64,12 +64,12 @@ class AccountChartWizard(models.TransientModel):
 
         self.company_id.account_ledger_id = self.ledger_id
         chart = self.chart_id
-        if chart.default_debit_account_id:
-            self.company_id.default_debit_account_id = account_by_entry_id[
-                chart.default_debit_account_id.id]
-        if chart.default_credit_account_id:
-            self.company_id.default_credit_account_id = account_by_entry_id[
-                chart.default_credit_account_id.id]
+        if chart.default_receivable_account_id:
+            self.company_id.default_receivable_account_id = account_by_entry_id[
+                chart.default_receivable_account_id.id]
+        if chart.default_payable_account_id:
+            self.company_id.default_payable_account_id = account_by_entry_id[
+                chart.default_payable_account_id.id]
 
         return {
             'type': 'ir.actions.act_window',

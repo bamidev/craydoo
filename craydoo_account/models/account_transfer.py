@@ -193,7 +193,7 @@ class AccountTransferPosted(models.Model):
     becomes part of the books.
     """
     _name = 'cd.account.transfer.posted'
-    _inherit = ['cd.account.transfer.mixin']
+    _inherit = ['cd.account.transfer.mixin', 'mail.thread.main.attachment']
     _inherits = {'cd.account.transfer': 'transfer_id'}
     _description = 'Posted Transfer Amount'
 

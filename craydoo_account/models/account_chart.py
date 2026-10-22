@@ -14,9 +14,9 @@ class AccountChart(models.Model):
     name = fields.Char(required=True, translate=True)
     account_ids = fields.One2many('cd.account.chart.account', 'chart_id')
 
-    default_debit_account_id = fields.Many2one(
+    default_receivable_account_id = fields.Many2one(
         'cd.account.chart.account', domain="[('chart_id', '=', id)]")
-    default_credit_account_id = fields.Many2one(
+    default_payable_account_id = fields.Many2one(
         'cd.account.chart.account', domain="[('chart_id', '=', id)]")
 
 

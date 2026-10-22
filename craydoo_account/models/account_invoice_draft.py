@@ -21,9 +21,9 @@ class AccountInvoiceDraft(models.Model):
     billing_contact_id = fields.Many2one('cd.contact.info', required=True, string="Billed to")
 
     debit_account_id = fields.Many2one(
-        'cd.account.account', default=lambda self: self._default_account('default_debit_account_id'))
+        'cd.account.account', default=lambda self: self._default_account('default_receivable_account_id'))
     credit_account_id = fields.Many2one(
-        'cd.account.account', default=lambda self: self._default_account('default_credit_account_id'))
+        'cd.account.account', default=lambda self: self._default_account('default_income_account_id'))
 
     @api.model
     def _default_account(self, field):
@@ -32,14 +32,6 @@ class AccountInvoiceDraft(models.Model):
             return account
         param = self.env['ir.config_parameter'].sudo().get_int(f'craydoo_account.{field}', 0)
         return self.env['cd.account.account'].browse(param)
-
-    @api.model
-    def _default_credit_account(self):
-        return self._default_account('default_credit_account_id')
-
-    @api.model
-    def _default_debit_account(self):
-        return self._default_account('default_debit_account_id')
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -87,7 +79,7 @@ class AccountInvoiceDraft(models.Model):
         """ `(account, amount)` pairs (amount in minor currency units) for
         `invoice`'s pre-tax revenue (`revenue_amount`), split across its
         lines by the account each one resolves via
-        `cd.account.invoice.line._get_default_account_id` (falling back
+        `cd.account.invoice.line.get_default_account_id` (falling back
         to `fallback_account` when a line doesn't resolve one), then
         grouped - so e.g. two lines resolving to the same account end up
         as one leg, not two. The last line absorbs whatever's left of
@@ -100,7 +92,7 @@ class AccountInvoiceDraft(models.Model):
         totals = {}
         allocated = 0
         for i, line in enumerate(lines):
-            account = line._get_default_account_id() or fallback_account
+            account = line.get_default_account_id() or fallback_account
             if not account:
                 raise UserError(_(
                     "%(line)s has no account configured to post to.", line=line.name))

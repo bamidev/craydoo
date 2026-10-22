@@ -6,19 +6,21 @@ class AccountInvoiceLine(models.Model):
 
     product_id = fields.Many2one('cd.product.variant')
 
-    def _get_default_account_id(self):
+    def get_default_account_id(self):
         """ Resolves the account from the line's product template, falling
-        back to its category - the same product-then-category fallback
-        chain vanilla Odoo uses - before giving up to `super()`'s
-        "nothing at this level" default. `cd.product.variant` has no
-        account of its own - only the template/category do.
+        back to its category and then the company's configured default -
+        the same product-then-category-then-company fallback chain vanilla
+        Odoo uses - before giving up to `super()`'s "nothing at this
+        level" default. `cd.product.variant` has no account of its own -
+        only the template/category do.
         """
         self.ensure_one()
         if not self.product_id:
-            return super()._get_default_account_id()
+            return super().get_default_account_id()
         template = self.product_id.template_id
         return (
             template.income_account_id
             or template.category_id.income_account_id
-            or super()._get_default_account_id()
+            or self.invoice_id.company_id.default_income_account_id
+            or super().get_default_account_id()
         )
