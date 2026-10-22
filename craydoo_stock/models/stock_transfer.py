@@ -5,7 +5,8 @@ from odoo.exceptions import UserError
 class StockTransfer(models.Model):
     """ One movement of a specific quantity of a product from one
     location to another. Immutable once created - a transfer is a
-    historical fact, not something to revise after execution.
+    historical administrative fact, not something to revise after
+    execution.
     """
     _name = 'cd.stock.transfer'
     _description = 'Stock Transfer'

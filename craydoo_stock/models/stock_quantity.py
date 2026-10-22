@@ -4,9 +4,7 @@ from odoo.tools import SQL
 
 class StockQuantity(models.Model):
     """ The on-hand quantity of a product at a location right now - bumped
-    incrementally by `cd.stock.transfer.create` as transfers happen,
-    mirroring `cd.account.fiscal.year.account.balance` in the account
-    module.
+    incrementally by `cd.stock.transfer.create` as transfers happen.
     """
     _name = 'cd.stock.quantity'
     _description = 'Stock Quantity'
