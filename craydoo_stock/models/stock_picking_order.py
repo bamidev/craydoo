@@ -50,6 +50,6 @@ class StockPickingOrderLine(models.Model):
     order_id = fields.Many2one('cd.stock.picking.order', required=True, ondelete='cascade')
     product_id = fields.Many2one('cd.product.variant', required=True)
     quantity = fields.Integer(required=True)
-    location_id = fields.Many2one('cd.stock.location', required=True)
+    location_src_id = fields.Many2one('cd.stock.location', required=True)
     location_dest_id = fields.Many2one('cd.stock.location', required=True)
     plan_id = fields.Many2one('cd.stock.transfer.plan', readonly=True, copy=False)

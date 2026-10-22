@@ -5,7 +5,7 @@ access_cd_stock_quantity_user,cd.stock.quantity.user,cd.stock.quantity,base.grou
 access_cd_stock_serial_user,cd.stock.serial.user,cd.stock.serial,base.group_user,crud,
 access_cd_stock_lot_user,cd.stock.lot.user,cd.stock.lot,base.group_user,crud,
 access_cd_stock_transfer_user,cd.stock.transfer.user,cd.stock.transfer,base.group_user,cr,
-access_cd_stock_transfer_group_user,cd.stock.transfer.group.user,cd.stock.transfer.group,base.group_user,cr,
+access_cd_stock_transfer_plan_user,cd.stock.transfer.plan.user,cd.stock.transfer.plan,base.group_user,cr,
 access_cd_stock_picking_order_user,cd.stock.picking.order.user,cd.stock.picking.order,base.group_user,crud,
 access_cd_stock_picking_order_line_user,cd.stock.picking.order.line.user,cd.stock.picking.order.line,base.group_user,crud,
 access_cd_product_template_enable_tracking_wizard_admin,cd.product.template.enable.tracking.wizard.admin,cd.product.template.enable.tracking.wizard,group_stock_admin,crud,

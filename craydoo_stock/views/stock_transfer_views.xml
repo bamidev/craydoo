@@ -8,31 +8,9 @@
                 <field name="date"/>
                 <field name="product_id"/>
                 <field name="quantity"/>
-                <field name="location_id"/>
+                <field name="location_src_id"/>
                 <field name="location_dest_id"/>
             </list>
-        </field>
-    </record>
-
-    <record id="view_stock_transfer_form" model="ir.ui.view">
-        <field name="name">cd.stock.transfer.form</field>
-        <field name="model">cd.stock.transfer</field>
-        <field name="arch" type="xml">
-            <form create="false" edit="false" delete="false">
-                <sheet>
-                    <h1><field name="name"/></h1>
-                    <group>
-                        <field name="date"/>
-                        <field name="product_id"/>
-                        <field name="quantity"/>
-                        <field name="location_id"/>
-                        <field name="location_dest_id"/>
-                        <field name="group_id"/>
-                        <field name="serial_id"/>
-                        <field name="lot_id"/>
-                    </group>
-                </sheet>
-            </form>
         </field>
     </record>
 
@@ -42,9 +20,9 @@
         <field name="view_mode">list,form</field>
     </record>
 
-    <record id="view_stock_transfer_group_form" model="ir.ui.view">
-        <field name="name">cd.stock.transfer.group.form</field>
-        <field name="model">cd.stock.transfer.group</field>
+    <record id="view_stock_transfer_plan_form" model="ir.ui.view">
+        <field name="name">cd.stock.transfer.plan.form</field>
+        <field name="model">cd.stock.transfer.plan</field>
         <field name="arch" type="xml">
             <form create="false" delete="false">
                 <sheet>
@@ -53,7 +31,7 @@
                             <field name="name"/>
                             <field name="product_id"/>
                             <field name="quantity"/>
-                            <field name="location_id"/>
+                            <field name="location_src_id"/>
                             <field name="location_dest_id"/>
                         </list>
                     </field>
